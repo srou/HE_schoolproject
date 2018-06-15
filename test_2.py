@@ -30,7 +30,7 @@ ctxt2 = HE.encrypt(ptxt2, fill=1)
 
 print("Encrypted v1: ")
 print("len :", ctxt1.getLen()," IDS : ",ctxt1.getIDs())
-print("pyfhel attributes : ", ctxt1.getPyfhel().__dict__)
+print("pyfhel attributes : ", dir(ctxt1.getPyfhel()))
 print("Encrypted v2: ", ctxt2)
 
 ctxt1 += ctxt2      # `ctxt1 = ctxt1 + ctxt2` would also be valid
