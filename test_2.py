@@ -28,7 +28,8 @@ ptxt2 = PyPtxt(v2, HE)
 ctxt1 = HE.encrypt(ptxt1, fill=1)
 ctxt2 = HE.encrypt(ptxt2, fill=1)
 
-print("Encrypted v1: ","\n","len :" ctxt1.getLen(),"\n pyfhel : ",ctxt1.getPyfhel()," \n IDS : ",ctxt1.getIDs())
+print("Encrypted v1: ")
+print("len :", ctxt1.getLen(),"\n pyfhel : ",ctxt1.getPyfhel()," \n IDS : ",ctxt1.getIDs())
 print("Encrypted v2: ", ctxt2)
 
 ctxt1 += ctxt2      # `ctxt1 = ctxt1 + ctxt2` would also be valid
