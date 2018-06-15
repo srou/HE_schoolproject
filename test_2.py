@@ -18,14 +18,17 @@ print("  KeyGen completed")
 v1 = [1,2,3,4,5]
 v2 = [2,2,2,2,2]
 
+print("v1: ", v1)
+print("v2: ", v2)
+
 ptxt1 = PyPtxt(v1, HE)
 ptxt2 = PyPtxt(v2, HE)
 
 ctxt1 = HE.encrypt(ptxt1, fill=1)
 ctxt2 = HE.encrypt(ptxt2, fill=1)
 
-print("Encrypted v1: ", v1)
-print("Encrypted v2: ", v2)
+print("Encrypted v1: ", ctxt1)
+print("Encrypted v2: ", ctxt2)
 
 ctxt1 += ctxt2      # `ctxt1 = ctxt1 + ctxt2` would also be valid
 v3 = HE.decrypt(ctxt1)

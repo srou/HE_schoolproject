@@ -20,10 +20,12 @@ p1 = PyPtxt(v1, HE)
 p2 = PyPtxt(v2, HE)
 
 
-print("Encryting v1: ", v1)
+print("Encrypting v1: ", v1)
 c1 = HE.encrypt(p1)
-print("Encryting v2: ", v2)
+print("c1 = ",c1)
+print("Encrypting v2: ", v2)
 c2 = HE.encrypt(p2)
+print("c2 = ",c2)
 
 
 c1 %= c2
