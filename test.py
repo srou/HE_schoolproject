@@ -17,6 +17,7 @@ v1 = [1,2,3,4,5]
 v2 = [1,1,1,1,1]
 
 p1 = PyPtxt(v1, HE)
+print('plaintext 1 ')
 p2 = PyPtxt(v2, HE)
 
 
@@ -32,6 +33,6 @@ c1 %= c2
 
 r1 = HE.decrypt(c1)
 
-print("Encrypted sum v1 .* v2: ", r1)
+print("Encrypted scalar product v1 .* v2: ", r1)
 
 print "ok"

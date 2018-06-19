@@ -1,32 +1,7 @@
-#
-#   Demo_Pyfhel_Power_Poly
-#   --------------------------------------------------------------------
-#   Perform tests on all the main operations of pyfhel. 
-#   You can view how to run this program (executed in the directory Pyfhel/src/Demo_Pyfhel), with the command: python Demo_Pyfhel -h
-#   --------------------------------------------------------------------
-#   Author: Remy AUDA and Alberto Ibarrondo 
-#   Date: 23/11/2017  
-#   --------------------------------------------------------------------
-#   License: GNU GPL v3
-#
-#   Demo_Pyfhel is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   Demo_Pyfhel is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#   --------------------------------------------------------------------
-
 """Import all the packages useful for the Demo.
 #-Pyfhel is useful to generate keys, encrypt and decrypt.
 #-PyPtxt is useful to tranform the input vectors into plain text objects that could be encrypted.
-#-PyCtxt is useful to tranform the plain text object in PyCtxt object that are encrypted (Cypher texts). PyCtxt can be add, multiply etc with homeomorphic operations."""
+#-PyCtxt is useful to tranform the plain text object in PyCtxt object that are encrypted (Cypher texts). PyCtxt can be add, multiply etc with homomorphic operations."""
 from Pyfhel import Pyfhel
 from PyPtxt import PyPtxt
 from PyCtxt import PyCtxt
@@ -152,9 +127,11 @@ print("******Homeomorphic encryption of the two vectors used during the tests***
 
 """Tranform the vectors (use to test the operation **n) in plaintext that are objects that could be encrypted."""
 ptxt_powern2 = PyPtxt(v_powern2, HE)
+# v_powern2 = [1,2,3,4,4]
 
 """Tranform the vectors (use to test the operation polynomial) in plaintext that are objects that could be encrypted."""
 ptxt_poly = PyPtxt(v_poly, HE)
+#v_poly= [1,2,3,4,5]
 
 """Encrypted the plaintexts to have Cypher texts that are encrypted in an homeomorphic way with the key that have been generated before. These Cypher txt will be use for the tests on the homeomorphic operations (**n)"""
 ctxt_powern2 = HE.encrypt(ptxt_powern2)
@@ -183,7 +160,7 @@ print("***Test of the homeomorphic Power **4 ***")
 print("Encrypted v1: Encrypt(", v_powern2, ")")
 """ctxt_power4 contains Encrypt(v1). So we perform: Encrypt(v1) ** 4"""
 print("Performing Encrypt(v1) ** 4...")
-ctxt_powern2_result = ctxt_powern2 ** 3
+ctxt_powern2_result = ctxt_powern2 ** 4
 """Decrypt the result of Power 4 of the encrypted vector."""
 v_powern2_decrypt_result = HE.decrypt(ctxt_powern2_result)
 """v_powern2_decrypt_result is a list of list ie [[a, b, c,...]], so we want to flatten it to obtain [a, b, c,...]."""
@@ -220,49 +197,3 @@ if args.graph:
    plt.title("Succesful tests versus fail tests.")
 
    plt.show()
-
-
-
-
-print("------------------TEST Polynomial function----------------------")
-
-a0 = [1,1,1,1,1]
-a1 = [1,1,1,1,1]
-a2 = [1,1,1,1,1]
-a3 = [1,1,1,1,1]
-
-pltxt0 = PyPtxt(a0, HE)
-pltxt1 = PyPtxt(a1, HE)
-pltxt2 = PyPtxt(a2, HE)
-pltxt3 = PyPtxt(a3, HE)
-
-cytxt0 = HE.encrypt(pltxt0)
-cytxt1 = HE.encrypt(pltxt1)
-cytxt2 = HE.encrypt(pltxt2)
-cytxt3 = HE.encrypt(pltxt3)
-
-print("Polynome: a0 + a1 * v + a2 * v**2 + a3 * v**3")
-print("Decrypt(coefficient_a0): ", HE.decrypt(cytxt0))
-print("Decrypt(coefficient_a1): ", HE.decrypt(cytxt1))
-print("Decrypt(coefficient_a2): ", HE.decrypt(cytxt2))
-print("Decrypt(coefficient_a3): ", HE.decrypt(cytxt3))
-print("Decrypt(v): ", HE.decrypt(ctxt_poly))
-
-coeff = [cytxt0, cytxt1, cytxt2, cytxt3]
-
-ctxt_polynomial = ctxt_poly.polynomialMult(coeff)
-result = HE.decrypt(ctxt_polynomial)
-print("Polynomial result: ", result)
-
-ppar = [1, 1, 1, 1]
-p = np.poly1d(ppar)
-print("Polynomial evaluation on unencrypted vector:")
-print(p(1), ", ", p(2), ", ", p(3), ", ", p(4), ", ", p(5))
-
-
-
-
-
-
-
-
