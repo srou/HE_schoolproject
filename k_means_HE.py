@@ -17,7 +17,7 @@ print("  Running KeyGen with params:")
 print(KEYGEN_PARAMS)
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
-print("  KeyGen completed in ",start-end," sec." )
+print("  KeyGen completed in ",end-start," sec." )
 
 #Load Dataset
 df=pd.read_csv("./Data_titanic/train.csv", error_bad_lines=False)
