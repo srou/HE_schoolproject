@@ -43,4 +43,3 @@ print("v2: ", v2)
 ctxt1 *= ctxt2      # `ctxt1 = ctxt1 * ctxt2` would also be valid
 v4 = HE.decrypt(ctxt1)
 print("mult: v3 * v2 -> ", v4)
-print 'ok'
