@@ -1,5 +1,8 @@
 import Pyfhel
 from Pyfhel import PyCtxt,PyPtxt,Pyfhel
+import pickle
+
+
 HE = Pyfhel()
 KEYGEN_PARAMS={ "p":2,        "r":48,
                 "d":0,        "c":3,
@@ -13,6 +16,12 @@ print("  Running KeyGen with params:")
 print(KEYGEN_PARAMS)
 HE.keyGen(KEYGEN_PARAMS)
 print("  KeyGen completed")
+
+print("  Saving key")
+f = open('key.pckl', 'wb')
+pickle.dump(HE, f)
+f.close()
+
 v1 = [1,2,3,4,5]
 v2 = [1,1,1,1,1]
 
