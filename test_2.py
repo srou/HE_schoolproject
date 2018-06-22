@@ -1,20 +1,13 @@
 from Pyfhel import Pyfhel
 from PyPtxt import PyPtxt
 from PyCtxt import PyCtxt
-HE = Pyfhel()
-KEYGEN_PARAMS={ "p":257,      "r":1,
-                "d":1,        "c":2,
-                "sec":80,     "w":64,
-                "L":10,       "m":-1,
-                "R":3,        "s":0,
-                "gens":[],    "ords":[]}
+import pickle
 
-print("Pyfhel DEMO")
-print("   Running KeyGen with params:")
-print(KEYGEN_PARAMS)
-HE.keyGen(KEYGEN_PARAMS)
-print("  KeyGen completed")
-print ("Pyfhel Object :", HE)
+print("  Loading key")
+f = open('key.pckl', 'rb')
+HE = pickle.load(f)
+f.close()
+print("Key loaded")
 
 v1 = [1,2,3,4,5]
 v2 = [2,2,2,2,2]
