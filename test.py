@@ -1,6 +1,7 @@
 import Pyfhel
 from Pyfhel import PyCtxt,PyPtxt,Pyfhel
 import pickle
+import time
 
 
 HE = Pyfhel()
@@ -14,8 +15,10 @@ KEYGEN_PARAMS={ "p":2,        "r":48,
 print("Pyfhel DEMO")
 print("  Running KeyGen with params:")
 print(KEYGEN_PARAMS)
+start = time.time()
 HE.keyGen(KEYGEN_PARAMS)
-print("  KeyGen completed")
+end=time.time()
+print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #print("  Saving key")
 #f = open('key.pckl', 'wb')
@@ -25,6 +28,7 @@ print("  KeyGen completed")
 v1 = [1,2,3,4,5]
 v2 = [1,1,1,1,1]
 
+start = time.time()
 p1 = PyPtxt(v1, HE)
 print('plaintext 1 ')
 p2 = PyPtxt(v2, HE)
@@ -36,6 +40,8 @@ print("c1 = ",c1.getIDs(),c1.getLen())
 print("Encrypting v2: ", v2)
 c2 = HE.encrypt(p2)
 print("c2 = ",c2.getIDs(),c2.getLen())
+end=time.time()
+print('Encryption in '+str(end-start)+' sec')
 
 
 c1 %= c2

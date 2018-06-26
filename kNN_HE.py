@@ -17,7 +17,7 @@ print("  Running KeyGen with params:")
 print(KEYGEN_PARAMS)
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
-print("  KeyGen completed in "+str(end-start)" sec." )
+print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #Load Dataset
 df1=pd.read_csv("./Data_titanic/train.csv", error_bad_lines=False)
@@ -59,6 +59,7 @@ print(end-start,"sec")
 
 #kNN
 k=3
+import operator
 def euclideanDistance(data1, data2, nbcols):
     #Returns the euclidian distance between 2 data points (ie : 2 rows as lists)
     distance = 0
