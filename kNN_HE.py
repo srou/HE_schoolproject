@@ -20,61 +20,71 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)" sec." )
 
 #Load Dataset
-df=pd.read_csv("./Data_titanic/train.csv", error_bad_lines=False)
-print("Number of cols : ",df.shape[1] )
-print("Number of rows : ",df.shape[0] )
-print("Colnames : ",df.columns.tolist())
-#Simplify Dataset (keep only relevant quantitative columns)
-df=df[['Survived','Pclass','Age','SibSp','Parch','Fare']]
+df1=pd.read_csv("./Data_titanic/train.csv", error_bad_lines=False)
+df2=pd.read_csv("./Data_titanic/test.csv", error_bad_lines=False)
+print("Number of cols for training set : ",df1.shape[1] )
+print("Number of rows for training set : ",df1.shape[0] )
+print("Colnames : ",df1.columns.tolist())
+#Split data set into input/output and test/train (keep only relevant quantitative columns)
+X_train=df1[['Pclass','Age','SibSp','Parch','Fare']]
+Y_train=df[['Survived']].tolist()
+X_test=df2[['Pclass','Age','SibSp','Parch','Fare']]
+Y_test=df2[['Survived']].tolist()
 
 
-#Encrypt columns
+#Encrypt the dataset as a list of rows
 start = time.time()
-p1 = PyPtxt(df['Survived'].tolist(), HE)
-print("Encrypting 1st column: ")
-c1 = HE.encrypt(p1)
+p_Xtrain = PyPtxt(X_train.values.tolist(), HE)
+print("Encrypting X_train : ")
+c_Xtrain = HE.encrypt(p_Xtrain)
 end=time.time()
 print(end-start,"sec")
 
 start = time.time()
-p2 = PyPtxt(df['Pclass'].tolist(), HE)
-print("Encrypting 2nd column: ")
-c2 = HE.encrypt(p2)
+p_Ytrain = PyPtxt(Y_train.values.tolist(), HE)
+print("Encrypting Y_train : ")
+c_Ytrain = HE.encrypt(p_Ytrain)
 end=time.time()
 print(end-start,"sec")
 
-#test : sum of the first 2 columns
+############# voir cb de temps prend cette opération (car à répeter sur tout le test set)
+############# et voir si enc([a , b , c])= [enc(a), enc(b), enc(c)] sinon adapter fct
 start = time.time()
-c1 += c2
-r1 = HE.decrypt(c1)
-print("Encrypted sum of the first 2 cols : ", r1)
+p_xtest = PyPtxt(X_test.values.tolist()[0], HE)  #x_test 1st row of the test set
+print("Encrypting X_test : ")
+c_xtest = HE.encrypt(p_Xtest)
 end=time.time()
 print(end-start,"sec")
+
 
 #kNN
 k=3
-def euclideanDistance(data1, data2, length):
+def euclideanDistance(data1, data2, nbcols):
+    #Returns the euclidian distance between 2 data points (ie : 2 rows as lists)
     distance = 0
-    for x in range(length):
+    for x in range(nbcols):
         distance += np.square(data1[x] - data2[x])
     return np.sqrt(distance)
 
 # Defining our KNN model
-def knn(trainingSet, testInstance, k):
- 
+def knn_HE(X_train, Y_train,x_test, k):
+    #Takes in input an encrypted training set and a test point 
+    #and returns the inferred class for this test point
+    #X_train : input (list of rows)
+    #Y_train : output (list of labels)
     distances = {}
     sort = {}
  
-    length = testInstance.shape[1]
+    nbcols = X_train.shape[1]
     
     #### Start of STEP 3
     # Calculating euclidean distance between each row of training data and test data
-    for x in range(len(trainingSet)):
+    for x in range(len(X_train)):
         
         #### Start of STEP 3.1
-        dist = euclideanDistance(testInstance, trainingSet.iloc[x], length)
+        dist = euclideanDistance(x_test, X_train[x], nbcols)
 
-        distances[x] = dist[0]
+        distances[x] = dist #distances contient la distance entre chaque instance du train set et le datapoint
         #### End of STEP 3.1
  
     #### Start of STEP 3.2
@@ -85,17 +95,16 @@ def knn(trainingSet, testInstance, k):
     neighbors = []
     
     #### Start of STEP 3.3
-    # Extracting top k neighbors
+    # Extracting top k neighbors (we store their row number)
     for x in range(k):
         neighbors.append(sorted_d[x][0])
     #### End of STEP 3.3
     classVotes = {}
     
     #### Start of STEP 3.4
-    # Calculating the most freq class in the neighbors
+    # Calculating the most frequent class in the neighbors
     for x in range(len(neighbors)):
-        response = trainingSet.iloc[neighbors[x]][-1]
- 
+        response = Y_train[neighbors[x]]
         if response in classVotes:
             classVotes[response] += 1
         else:
@@ -103,6 +112,14 @@ def knn(trainingSet, testInstance, k):
     #### End of STEP 3.4
 
     #### Start of STEP 3.5
+    #return(inferred class,index of k nearest neighbors in the test set)
     sortedVotes = sorted(classVotes.items(), key=operator.itemgetter(1), reverse=True)
     return(sortedVotes[0][0], neighbors)
     #### End of STEP 3.5
+
+
+
+#Run the KNN model
+print("Run the KNN model on encrypted data : ")
+result,neigh = knn_HE(c_Xtrain, c_Ytrain, c_xtest, k)
+print(result)

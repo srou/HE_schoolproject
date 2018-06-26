@@ -17,10 +17,10 @@ print(KEYGEN_PARAMS)
 HE.keyGen(KEYGEN_PARAMS)
 print("  KeyGen completed")
 
-print("  Saving key")
-f = open('key.pckl', 'wb')
-pickle.dump(HE, f)
-f.close()
+#print("  Saving key")
+#f = open('key.pckl', 'wb')
+#pickle.dump(HE, f)
+#f.close()
 
 v1 = [1,2,3,4,5]
 v2 = [1,1,1,1,1]
@@ -32,10 +32,10 @@ p2 = PyPtxt(v2, HE)
 
 print("Encrypting v1: ", v1)
 c1 = HE.encrypt(p1)
-print("c1 = ",c1)
+print("c1 = ",c1.getIDs(),c1.getLen())
 print("Encrypting v2: ", v2)
 c2 = HE.encrypt(p2)
-print("c2 = ",c2)
+print("c2 = ",c2.getIDs(),c2.getLen())
 
 
 c1 %= c2

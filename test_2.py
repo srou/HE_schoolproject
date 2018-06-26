@@ -3,7 +3,12 @@ from PyPtxt import PyPtxt
 from PyCtxt import PyCtxt
 import pickle
 
-print("  Loading key")
+print("  Loading key with params : ",{ "p":2,        "r":48,
+                "d":0,        "c":3,
+                "sec":128,    "w":64,
+                "L":32,       "m":-1,
+                "R":3,        "s":0,
+                "gens":[],    "ords":[]})
 f = open('key.pckl', 'rb')
 HE = pickle.load(f)
 f.close()
