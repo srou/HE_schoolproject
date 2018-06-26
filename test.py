@@ -43,8 +43,10 @@ print("c2 = ",c2.getIDs(),c2.getLen())
 end=time.time()
 print('Encryption in '+str(end-start)+' sec')
 
-
+start = time.time()
 c1 %= c2
+end=time.time()
+print('Scalar product in '+str(end-start)+' sec')
 
 start = time.time()
 r1 = HE.decrypt(c1)
