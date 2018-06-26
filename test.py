@@ -28,16 +28,16 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 v1 = [1,2,3,4,5]
 v2 = [1,1,1,1,1]
 
-start = time.time()
-p1 = PyPtxt(v1, HE)
-print('plaintext 1 ')
-p2 = PyPtxt(v2, HE)
 
 
 print("Encrypting v1: ", v1)
+p1 = PyPtxt(v1, HE)
 c1 = HE.encrypt(p1)
 print("c1 = ",c1.getIDs(),c1.getLen())
+
 print("Encrypting v2: ", v2)
+start = time.time()
+p2 = PyPtxt(v2, HE)
 c2 = HE.encrypt(p2)
 print("c2 = ",c2.getIDs(),c2.getLen())
 end=time.time()
@@ -46,7 +46,10 @@ print('Encryption in '+str(end-start)+' sec')
 
 c1 %= c2
 
+start = time.time()
 r1 = HE.decrypt(c1)
+end=time.time()
+print('Decryption in '+str(end-start)+' sec')
 
 print("Encrypted scalar product v1 .* v2: ", r1)
 
