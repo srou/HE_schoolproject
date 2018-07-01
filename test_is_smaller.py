@@ -12,12 +12,13 @@ def is_smaller(x_bits,y_bits,HE,n=10):
 
     #Initialisation 
     print("Initisalisation")
-    p_1=PyPtxt([1],HE)   
+    a=[1]
+    p_1=PyPtxt(1,HE)   
     c_1=HE.encrypt(p_1) #encrypt 1
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]   ##peut etre faire deepcopy ??
-    for i in range(math.floor(math.log(n))+1):
+    for i in range(int(math.floor(math.log(n))+1)):
         same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))   ### !!!! voir si la fct **2 marche pour les Ctxt
         tmp=c_1
         for j in range(i+1):
