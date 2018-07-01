@@ -22,8 +22,11 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1
+        print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
+            print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp=tmp*same_bit[j]
+        print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]  ## peut etre un pb d'indice
         print("res : ",HE.decrypt(res))
