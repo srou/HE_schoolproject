@@ -4,9 +4,11 @@ import pandas as pd
 import time
 import math
 import numpy as np
+##pb : comment choisir n ??
 
-def is_smaller(x_bits,y_bits,HE,n=10):
+def is_smaller(x_bits,y_bits,HE,alpha=8,n=100):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
+    #coded on alpha bits
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
@@ -17,8 +19,8 @@ def is_smaller(x_bits,y_bits,HE,n=10):
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]   ##peut etre faire deepcopy ??
-    for i in range(int(math.floor(math.log(n))+1)):
-        same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))   ### !!!! voir si la fct **2 marche pour les Ctxt
+    for i in range(min(alpha,int(math.floor(math.log(n))+1))):
+        same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1
         for j in range(i+1):
             tmp=tmp*same_bit[j]
@@ -48,9 +50,9 @@ print("c_test = ",c_test.getIDs(),c_test.getLen())
 
 #test is_smaller with integers 5 and 6
 x=6
-x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 5 as a list of bits
+x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 5 as a list of 8 bits
 x_bits_enc=[]
-print("Encrypting "+str(x)+" in bits.")
+print("Encrypting "+str(x)+" in bits ",x_bits)
 start = time.time()
 for i in x_bits:
     p_bit=PyPtxt([i],HE)
@@ -61,9 +63,9 @@ end=time.time()
 print(str(end-start)+" sec." )
 
 y=5
-y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 6 as a list of bits
+y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 6 as a list of 8 bits
 y_bits_enc=[]
-print("Encrypting "+str(y)+" in bits.")
+print("Encrypting "+str(y)+" in bits.",y_bits)
 for i in y_bits:
     p_bit=PyPtxt([i],HE)
     c_bit=HE.encrypt(p_bit)
