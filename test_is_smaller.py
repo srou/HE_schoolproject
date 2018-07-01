@@ -11,7 +11,7 @@ def is_smaller(x_bits,y_bits,HE,n=10):
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Initialisation 
-    print("Initialisation")
+    print("Initisalisation")
     p_1=PyPtxt(1,HE)
     c_1=HE.encrypt(p_1) #encrypt 1
     same_prefix=[c_1]
@@ -45,13 +45,11 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 #test is_smaller with integers 5 and 6
 x=5
 x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 5 as a list of bits
-x_bits_enc=[]
 print("Encrypting "+str(x)+" in bits.")
 start = time.time()
-for i in x_bits :
-    p_bit=PyPtxt(x_bits[i],HE)
-    c_bit=HE.encrypt(p_bit)
-    x_bits_enc.append(c_bit)
+p_bit=PyPtxt(x_bits,HE)
+x_bits_enc=HE.encrypt(p_bit)
+print("x_bits_enc = ",x_bits_enc.getIDs(),x_bits_enc.getLen())
 end=time.time()
 print(str(end-start)+" sec." )
 
