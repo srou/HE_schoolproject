@@ -6,7 +6,7 @@ import math
 import numpy as np
 ##pb : comment choisir n ??
 
-def is_smaller(x_bits,y_bits,HE,alpha=8,n=100):
+def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
@@ -19,7 +19,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=100):
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]   ##peut etre faire deepcopy ??
-    for i in range(min(alpha,int(math.floor(math.log(n))+1))):
+    for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1
         for j in range(i+1):
