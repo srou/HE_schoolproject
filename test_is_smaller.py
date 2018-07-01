@@ -12,7 +12,7 @@ def is_smaller(x_bits,y_bits,HE,n=10):
 
     #Initialisation 
     print("Initisalisation")
-    p_1=PyPtxt(1,HE)
+    p_1=PyPtxt(1,HE)   # à la place surement PyPtxt([1,0,...0],HE)
     c_1=HE.encrypt(p_1) #encrypt 1
     same_prefix=[c_1]
     same_bit=[]
@@ -41,6 +41,9 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
+p_test=PyPtxt([1],HE)
+c_test=HE.encrypt(p_test)
+print("c_test = ",c_test.getIDs(),c_test.getLen())
 
 #test is_smaller with integers 5 and 6
 x=5
@@ -55,12 +58,11 @@ print(str(end-start)+" sec." )
 
 y=6
 y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 6 as a list of bits
-y_bits_enc=[]
 print("Encrypting "+str(y)+" in bits.")
-for i in y_bits :
-    p_bit=PyPtxt(y_bits[i],HE)
-    c_bit=HE.encrypt(p_bit)
-    y_bits_enc.append(c_bit)
+start = time.time()
+p_bit=PyPtxt(y_bits,HE)
+y_bits_enc=HE.encrypt(p_bit)
+print("x_bits_enc = ",y_bits_enc.getIDs(),x_bits_enc.getLen())
 end=time.time()
 print(str(end-start)+" sec." )
 
