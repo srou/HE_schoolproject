@@ -24,7 +24,7 @@ def is_smaller(x_bits,y_bits,HE,n=10):
             tmp=tmp*same_bit[j]
         same_prefix.append(tmp)
         res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]  ## peut etre un pb d'indice
-        print("res : "+HE.decrypt(res))
+        print("res : ",HE.decrypt(res))
     return res
 
 start = time.time()
