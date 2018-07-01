@@ -5,12 +5,13 @@ import time
 import math
 import numpy as np
 
-def is_smaller(x_bits,y_bits,HE=HE,n=10):
+def is_smaller(x_bits,y_bits,HE,n=10):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Initialisation 
+    print("Initialisation")
     p_1=PyPtxt(1,HE)
     c_1=HE.encrypt(p_1) #encrypt 1
     same_prefix=[c_1]
@@ -42,18 +43,29 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 
 
 #test is_smaller with integers 5 and 6
-x_bits=[int(i) for i in list('{0:08b}'.format(5))] #int 5 as a list of bits
+x=5
+x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 5 as a list of bits
 x_bits_enc=[]
+print("Encrypting "+str(x)+" in bits.")
+start = time.time()
 for i in x_bits :
     p_bit=PyPtxt(x_bits[i],HE)
     c_bit=HE.encrypt(p_bit)
     x_bits_enc.append(c_bit)
-y_bits=[int(i) for i in list('{0:08b}'.format(6))] #int 5 as a list of bits
+end=time.time()
+print(str(end-start)+" sec." )
+
+y=6
+y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 6 as a list of bits
 y_bits_enc=[]
+print("Encrypting "+str(y)+" in bits.")
 for i in y_bits :
     p_bit=PyPtxt(y_bits[i],HE)
     c_bit=HE.encrypt(p_bit)
     y_bits_enc.append(c_bit)
-result=is_smaller(x_bits_enc,y_bits_enc)
+end=time.time()
+print(str(end-start)+" sec." )
+
+result=is_smaller(x_bits_enc,y_bits_enc,HE)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
