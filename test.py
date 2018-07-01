@@ -55,4 +55,3 @@ print('Decryption in '+str(end-start)+' sec')
 
 print("Encrypted scalar product v1 .* v2: ", r1)
 
-print "ok"
