@@ -12,7 +12,7 @@ def is_smaller(x_bits,y_bits,HE,n=10):
 
     #Initialisation 
     print("Initisalisation")
-    p_1=PyPtxt(1,HE)   # à la place surement PyPtxt([1,0,...0],HE)
+    p_1=PyPtxt(1,HE)   
     c_1=HE.encrypt(p_1) #encrypt 1
     same_prefix=[c_1]
     same_bit=[]
