@@ -46,7 +46,7 @@ c_test=HE.encrypt(p_test)
 print("c_test = ",c_test.getIDs(),c_test.getLen())
 
 #test is_smaller with integers 5 and 6
-x=5
+x=6
 x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 5 as a list of bits
 x_bits_enc=[]
 print("Encrypting "+str(x)+" in bits.")
@@ -59,7 +59,7 @@ for i in x_bits:
 end=time.time()
 print(str(end-start)+" sec." )
 
-y=6
+y=5
 y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 6 as a list of bits
 y_bits_enc=[]
 print("Encrypting "+str(y)+" in bits.")
