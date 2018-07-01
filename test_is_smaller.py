@@ -12,7 +12,7 @@ def is_smaller(x_bits,y_bits,HE,n=10):
 
     #Initialisation 
     print("Initisalisation")
-    p_1=PyPtxt(1,HE)   
+    p_1=PyPtxt([1],HE)   
     c_1=HE.encrypt(p_1) #encrypt 1
     same_prefix=[c_1]
     same_bit=[]
@@ -48,21 +48,26 @@ print("c_test = ",c_test.getIDs(),c_test.getLen())
 #test is_smaller with integers 5 and 6
 x=5
 x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 5 as a list of bits
+x_bits_enc=[]
 print("Encrypting "+str(x)+" in bits.")
 start = time.time()
-p_bit=PyPtxt(x_bits,HE)
-x_bits_enc=HE.encrypt(p_bit)
-print("x_bits_enc = ",x_bits_enc.getIDs(),x_bits_enc.getLen())
+for i in x_bits:
+    p_bit=PyPtxt([i],HE)
+    c_bit=HE.encrypt(p_bit)
+    x_bits_enc.append(c_bit)
+#print("x_bits_enc = ",x_bits_enc.getIDs(),x_bits_enc.getLen())
 end=time.time()
 print(str(end-start)+" sec." )
 
 y=6
 y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 6 as a list of bits
+y_bits_enc=[]
 print("Encrypting "+str(y)+" in bits.")
-start = time.time()
-p_bit=PyPtxt(y_bits,HE)
-y_bits_enc=HE.encrypt(p_bit)
-print("x_bits_enc = ",y_bits_enc.getIDs(),x_bits_enc.getLen())
+for i in y_bits:
+    p_bit=PyPtxt([i],HE)
+    c_bit=HE.encrypt(p_bit)
+    y_bits_enc.append(c_bit)
+#print("x_bits_enc = ",y_bits_enc.getIDs(),x_bits_enc.getLen())
 end=time.time()
 print(str(end-start)+" sec." )
 

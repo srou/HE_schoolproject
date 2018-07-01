@@ -61,23 +61,6 @@ c_xtest = HE.encrypt(p_xtest)
 end=time.time()
 print(end-start,"sec")
 
-#test is_smaller with integers 5 and 6
-x_bits=[int(i) for i in list('{0:08b}'.format(5))] #int 5 as a list of bits
-x_bits_enc=[]
-for i in x_bits :
-    p_bit=PyPtxt(x_bits[i],HE)
-    c_bit=HE.encrypt(p_bit)
-    x_bits_enc.append(c_bit)
-y_bits=[int(i) for i in list('{0:08b}'.format(6))] #int 5 as a list of bits
-y_bits_enc=[]
-for i in y_bits :
-    p_bit=PyPtxt(y_bits[i],HE)
-    c_bit=HE.encrypt(p_bit)
-    y_bits_enc.append(c_bit)
-result=is_smaller(x_bits_enc,y_bits_enc)
-decrypted_res=HE.decrypt(result)
-print("decrypted result : ",decrypted_res)
-
 
 def is_smaller(x_bits,y_bits,HE=HE,n=10):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
@@ -98,7 +81,6 @@ def is_smaller(x_bits,y_bits,HE=HE,n=10):
         same_prefix.append(tmp)
         res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]  ## peut etre un pb d'indice
     return res
-    #i=0
     
 
 
