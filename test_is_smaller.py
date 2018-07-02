@@ -62,6 +62,38 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 #c5*=c6
 #print("multiplication v5*v6 : ",HE.decrypt(c5))
 
+#test [0]*[1]
+v1=[1]
+v2=[1]
+v3=[1]
+v4=[1]
+v5=[1]
+v6=[1]
+p1 = PyPtxt(v1, HE)
+p2 = PyPtxt(v2, HE)
+p3 = PyPtxt(v3, HE)
+p4 = PyPtxt(v4, HE)
+p5 = PyPtxt(v5, HE)
+p6 = PyPtxt(v6, HE)
+print("Encrypting v1: ", v1)
+c1 = HE.encrypt(p1)
+print("Encrypting v2: ", v2)
+c2 = HE.encrypt(p2)
+print("Encrypting v3: ", v3)
+c3 = HE.encrypt(p3)
+print("Encrypting v4: ", v4)
+c4 = HE.encrypt(p6)
+print("Encrypting v5: ", v5)
+c5 = HE.encrypt(p5)
+print("Encrypting v6: ", v6)
+c6 = HE.encrypt(p6)
+c1*=c2
+c1*=c3
+c1*=c4
+c1*=c5
+c1*=c6
+print("multiplication v1 to v6: ",HE.decrypt(c1))
+
 #test is_smaller with integers 5 and 6
 x=6
 x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 5 as a list of 8 bits
