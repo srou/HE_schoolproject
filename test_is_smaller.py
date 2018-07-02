@@ -18,10 +18,10 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     c_1=HE.encrypt(p_1) #encrypt 1
     same_prefix=[c_1]
     same_bit=[]
-    res=(c_1-y_bits[0])*x_bits[0]              ##peut etre faire deepcopy ??
+    res=(c_1-y_bits[0])*x_bits[0]
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))
-        tmp=c_1.copy()
+        tmp=c_1.copy(tmp)
         print("c_1 : ",HE.decrypt(c_1))
         print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
