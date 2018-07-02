@@ -23,12 +23,13 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
         same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))
         tmp=[]
         tmp=c_1.copy(c_1)
-        print("c_1 : ",HE.decrypt(c_1))
+        #print("c_1 : ",HE.decrypt(c_1))
         print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
             print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp*=same_bit[j]
-        print("tmp : ",HE.decrypt(tmp))
+            print("tmp : ",HE.decrypt(tmp))
+        print("tmp after loop: ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]  ## peut etre un pb d'indice
         print("res : ",HE.decrypt(res))
@@ -61,38 +62,6 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 #c6 = HE.encrypt(p6)
 #c5*=c6
 #print("multiplication v5*v6 : ",HE.decrypt(c5))
-
-#test [0]*[1]
-v1=[1]
-v2=[1]
-v3=[1]
-v4=[1]
-v5=[1]
-v6=[1]
-p1 = PyPtxt(v1, HE)
-p2 = PyPtxt(v2, HE)
-p3 = PyPtxt(v3, HE)
-p4 = PyPtxt(v4, HE)
-p5 = PyPtxt(v5, HE)
-p6 = PyPtxt(v6, HE)
-print("Encrypting v1: ", v1)
-c1 = HE.encrypt(p1)
-print("Encrypting v2: ", v2)
-c2 = HE.encrypt(p2)
-print("Encrypting v3: ", v3)
-c3 = HE.encrypt(p3)
-print("Encrypting v4: ", v4)
-c4 = HE.encrypt(p6)
-print("Encrypting v5: ", v5)
-c5 = HE.encrypt(p5)
-print("Encrypting v6: ", v6)
-c6 = HE.encrypt(p6)
-c1*=c2
-c1*=c3
-c1*=c4
-c1*=c5
-c1*=c6
-print("multiplication v1 to v6: ",HE.decrypt(c1))
 
 #test is_smaller with integers 5 and 6
 x=6
