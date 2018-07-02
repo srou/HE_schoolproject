@@ -21,7 +21,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     res=(c_1-y_bits[0])*x_bits[0]              ##peut etre faire deepcopy ??
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))
-        tmp=c_1
+        tmp=c_1.copy()
         print("c_1 : ",HE.decrypt(c_1))
         print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
@@ -49,17 +49,17 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#test
-v5=[0]
-v6=[1]
-p5 = PyPtxt(v5, HE)
-p6 = PyPtxt(v6, HE)
-print("Encrypting v5: ", v5)
-c5 = HE.encrypt(p5)
-print("Encrypting v6: ", v6)
-c6 = HE.encrypt(p6)
-c5*=c6
-print("multiplication v5*v6 : ",HE.decrypt(c5))
+#test [0]*[1]
+#v5=[0]
+#v6=[1]
+#p5 = PyPtxt(v5, HE)
+#p6 = PyPtxt(v6, HE)
+#print("Encrypting v5: ", v5)
+#c5 = HE.encrypt(p5)
+#print("Encrypting v6: ", v6)
+#c6 = HE.encrypt(p6)
+#c5*=c6
+#print("multiplication v5*v6 : ",HE.decrypt(c5))
 
 #test is_smaller with integers 5 and 6
 x=6

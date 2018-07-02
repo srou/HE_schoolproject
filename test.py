@@ -26,7 +26,7 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 #f.close()
 
 v1 = [1,2,3,4,5]
-v2 = [1,1,1,1,1]
+v2 = [0,1,1,1,1]
 
 
 
