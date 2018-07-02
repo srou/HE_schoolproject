@@ -18,7 +18,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     c_1=HE.encrypt(p_1) #encrypt 1
     same_prefix=[c_1]
     same_bit=[]
-    res=(c_1-y_bits[0])*x_bits[0]   ##peut etre faire deepcopy ??
+    res=(c_1-y_bits[0])*x_bits[0]              ##peut etre faire deepcopy ??
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         same_bit.append(c_1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1
@@ -50,12 +50,19 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 
 
 #test
-p_1=PyPtxt([1],HE)   
+p_1=PyPtxt([1,1],HE)   
 c_1=HE.encrypt(p_1)
-p_2=PyPtxt([0],HE)   
+p_2=PyPtxt([0,0],HE)   
 c_2=HE.encrypt(p_1)
 tmp=c_1*c_2
-print('[0]*[1] : ',HE.decrypt(tmp))
+print('[0,0]*[1,1] : ',HE.decrypt(tmp))
+
+p_1=PyPtxt([[1]],HE)   
+c_1=HE.encrypt(p_1)
+p_2=PyPtxt([[0]],HE)   
+c_2=HE.encrypt(p_1)
+tmp=c_1*c_2
+print('[[0]]*[[1]] : ',HE.decrypt(tmp))
 
 #test is_smaller with integers 5 and 6
 x=6

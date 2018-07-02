@@ -25,13 +25,13 @@ p3 = PyPtxt(v3, HE)
 p4 = PyPtxt(v4, HE)
 
 
-print("Encryting v1: ", v1)
+print("Encrypting v1: ", v1)
 c1 = HE.encrypt(p1)
-print("Encryting v2: ", v2)
+print("Encrypting v2: ", v2)
 c2 = HE.encrypt(p2)
-print("Encryting v3: ", v3)
+print("Encrypting v3: ", v3)
 c3 = HE.encrypt(p3)
-print("Encryting v4: ", v4)
+print("Encrypting v4: ", v4)
 c4 = HE.encrypt(p4)
 
 
