@@ -4,8 +4,8 @@ import pandas as pd
 import time
 import math
 import numpy as np
-##pb : comment choisir n ??
 
+##pb : how to choose n ??
 def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
@@ -26,7 +26,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
         print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
             print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
-            tmp=tmp*same_bit[j]
+            tmp*=same_bit[j]
         print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]  ## peut etre un pb d'indice
@@ -48,9 +48,14 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-p_test=PyPtxt([1],HE)
-c_test=HE.encrypt(p_test)
-print("c_test = ",c_test.getIDs(),c_test.getLen())
+
+#test
+p_1=PyPtxt([1],HE)   
+c_1=HE.encrypt(p_1)
+p_2=PyPtxt([0],HE)   
+c_2=HE.encrypt(p_1)
+tmp=c_1*c_2
+print('[0]*[1] : ',HE.decrypt(tmp))
 
 #test is_smaller with integers 5 and 6
 x=6
