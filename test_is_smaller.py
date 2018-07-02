@@ -42,27 +42,24 @@ KEYGEN_PARAMS={ "p":2,        "r":32,
                 "L":30,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}
+
 print("  Running KeyGen with params:")
 print(KEYGEN_PARAMS)
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-
 #test
-p_1=PyPtxt([1],HE)   
-c_1=HE.encrypt(p_1)
-p_2=PyPtxt([0],HE)   
-c_2=HE.encrypt(p_1)
-tmp=c_1%c_2
-print('[0]%[1] : ',HE.decrypt(tmp))
-
-p_1=PyPtxt([[1]],HE)   
-c_1=HE.encrypt(p_1)
-p_2=PyPtxt([[0]],HE)   
-c_2=HE.encrypt(p_1)
-tmp=c_1*c_2
-print('[[0]]*[[1]] : ',HE.decrypt(tmp))
+v5=[0]
+v6=[1]
+p5 = PyPtxt(v5, HE)
+p6 = PyPtxt(v6, HE)
+print("Encrypting v5: ", v5)
+c5 = HE.encrypt(p5)
+print("Encrypting v6: ", v6)
+c6 = HE.encrypt(p6)
+c5*=c6
+print("multiplication v5*v6 : ",HE.decrypt(c5))
 
 #test is_smaller with integers 5 and 6
 x=6
