@@ -50,12 +50,12 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 
 
 #test
-p_1=PyPtxt([1,1],HE)   
+p_1=PyPtxt([1],HE)   
 c_1=HE.encrypt(p_1)
-p_2=PyPtxt([0,0],HE)   
+p_2=PyPtxt([0],HE)   
 c_2=HE.encrypt(p_1)
-tmp=c_1*c_2
-print('[0,0]*[1,1] : ',HE.decrypt(tmp))
+tmp=c_1%c_2
+print('[0]%[1] : ',HE.decrypt(tmp))
 
 p_1=PyPtxt([[1]],HE)   
 c_1=HE.encrypt(p_1)
