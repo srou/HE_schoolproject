@@ -18,8 +18,8 @@ v1 = [range(8), range(3)]
 v2 = [range(1,9), range(1,4)]
 v3 = [range(8), range(3)]
 v4 = [range(8), range(3)]
-v5=[0,1]
-v6=[1,2]
+v5=[0]
+v6=[1]
 
 p1 = PyPtxt(v1, HE)
 p2 = PyPtxt(v2, HE)
