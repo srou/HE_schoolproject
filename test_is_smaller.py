@@ -68,11 +68,13 @@ x_bits_enc=[]
 print("Encrypting "+str(x)+" in bits ",x_bits)
 start = time.time()
 for i in x_bits:
+    print
     p_bit=PyPtxt([i],HE)
     c_bit=HE.encrypt(p_bit)
     x_bits_enc.append(c_bit)
 #print("x_bits_enc = ",x_bits_enc.getIDs(),x_bits_enc.getLen())
 end=time.time()
+print(x_bits_enc)
 print(str(end-start)+" sec." )
 
 y=5
@@ -85,6 +87,7 @@ for i in y_bits:
     y_bits_enc.append(c_bit)
 #print("x_bits_enc = ",y_bits_enc.getIDs(),x_bits_enc.getLen())
 end=time.time()
+print(y_bits_enc)
 print(str(end-start)+" sec." )
 
 result=is_smaller(x_bits_enc,y_bits_enc,HE)
