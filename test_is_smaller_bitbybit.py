@@ -72,8 +72,6 @@ for i in y_bits:
     y_bits_enc.append(HE.encrypt(p))
 end=time.time()
 print(str(end-start)+" sec." )
-end=time.time()
-print(str(end-start)+" sec." )
 
 result=is_smaller(x_bits_enc,y_bits_enc,HE)
 decrypted_res=HE.decrypt(result)

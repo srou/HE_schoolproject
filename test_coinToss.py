@@ -74,6 +74,9 @@ for i in x_bits:
     x_bits_enc.append(HE.encrypt(p))
 
 #Coin toss with equal proba (random number r between 0 and 9 either > 4 or =<4)
+start = time.time()
 result=coinToss(x_bits_enc,9,HE)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
+end=time.time()
+print(str(end-start)+" sec." )
