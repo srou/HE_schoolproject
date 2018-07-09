@@ -70,7 +70,7 @@ print("Encrypting "+str(y)+" in bits.",y_bits)
 start = time.time()
 for i in y_bits:
     p=PyPtxt([i], HE)
-    y_bits_enc.append(HE.encrypt([i]))
+    y_bits_enc.append(HE.encrypt(p))
 end=time.time()
 print(str(end-start)+" sec." )
 end=time.time()
