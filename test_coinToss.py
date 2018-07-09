@@ -38,7 +38,7 @@ def coinToss(x_bits,n,HE,alpha=8):
 #Takes in input an integer n, and an encrypted number x_bits as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
-    
+    print("n=",n)
     r=randint(0, n)
     #encrypt r as a list of bits
     r_bits=[int(i) for i in list('{0:08b}'.format(r))] 
@@ -46,9 +46,8 @@ def coinToss(x_bits,n,HE,alpha=8):
     for i in r_bits:
         p=PyPtxt([i], HE)
         r_bits_enc.append(HE.encrypt(p))
-    
     #compare r_bits and x_bits
-    return is_smaller(x_bits,r_bits,HE,alpha,n=1000)
+    return is_smaller(x_bits,r_bits,HE)
 
 start = time.time()
 HE = Pyfhel()
