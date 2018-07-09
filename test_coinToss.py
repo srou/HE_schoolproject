@@ -4,6 +4,7 @@ import pandas as pd
 import time
 import math
 import numpy as np
+from random import randint
 
 def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
@@ -23,16 +24,31 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
         same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1.copy(c_1)
         #print("c_1 : ",HE.decrypt(c_1))
-        print("tmp : ",HE.decrypt(tmp))
+        #print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
-            print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
+            #print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp*=same_bit[j]
-        print("tmp : ",HE.decrypt(tmp))
+        #print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]  ## peut etre un pb d'indice
-        print("res : ",HE.decrypt(res))
+        #print("res : ",HE.decrypt(res))
     return res
 
+def coinToss(x_bits,n,HE,alpha=8):
+#Takes in input an integer n, and an encrypted number x_bits as a list of alpha bits
+#generates a random number r between 0 and n  (potentially drawn from a distribution D)
+#Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
+    
+    r=randint(0, n)
+    #encrypt r as a list of bits
+    r_bits=[int(i) for i in list('{0:08b}'.format(r))] 
+    r_bits_enc=[]
+    for i in r_bits:
+        p=PyPtxt([i], HE)
+        r_bits_enc.append(HE.encrypt(p))
+    
+    #compare r_bits and x_bits
+    return is_smaller(x_bits,r_bits,HE,alpha,n=1000)
 
 start = time.time()
 HE = Pyfhel()
@@ -50,31 +66,14 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#test is_smaller with integers 5 and 6
-x=6
-x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 6 as a list of 8 bits
+#encrypt 5 as a list of bits
+x_bits=[int(i) for i in list('{0:08b}'.format(4))]
 x_bits_enc=[]
-print("Encrypting "+str(x)+" in bits ",x_bits)
-start = time.time()
 for i in x_bits:
     p=PyPtxt([i], HE)
     x_bits_enc.append(HE.encrypt(p))
-end=time.time()
-print(str(end-start)+" sec." )
 
-y=5
-y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 5 as a list of 8 bits
-y_bits_enc=[]
-print("Encrypting "+str(y)+" in bits.",y_bits)
-start = time.time()
-for i in y_bits:
-    p=PyPtxt([i], HE)
-    y_bits_enc.append(HE.encrypt(p))
-end=time.time()
-print(str(end-start)+" sec." )
-end=time.time()
-print(str(end-start)+" sec." )
-
-result=is_smaller(x_bits_enc,y_bits_enc,HE)
+#Coin toss with equal proba (random number r between 0 and 9 either > 4 or =<4)
+result=coinToss(x_bits_enc,9,HE)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
