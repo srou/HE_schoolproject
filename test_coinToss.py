@@ -48,7 +48,7 @@ def coinToss(x_bits,n,HE,alpha=8):
         p=PyPtxt([i], HE)
         r_bits_enc.append(HE.encrypt(p))
     #compare r_bits and x_bits
-    return is_smaller(x_bits,r_bits,HE)
+    return is_smaller(x_bits,r_bits_enc,HE)
 
 start = time.time()
 HE = Pyfhel()
@@ -66,7 +66,7 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#encrypt 5 as a list of bits
+#encrypt 4 as a list of bits
 x_bits=[int(i) for i in list('{0:08b}'.format(4))]
 x_bits_enc=[]
 for i in x_bits:
