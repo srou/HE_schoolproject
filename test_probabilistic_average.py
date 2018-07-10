@@ -100,7 +100,7 @@ for k in list_nb:
         x_bits_enc.append(HE.encrypt(p))
     list_x_bits.append(x_bits_enc)
 
-
+#Compute the probabilistic average of the list of int
 start = time.time()
 result=probabilisticAverage(list_x_bits,3,HE,1,L=8)
 decrypted_res=HE.decrypt(result)
