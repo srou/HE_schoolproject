@@ -65,7 +65,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,L=8):
     p_0=PyPtxt([0], HE)
     res=HE.encrypt(p_0)
     print("c*n="+str(c*n))
-    for i in range((c*n)-1):     #rq : pour L=8 et n=3, c=3 et n=9
+    for i in range((c*n)-1):     #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 650sec)
         tmp=int(math.floor(i/c))
         a.append(coinToss(list_x_bits[tmp],c*n,HE))
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
@@ -79,7 +79,7 @@ HE = Pyfhel()
 KEYGEN_PARAMS={ "p":2,        "r":32,
                 "d":0,        "c":3,
                 "sec":128,    "w":64,
-                "L":50,       "m":-1,
+                "L":40,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}
 
