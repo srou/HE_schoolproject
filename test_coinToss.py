@@ -49,6 +49,7 @@ def coinToss(x_bits,n,HE,alpha=4):
         p=PyPtxt([i], HE)
         r_bits_enc.append(HE.encrypt(p))
     #compare r_bits and x_bits
+    print (len(r_bits_enc),len(x_bits))
     return is_smaller(x_bits,r_bits_enc,HE)
 
 start = time.time()
@@ -57,7 +58,7 @@ HE = Pyfhel()
 KEYGEN_PARAMS={ "p":2,        "r":32,
                 "d":0,        "c":3,
                 "sec":128,    "w":64,
-                "L":50,       "m":-1,
+                "L":40,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}
 
