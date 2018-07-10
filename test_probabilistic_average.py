@@ -65,7 +65,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,L=8):
     p_0=PyPtxt([0], HE)
     res=HE.encrypt(p_0)
     for i in range((c*n)-1):
-        tmp=math.floor(i/c)
+        tmp=int(math.floor(i/c))
         a.append(coinToss(list_x_bits[tmp],c*n,HE))
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
