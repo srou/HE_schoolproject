@@ -6,7 +6,7 @@ import math
 import numpy as np
 from random import randint
 
-def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
+def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
@@ -34,7 +34,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
         #print("res : ",HE.decrypt(res))
     return res
 
-def coinToss(x_bits,n,HE,alpha=8):
+def coinToss(x_bits,n,HE,alpha=4):
 #Takes in input an integer n, and an encrypted number 0=< x_bits <n as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
@@ -42,7 +42,8 @@ def coinToss(x_bits,n,HE,alpha=8):
     r=randint(0, n)
     #encrypt r as a list of bits
     print("Encrypt "+str(r)+" as a list of bits.")
-    r_bits=[int(i) for i in list('{0:08b}'.format(r))] 
+    a='{0:0'+str(alpha)+'b}'
+    r_bits=[int(i) for i in list(a.format(r))] 
     r_bits_enc=[]
     for i in r_bits:
         p=PyPtxt([i], HE)
@@ -50,7 +51,7 @@ def coinToss(x_bits,n,HE,alpha=8):
     #compare r_bits and x_bits
     return is_smaller(x_bits,r_bits_enc,HE)
 
-def probabilisticAverage(list_x_bits,n,HE,deg,L=8):
+def probabilisticAverage(list_x_bits,n,HE,deg,L=4):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
     #n=size of the vector input
     #L=number of bits on which each elt of the vector is encoded
@@ -65,7 +66,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,L=8):
     p_0=PyPtxt([0], HE)
     res=HE.encrypt(p_0)
     print("c*n="+str(c*n))
-    for i in range((c*n)-1):     #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 650sec)
+    for i in range((c*n)-1):     #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/c))
         a.append(coinToss(list_x_bits[tmp],c*n,HE))
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
@@ -94,7 +95,7 @@ list_x_bits=[]
 list_nb=[4,8,12]  #we want to compute the average of these numbers
 for k in list_nb:
     print ("Encrypting "+str(k)+" as a list of bits.")
-    x_bits=[int(i) for i in list('{0:08b}'.format(k))]
+    x_bits=[int(i) for i in list('{0:04b}'.format(k))]
     x_bits_enc=[]
     for i in x_bits:
         p=PyPtxt([i], HE)

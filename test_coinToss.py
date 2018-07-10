@@ -34,15 +34,16 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
         #print("res : ",HE.decrypt(res))
     return res
 
-def coinToss(x_bits,n,HE,alpha=8):
+def coinToss(x_bits,n,HE,alpha=4):
 #Takes in input an integer n, and an encrypted number x_bits as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
     print("n="+str(n))
     r=randint(0, n)
     #encrypt r as a list of bits
-    print("Encrypt "+str(r)+" as a list of bits.")
-    r_bits=[int(i) for i in list('{0:08b}'.format(r))] 
+    print("Encrypt "+str(r)+" as a list of "+str(alpha)+" bits.")
+    a='{0:0'+str(alpha)+'b}'
+    r_bits=[int(i) for i in list(a.format(r))] 
     r_bits_enc=[]
     for i in r_bits:
         p=PyPtxt([i], HE)
@@ -67,7 +68,7 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #encrypt 4 as a list of bits
-x_bits=[int(i) for i in list('{0:08b}'.format(4))]
+x_bits=[int(i) for i in list('{0:04b}'.format(4))]
 x_bits_enc=[]
 for i in x_bits:
     p=PyPtxt([i], HE)
