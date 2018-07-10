@@ -35,7 +35,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     return res
 
 def coinToss(x_bits,n,HE,alpha=8):
-#Takes in input an integer n, and an encrypted number x_bits as a list of alpha bits
+#Takes in input an integer n, and an encrypted number 0=< x_bits <n as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
     print("n="+str(n))
@@ -50,20 +50,23 @@ def coinToss(x_bits,n,HE,alpha=8):
     #compare r_bits and x_bits
     return is_smaller(x_bits,r_bits_enc,HE)
 
-def probabilisticAverage(list_x_bits,L,p,n,m,HE,alpha=8):
+def probabilisticAverage(list_x_bits,n,HE,deg,L=8):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
-    #Integers, L, p, n, m > 0, such that L<p
-    #Returns an approximation of the average of the integer list
+    #n=size of the vector input
+    #L=number of bits on which each elt of the vector is encoded
+    #deg is the degree of the moment to compute
+    #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
+    #Returns an approximation of the statistical function (ie : average, 2nd order moment..) computed on the integer list
+    
     #Initialize
-    c=math.floor((L**math.e)/m)+1
+    c=math.floor((L**deg)/n)+1  ###peut etre pas partie entiere supérieure (pb d'indices ???)
     a=[]  
     p_0=PyPtxt([0], HE)
     res=HE.encrypt(p_0)
-    for i in range(c*n):
-        tmp=math.floor(i/c)+1
-        r=randint(0, math.floor(c*m)+1)
-        a.append(coinToss(list_x_bits[tmp],r,HE))  ####voir si r est le bon param à mettre
+    for i in range((c*n)-1):
+        tmp=math.floor(i/c)
+        a.append(coinToss(list_x_bits[tmp],c*n,HE))
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
     
@@ -84,3 +87,23 @@ print(KEYGEN_PARAMS)
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
+
+#Create a list of int, each one encrypted bit by bit
+list_x_bits=[]
+list_nb=[4,8,12]  #we want to compute the average of these numbers
+for k in list_nb:
+    print ("Encrypting "+str(k)+" as a list of bits.")
+    x_bits=[int(i) for i in list('{0:08b}'.format(k))]
+    x_bits_enc=[]
+    for i in x_bits:
+        p=PyPtxt([i], HE)
+        x_bits_enc.append(HE.encrypt(p))
+    list_x_bits.append(x_bits_enc)
+
+
+start = time.time()
+result=probabilisticAverage(list_x_bits,3,HE,1,L=8)
+decrypted_res=HE.decrypt(result)
+print("decrypted result : ",decrypted_res)
+end=time.time()
+print(str(end-start)+" sec." )
