@@ -19,10 +19,8 @@ def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]
-    print (len(x_bits),len(y_bits))
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         tmp1=c_1.copy(c_1)
-        print i
         same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1.copy(c_1)
         #print("c_1 : ",HE.decrypt(c_1))
@@ -51,7 +49,6 @@ def coinToss(x_bits,n,HE,alpha=4):
         p=PyPtxt([i], HE)
         r_bits_enc.append(HE.encrypt(p))
     #compare r_bits and x_bits
-    print (len(r_bits_enc),len(x_bits))
     return is_smaller(x_bits,r_bits_enc,HE)
 
 start = time.time()
