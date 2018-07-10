@@ -13,7 +13,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Initialisation of same_prefix and same_bit
-    print("Initisalisation")
+    #print("Initisalisation")
     p_1=PyPtxt([1], HE)
     c_1=HE.encrypt(p_1)
     same_prefix=[c_1]
