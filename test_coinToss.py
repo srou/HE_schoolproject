@@ -6,7 +6,7 @@ import math
 import numpy as np
 from random import randint
 
-def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
+def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
