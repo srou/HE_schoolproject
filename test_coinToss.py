@@ -19,8 +19,10 @@ def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]
+    print (len(x_bits),len(y_bits))
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         tmp1=c_1.copy(c_1)
+        print i
         same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1.copy(c_1)
         #print("c_1 : ",HE.decrypt(c_1))
