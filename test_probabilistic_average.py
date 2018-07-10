@@ -60,7 +60,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,L=8):
     #Returns an approximation of the statistical function (ie : average, 2nd order moment..) computed on the integer list
     
     #Initialize
-    c=math.floor((L**deg)/n)+1  ###peut etre pas partie entiere supérieure (pb d'indices ???)
+    c=math.floor((L**deg)/n)+1  #peut etre pas partie entiere supérieure (pb d'indices ???)
     a=[]  
     p_0=PyPtxt([0], HE)
     res=HE.encrypt(p_0)
