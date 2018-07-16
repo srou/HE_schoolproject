@@ -70,6 +70,8 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
         a.append(coinToss(list_x_bits[tmp],c*n,HE))
+        decrypted_res=HE.decrypt(a[i])
+        print("result of the coin toss : ",decrypted_res)
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
     
