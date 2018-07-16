@@ -50,7 +50,7 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#test is_smaller with integers 5 and 6
+#test is_smaller with integers 6 and 0
 x=6
 x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 6 as a list of 8 bits
 x_bits_enc=[]
@@ -62,7 +62,7 @@ for i in x_bits:
 end=time.time()
 print(str(end-start)+" sec." )
 
-y=5
+y=0
 y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 5 as a list of 8 bits
 y_bits_enc=[]
 print("Encrypting "+str(y)+" in bits.",y_bits)
