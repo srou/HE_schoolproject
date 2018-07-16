@@ -13,7 +13,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Initialisation of same_prefix and same_bit
-    print("Initisalisation")
+    print("Initisalisation of is_smaller")
     p_1=PyPtxt([1], HE)
     c_1=HE.encrypt(p_1)
     same_prefix=[c_1]
@@ -23,27 +23,28 @@ def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
         tmp1=c_1.copy(c_1)
         same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1.copy(c_1)
-        #print("c_1 : ",HE.decrypt(c_1))
+        print("c_1 : ",HE.decrypt(c_1))
         #print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
             #print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp*=same_bit[j]
-        #print("tmp : ",HE.decrypt(tmp))
+        print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]  ## peut etre un pb d'indice
-        #print("res : ",HE.decrypt(res))
+        print("res : ",HE.decrypt(res))
     return res
 
 def coinToss(x_bits,n,HE,alpha=4):
 #Takes in input an integer n, and an encrypted number 0=< x_bits <n as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
-    print("n="+str(n))
+    print("Random number between 0 and "+str(n))
     r=randint(0, n)
     #encrypt r as a list of bits
     print("Encrypt "+str(r)+" as a list of bits.")
     a='{0:0'+str(alpha)+'b}'
     r_bits=[int(i) for i in list(a.format(r))] 
+    print(r_bits)
     r_bits_enc=[]
     for i in r_bits:
         p=PyPtxt([i], HE)
@@ -69,9 +70,9 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
     print("c*n="+str(c*n))
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
+        print("tmp="+str(tmp),"/n")
         a.append(coinToss(list_x_bits[tmp],c*n,HE))
         decrypted_res=HE.decrypt(a[i])
-        print("tmp="+str(tmp))
         print("result of the coin toss : ",decrypted_res)
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res

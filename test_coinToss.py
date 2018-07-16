@@ -38,7 +38,7 @@ def coinToss(x_bits,n,HE,alpha=4):
 #Takes in input an integer n, and an encrypted number x_bits as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
-    print("n="+str(n))
+    print("Random number between 0 and "+str(n))
     r=randint(0, n)
     #encrypt r as a list of bits
     print("Encrypt "+str(r)+" as a list of "+str(alpha)+" bits.")
