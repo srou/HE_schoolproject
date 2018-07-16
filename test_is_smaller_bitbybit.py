@@ -5,7 +5,7 @@ import time
 import math
 import numpy as np
 
-def is_smaller(x_bits,y_bits,HE,alpha=8,n=1000):
+def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
@@ -52,7 +52,7 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #test is_smaller with integers 6 and 0
 x=6
-x_bits=[int(i) for i in list('{0:08b}'.format(x))] #int 6 as a list of 8 bits
+x_bits=[int(i) for i in list('{0:04b}'.format(x))] #int 6 as a list of 8 bits
 x_bits_enc=[]
 print("Encrypting "+str(x)+" in bits ",x_bits)
 start = time.time()
@@ -63,7 +63,7 @@ end=time.time()
 print(str(end-start)+" sec." )
 
 y=0
-y_bits=[int(i) for i in list('{0:08b}'.format(y))] #int 5 as a list of 8 bits
+y_bits=[int(i) for i in list('{0:04b}'.format(y))] #int 5 as a list of 8 bits
 y_bits_enc=[]
 print("Encrypting "+str(y)+" in bits.",y_bits)
 start = time.time()
