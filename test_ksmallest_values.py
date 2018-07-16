@@ -55,7 +55,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
     #n=size of the vector input
     #L=number of bits on which each elt of the vector is encoded
-    #deg is the degree of the moment to compute
+    #deg is the degree of the moment to compute (deg=1 : mean, deg=2 : 2nd order momentum)
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Returns an approximation of the statistical function (ie : average, 2nd order moment..) computed on the integer list
@@ -69,11 +69,15 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
     print("c*n="+str(c*n))
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
+        print("tmp="+str(tmp))
         a.append(coinToss(list_x_bits[tmp],c*n,HE))
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
 
-def k_smallest_values():
+def k_smallest_values(list_d_bits,HE,deg,alpha=4):
+    n=len(list_d_bits)
+    avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha)
+    second_moment=avg=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
     
 
 
