@@ -72,6 +72,8 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
         a.append(coinToss(list_x_bits[tmp],c*n,HE))
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
+
+def k_smallest_values():
     
 
 
@@ -105,7 +107,7 @@ for k in list_nb:
 
 #Compute the probabilistic average of the list of int
 start = time.time()
-result=probabilisticAverage(list_x_bits,3,HE,1,alpha=4)
+result=probabilisticAverage(list_x_bits,3,HE,1,L=8)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
