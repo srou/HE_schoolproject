@@ -19,6 +19,8 @@ def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]
+    print("x_bits[0] : ",HE.decrypt(x_bits[0]))
+    print("y_bits[0] : ",HE.decrypt(y_bits[0]))
     print("res : ",HE.decrypt(res))
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         tmp1=c_1.copy(c_1)
@@ -71,7 +73,9 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
     print("c*n="+str(c*n))
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
-        print("tmp="+str(tmp),"/n")
+        print("")
+        print("tmp="+str(tmp)))
+        print("")
         a.append(coinToss(list_x_bits[tmp],c*n,HE))
         decrypted_res=HE.decrypt(a[i])
         print("result of the coin toss : ",decrypted_res)
