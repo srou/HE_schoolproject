@@ -5,9 +5,6 @@ import time
 import math
 import numpy as np
 
-## peut etre rajouter un test avant l'encryptage des entiers (vérifier s'ils sont bien inférieurs à
-# 2^alpha -1, sinon ils seront automatiquement encodés sur plus de bits)
-
 def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits

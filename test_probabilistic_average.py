@@ -13,29 +13,29 @@ def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Initialisation of same_prefix and same_bit
-    print("Initisalisation of is_smaller")
+    #print("Initisalisation of is_smaller")
     p_1=PyPtxt([1], HE)
     c_1=HE.encrypt(p_1)
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]
-    print("x_bits[0] : ",HE.decrypt(x_bits[0]))
-    print("y_bits[0] : ",HE.decrypt(y_bits[0]))
-    print("res : ",HE.decrypt(res))
+    #print("x_bits[0] : ",HE.decrypt(x_bits[0]))
+    #print("y_bits[0] : ",HE.decrypt(y_bits[0]))
+    #print("res : ",HE.decrypt(res))
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         tmp1=c_1.copy(c_1)
         same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
         tmp=c_1.copy(c_1)
-        print("c_1 : ",HE.decrypt(c_1))
+        #print("c_1 : ",HE.decrypt(c_1))
         #print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
             #print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp*=same_bit[j]
-        print("tmp : ",HE.decrypt(tmp))
+        #print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         if i>0:  #since the 1st term of the sum is already computed before the loop
             res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]
-            print("res : ",HE.decrypt(res))
+            #print("res : ",HE.decrypt(res))
     return res
 
 def coinToss(x_bits,n,HE,alpha=4):
