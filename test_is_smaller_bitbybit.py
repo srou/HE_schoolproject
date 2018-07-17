@@ -52,7 +52,7 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #test is_smaller with integers 8 and 0
-x=8
+x=1
 x_bits=[int(i) for i in list('{0:04b}'.format(x))] #int 6 as a list of 8 bits
 x_bits_enc=[]
 print("Encrypting "+str(x)+" in bits ",x_bits)
@@ -63,7 +63,7 @@ for i in x_bits:
 end=time.time()
 print(str(end-start)+" sec." )
 
-y=0
+y=5
 y_bits=[int(i) for i in list('{0:04b}'.format(y))] #int 5 as a list of 8 bits
 y_bits_enc=[]
 print("Encrypting "+str(y)+" in bits.",y_bits)
