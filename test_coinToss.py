@@ -50,7 +50,7 @@ def coinToss(x_bits,n,HE,alpha=4):
         p=PyPtxt([i], HE)
         r_bits_enc.append(HE.encrypt(p))
     #compare r_bits and x_bits
-    return is_smaller(x_bits,r_bits_enc,HE)
+    return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
 
 start = time.time()
 HE = Pyfhel()
