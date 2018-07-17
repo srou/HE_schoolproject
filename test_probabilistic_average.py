@@ -33,8 +33,9 @@ def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
             tmp*=same_bit[j]
         print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
-        res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]  ## peut etre un pb d'indice
-        print("res : ",HE.decrypt(res))
+        if i>0:  #since the 1st term of the sum is already computed before the loop
+            res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]
+            print("res : ",HE.decrypt(res))
     return res
 
 def coinToss(x_bits,n,HE,alpha=4):
@@ -66,7 +67,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
     
     #Initialize
     L=2**alpha
-    c=int(math.floor((L**deg)/n))+1  #peut etre pas +1
+    c=int(math.floor((L**deg)/n))  #peut etre pas +1
     a=[]  
     p_0=PyPtxt([0], HE)
     res=HE.encrypt(p_0)
