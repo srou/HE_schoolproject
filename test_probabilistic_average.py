@@ -6,7 +6,7 @@ import math
 import numpy as np
 from random import randint
 
-def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
+def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
@@ -38,7 +38,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
             #print("res : ",HE.decrypt(res))
     return res
 
-def coinToss(x_bits,n,HE,alpha=4):
+def coinToss(x_bits,n,HE,alpha=5):
 #Takes in input an integer n, and an encrypted number 0=< x_bits <n as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
@@ -54,9 +54,9 @@ def coinToss(x_bits,n,HE,alpha=4):
         p=PyPtxt([i], HE)
         r_bits_enc.append(HE.encrypt(p))
     #compare r_bits and x_bits
-    return is_smaller(x_bits,r_bits_enc,HE)
+    return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
 
-def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
+def probabilisticAverage(list_x_bits,n,HE,deg,alpha=5):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
     #n=size of the vector input
     #L=number of bits on which each elt of the vector is encoded
@@ -77,7 +77,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=4):
         print("")
         print("tmp="+str(tmp))
         print("")
-        a.append(coinToss(list_x_bits[tmp],c*n,HE))
+        a.append(coinToss(list_x_bits[tmp],c*n,HE,alpha=alpha))
         decrypted_res=HE.decrypt(a[i])
         print("result of the coin toss : ",decrypted_res)
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
