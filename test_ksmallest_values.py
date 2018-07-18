@@ -95,7 +95,6 @@ def phi(t,mean,std,data_enc,n,HE,alpha):
     #Cumulative distribution function
     
     #Takes in input a float t between 0 and 1, a list of encrypted data, and the mean and std of this distribution
-    
     p_0=PyPtxt([0], HE)
     res=HE.encrypt(p_0)
     cste=int((t*std) + mean) 

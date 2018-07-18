@@ -121,7 +121,7 @@ for k in list_nb:
 
 #Compute the probabilistic average of the list of int
 start = time.time()
-result=probabilisticAverage(list_x_bits,3,HE,1,alpha=5)
+result=probabilisticAverage(list_x_bits,3,HE,1,alpha=4)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
