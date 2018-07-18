@@ -25,11 +25,11 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 #pickle.dump(HE, f)
 #f.close()
 
-v=[2]
+v=[1.5]
 print("Encrypting v: ", v)
 p = PyPtxt(v, HE)
 c = HE.encrypt(p)
-res=c**4
+res=c**5
 print("v**4=",HE.decrypt(res))
 
 v1 = [1,2,3,4,5]
