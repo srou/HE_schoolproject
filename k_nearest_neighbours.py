@@ -46,6 +46,7 @@ def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
     for i in range(len(b)):
         iss=is_smaller(b_bits[i],a_enc_bits[i],HE,alpha=alpha,n=1000)
         tmp=(b[i]-a_enc[i])*iss
+        print("tmp ",HE.decrypt(tmp))
         tmp*=2
         tmp+=a_enc[i]-b[i]
         res+=tmp
