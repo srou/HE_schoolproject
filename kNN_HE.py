@@ -95,14 +95,6 @@ def l1_norm(a_enc,a_enc_bits,b,b_bits):
         res+=tmp
     return res
 
-def convert_to_bit():
-    #converts an encrypted number to its bit representation (???)
-    #P_bit(x,i)= ith bit of x
-    return 0
-
-#def coin_toss()
-#def probabilistic_average
-#def K_smallest_values()
 
 #kNN over Encrypted Data
 def kNN_HE(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=1):
