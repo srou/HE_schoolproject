@@ -50,8 +50,8 @@ def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
     return res
 
 def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
-    #q_enc =(enc(q1),…,enc(qd)) : list of the encrypted components of q
-    #q_bits=([[q1_bits]],…,[[qd_bits]]) : list of lists, where [[q1_bits]] is the list of each encrypted bit of q1
+    #q_enc =(enc(q1), ,enc(qd)) : list of the encrypted components of q
+    #q_bits=([[q1_bits]], ,[[qd_bits]]) : list of lists, where [[q1_bits]] is the list of each encrypted bit of q1
     #X_train : training set (list of rows, each row being a list itself)
     #Y_train : labels associated with X_train
     #n,d : dimensions of X_train (n : nb of rows, d : nb of columns)
