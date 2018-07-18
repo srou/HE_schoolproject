@@ -29,8 +29,22 @@ v=[1.5]
 print("Encrypting v: ", v)
 p = PyPtxt(v, HE)
 c = HE.encrypt(p)
-res=c**5
+res=c**4
 print("v**4=",HE.decrypt(res))
+v=[2.5]
+print("Encrypting v: ", v)
+p = PyPtxt(v, HE)
+c = HE.encrypt(p)
+res=c**4
+print("ok")
+print("v**4=",HE.decrypt(res))
+v=[2.5]
+print("Encrypting v: ", v)
+p = PyPtxt(v, HE)
+c = HE.encrypt(p)
+res=c**2
+print("v**2=",HE.decrypt(res))
+
 
 v1 = [1,2,3,4,5]
 v2 = [0,1,1,1,1]
