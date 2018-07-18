@@ -42,7 +42,8 @@ def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
     #a_enc : encrypted vector a (list of Ctxt where each Ctxt is an encrypted coefficient of a)
     #a_enc : encrypted bits of each elt of a (list of lists of Ctxt)
     #same for b and b_bits 
-    res=0
+    p_0=PyPtxt([0], HE)
+    res=HE.encrypt(p_0)
     p_2=PyPtxt([2], HE)
     c_2=HE.encrypt(p_2)
     for i in range(len(b)):
