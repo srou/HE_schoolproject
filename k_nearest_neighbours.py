@@ -41,7 +41,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
 def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
     #a_enc : encrypted vector a (list of Ctxt where each Ctxt is an encrypted coefficient of a)
     #a_enc : encrypted bits of each elt of a (list of lists of Ctxt)
-    #same for b and b_bits (b doit etre encrypté ???)
+    #same for b and b_bits 
     res=0
     for i in range(len(b)):
         iss=is_smaller(b_bits[i],a_enc_bits[i],HE,alpha=alpha,n=1000)
