@@ -21,7 +21,7 @@ def P_bits(x,i,p,alpha):
         l2=[x_bits(i,alpha)[0] for i in range(p)]   #1er bit de chaque nombre entre 0 et 15
         print l2
         return np.polyfit(l1,l2,p)
-
+    print coeffs,type(coeffs)
     coeffs=poly_bits(i,alpha)
     p_1=PyPtxt([1], HE)
     c_1=HE.encrypt(p_1)
