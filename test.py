@@ -36,7 +36,6 @@ print("Encrypting v: ", v)
 p = PyPtxt(v, HE)
 c = HE.encrypt(p)
 res=c**4
-print("ok")
 print("v**4=",HE.decrypt(res))
 v=[2.5]
 print("Encrypting v: ", v)
