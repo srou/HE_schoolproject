@@ -23,11 +23,15 @@ def P_bits(x,i,p,alpha):
         return np.polyfit(l1,l2,p)
     coeffs=poly_bits(i,alpha)
     print coeffs,type(coeffs)
-    p_1=PyPtxt([1], HE)
-    c_1=HE.encrypt(p_1)
-    res=c_1*coeffs[0]
-    for k in range(1,len(coeffs)):
-        res+=coeffs[k]*(x**k)
+    coeffs_enc=[]
+    for c in coeffs:
+        coeffs_enc.append(HE.encrypt(PyPtxt([c], HE)))
+    res=x.polynomialMult(coeffs_enc)
+    #p_1=PyPtxt([1], HE)
+    #c_1=HE.encrypt(p_1)
+    #res=c_1*coeffs_enc[0]
+    #for k in range(1,len(coeffs_enc)):
+        #res+=coeffs_enc[k]*(x**k)
     return res
 
 start = time.time()
