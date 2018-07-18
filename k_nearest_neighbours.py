@@ -70,7 +70,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
         b_bits_enc=[]
         for elt in X_train[i]:
             #encrypt each elt of X_train[i] as a single cyphertext
-            ptxt=PyPtxt([elt], HE)  #attention à ce que X_train ne contienne que des entiers
+            ptxt=PyPtxt([elt], HE)  #attention à ce que Xtrain ne contienne que des entiers
             b_enc.append(HE.encrypt(ptxt))
             #also encrypt each elt of X_train[i] as a list of encrypted bits
             a='{0:0'+str(alpha)+'b}'
