@@ -39,7 +39,7 @@ c = HE.encrypt(p)
 print(HE.decrypt(c))
 res=c**4
 print("v**4=",HE.decrypt(res))
-v=[2.5]
+v=[4.56]
 print("Encrypting v: ", v)
 p = PyPtxt(v, HE)
 c = HE.encrypt(p)

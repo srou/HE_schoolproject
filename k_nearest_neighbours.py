@@ -49,7 +49,7 @@ def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
     for i in range(len(b)):
         iss=is_smaller(b_bits[i],a_enc_bits[i],HE,alpha=alpha,n=1000)
         tmp=(b[i]-a_enc[i])*iss*c_2   ##peut etre besoin de copier c_2
-        print("tmp ",HE.decrypt(tmp))
+        #print("tmp ",HE.decrypt(tmp))
         tmp+=a_enc[i]
         tmp=tmp-b[i]
         res+=tmp
@@ -134,7 +134,7 @@ for elt in q:
 print("Encrypting X1")
 x1_enc=[]
 x1_bits_enc=[]
-for elt in X_train[1]:
+for elt in X_train[0]:
     #encrypt each elt of q as a single cyphertext
     ptxt=PyPtxt([elt], HE) 
     x1_enc.append(HE.encrypt(ptxt))
@@ -184,7 +184,6 @@ print(str(end-start)+" sec." )
 print("Test knn")
 start = time.time()
 result=knn(q_enc,q_bits_enc,X_train,Y_train,HE,1023,3,3,k=3,alpha=4,a_class=1)
-decrypted_res=HE.decrypt(result)
 print("Distances between q and elements of X_train : ")
 for res in result :
     print(HE.decrypt(res))
