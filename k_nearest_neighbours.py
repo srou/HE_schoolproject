@@ -108,7 +108,7 @@ alpha=4
 q=[3,6,2]
 X_train=[[3,6,2],[7,0,1],[5,12,3]]
 Y_train=[1,0,0]
-#encypt q
+print("Encrypting q")
 q_enc=[]
 q_bits_enc=[]
 for elt in q:
@@ -125,7 +125,7 @@ for elt in q:
         elt_bits_enc.append(HE.encrypt(p))
     q_bits_enc.append(elt_bits_enc)
 
-#encypt X1
+print("Encrypting X1")
 x1_enc=[]
 x1_bits_enc=[]
 for elt in X_train[1]:
@@ -142,7 +142,7 @@ for elt in X_train[1]:
         elt_bits_enc.append(HE.encrypt(p))
     x1_bits_enc.append(elt_bits_enc)
 
-#encypt X2
+print("Encrypting X2")
 x2_enc=[]
 x2_bits_enc=[]
 for elt in X_train[1]:
