@@ -6,7 +6,7 @@ import numpy as np
 
 def P_bits(x,i,p,alpha):
     #x encrypted as a single Ctxt
-    #0=< x =< p
+    #0=< x =< p  (p=2**alpha)
     #0=< i <alpha
     #returns [1] if the ith bit of x is 1, otherwise 0
     def poly_bits(i,alpha):
@@ -51,7 +51,7 @@ ptxt=PyPtxt([20], HE)
 x=HE.encrypt(ptxt)
 
 start = time.time()
-result=P_bits(x,i=1,p=31,alpha=5)
+result=P_bits(x,i=1,p=32,alpha=5)
 decrypted_res=HE.decrypt(result)
 print("1st bit of 20 written in 5 bits : ",decrypted_res)
 end=time.time()
