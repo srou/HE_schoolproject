@@ -38,23 +38,29 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
             #print("res : ",HE.decrypt(res))
     return res
 
-def coinToss(x_bits,n,HE,alpha=5):
+def coinToss(x_bits,n,HE,deg=1,alpha=5):
 #Takes in input an integer n, and an encrypted number 0=< x_bits <n as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
-#Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
+#Returns an encrypted bit b=[1] if r^(1/deg)<x (ie : with probability x/n) otherwise [0]
     print("Random number between 0 and "+str(n))
     r=randint(0, n)
-    #encrypt r as a list of bits
-    print("Encrypt "+str(r)+" as a list of bits.")
-    a='{0:0'+str(alpha)+'b}'
-    r_bits=[int(i) for i in list(a.format(r))] 
-    print(r_bits)
-    r_bits_enc=[]
-    for i in r_bits:
-        p=PyPtxt([i], HE)
-        r_bits_enc.append(HE.encrypt(p))
-    #compare r_bits and x_bits
-    return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
+    r=int(math.floor((r**(1/deg))))
+    if r>((2**alpha) -1) : #rq : x=< 2**alpha -1 so if r>2**alpha-1, then r>x
+        p_0=PyPtxt([0], HE)
+        c_0=HE.encrypt(p_0)
+        return c_0
+    else :
+        #encrypt r as a list of bits
+        print("Encrypt "+str(r)+" as a list of bits.")
+        a='{0:0'+str(alpha)+'b}'
+        r_bits=[int(i) for i in list(a.format(r))] 
+        print(r_bits)
+        r_bits_enc=[]
+        for i in r_bits:
+            p=PyPtxt([i], HE)
+            r_bits_enc.append(HE.encrypt(p))
+        #compare r_bits and x_bits
+        return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
 
 def probabilisticAverage(list_x_bits,n,HE,deg,alpha=5):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
@@ -67,7 +73,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=5):
     
     #Initialize
     L=2**alpha
-    c=int(math.floor((L**deg)/n))  #peut etre pas +1
+    c=int(math.ceil((L**deg)/n))
     a=[]  
     p_0=PyPtxt([0], HE)
     res=HE.encrypt(p_0)
@@ -77,7 +83,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=5):
         print("")
         print("tmp="+str(tmp))
         print("")
-        a.append(coinToss(list_x_bits[tmp],c*n,HE,alpha=alpha))
+        a.append(coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha))
         decrypted_res=HE.decrypt(a[i])
         print("result of the coin toss : ",decrypted_res)
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
@@ -106,7 +112,7 @@ list_x_bits=[]
 list_nb=[4,8,12]  #we want to compute the average of these numbers
 for k in list_nb:
     print ("Encrypting "+str(k)+" as a list of bits.")
-    x_bits=[int(i) for i in list('{0:04b}'.format(k))]
+    x_bits=[int(i) for i in list('{0:05b}'.format(k))]
     x_bits_enc=[]
     for i in x_bits:
         p=PyPtxt([i], HE)
@@ -115,7 +121,7 @@ for k in list_nb:
 
 #Compute the probabilistic average of the list of int
 start = time.time()
-result=probabilisticAverage(list_x_bits,3,HE,1,alpha=4)
+result=probabilisticAverage(list_x_bits,3,HE,1,alpha=5)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
