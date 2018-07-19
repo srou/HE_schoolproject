@@ -35,8 +35,8 @@ print("Encrypting v: ", v)
 p = PyPtxt(v, HE)
 c = HE.encrypt(p)
 print(HE.decrypt(c))
-for i in range(10):
-    v=[90+10*i]
+for i in range(1000):
+    v=[200+20*i]
     print("Encrypting v: ", v)
     p = PyPtxt(v, HE)
     c = HE.encrypt(p)
