@@ -5,7 +5,7 @@ import time
 
 
 HE = Pyfhel()
-KEYGEN_PARAMS={ "p":2,        "r":48,
+KEYGEN_PARAMS={ "p":127,        "r":48,
                 "d":0,        "c":3,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
@@ -25,27 +25,24 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 #pickle.dump(HE, f)
 #f.close()
 
-v=[1.5]
+v=[126]
 print("Encrypting v: ", v)
 p = PyPtxt(v, HE)
 c = HE.encrypt(p)
 print(HE.decrypt(c))
 res=c**4
 print("v**4=",HE.decrypt(res))
-v=[2.5]
+v=[127]
 print("Encrypting v: ", v)
 p = PyPtxt(v, HE)
 c = HE.encrypt(p)
 print(HE.decrypt(c))
-res=c**4
-print("v**4=",HE.decrypt(res))
-v=[4.56]
+v=[128]
 print("Encrypting v: ", v)
 p = PyPtxt(v, HE)
 c = HE.encrypt(p)
 print(HE.decrypt(c))
-res=c**2
-print("v**2=",HE.decrypt(res))
+
 
 
 v1 = [1,2,3,4,5]
