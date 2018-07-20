@@ -5,12 +5,19 @@ import time
 
 
 HE = Pyfhel()
-KEYGEN_PARAMS={ "p":13,        "r":48,
-                "d":0,        "c":3,
+KEYGEN_PARAMS={ "p":113,        "r":1,
+                "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}
+
+#KEYGEN_PARAMS={ "p":123,      "r":1,
+#                "d":1,        "c":2,
+#                "sec":80,     "w":64,
+#                "L":40,       "m":-1,
+#                "R":3,        "s":0,
+#                "gens":[],    "ords":[]}
 
 print("Pyfhel DEMO")
 print("  Running KeyGen with params:")
