@@ -5,7 +5,7 @@ import time
 
 
 HE = Pyfhel()
-KEYGEN_PARAMS={ "p":113,        "r":1,
+KEYGEN_PARAMS={ "p":113,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
