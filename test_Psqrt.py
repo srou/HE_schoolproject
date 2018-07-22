@@ -69,7 +69,10 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #test
+start = time.time()
 a=HE.encrypt(PyPtxt([4], HE))
+end=time.time()
+print("encrypts an int in : "+str(end-start)+" sec." )
 b=HE.encrypt(PyPtxt([6], HE))
 print("4-6",HE.decrypt(a-b))
 
