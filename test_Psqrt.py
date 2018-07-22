@@ -6,8 +6,6 @@ import numpy as np
 
 
 def coeffs_Psqrt(p):
-    #x encrypted as a single Ctxt
-    #0=< x =< p  , p prime
     #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
     print("Computing coefficients of Psqrt")
     def bezout(a, b):
@@ -38,6 +36,8 @@ def coeffs_Psqrt(p):
     return r
 
 def compute_Psqrt(x,p,coeffs,HE):
+    #x encrypted as a single Ctxt
+    #0=< x =< p  , p prime
     res=HE.encrypt(PyPtxt([0], HE))  #encrypted integers from 0 to p
     c_1=HE.encrypt(PyPtxt([0], HE))
     enc_integers=[HE.encrypt(PyPtxt([i], HE)) for i in range(p)]

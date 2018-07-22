@@ -4,41 +4,60 @@ import time
 import math
 import numpy as np
 
-def P_bits(x,i,p,alpha):
-    #x encrypted as a single Ctxt
-    #0=< x =< p  (p=2**alpha)
-    #0=< i <alpha
-    #returns [1] if the ith bit of x is 1, otherwise 0
-    def poly_bits(i,alpha):
-    #returns the coeffs of the polynomial P that interpolates the function Pbit_i on [0,2^alpha - 1]
-    #where Pbit_i(n)=ith bit of n in its representation on alpha bits
-        def x_bits(n,L):
-            #encrypts n on L bits
-            a='{0:0'+str(L)+'b}'
-            return [int(i) for i in list(a.format(n))]
-        p=(2**alpha)
-        l1=range(0,p)
-        l2=[x_bits(i,alpha)[0] for i in range(p)]   #1er bit de chaque nombre entre 0 et 15
-        print l2
-        return np.polyfit(l1,l2,p)
-    coeffs=poly_bits(i,alpha)
-    print coeffs,type(coeffs)
-    coeffs_enc=[]
-    for c in coeffs:
-        coeffs_enc.append(HE.encrypt(PyPtxt([c], HE)))
-    res=x.polynomialMult(coeffs_enc)
-    #p_1=PyPtxt([1], HE)
-    #c_1=HE.encrypt(p_1)
-    #res=c_1*coeffs_enc[0]
-    #for k in range(1,len(coeffs_enc)):
-        #res+=coeffs_enc[k]*(x**k)
+def coeffs_Pbit_i(i,p,alpha):
+    #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
+    #alpha : nb of bits
+    #0=< 2^alpha-1 < p, p prime
+    #0=< i =< alpha
+    print("Computing coefficients of Psqrt")
+    def bezout(a, b):
+        #computes (u,v,p) st a*u + b*v = gdc(a,b)
+        if a == 0 and b == 0: return (0, 0, 0)
+        if b == 0: return (a/abs(a), 0, abs(a))
+        (u, v, gdc) = bezout(b, a%b)
+        return (v, (u - v*(a/b)), gdc)
+    def inv_modulo(x, p):
+        #Computes y in [p] st x*y=1 mod p
+        (u, _, gdc) = bezout(x, p)
+        if gdc == 1: return u%abs(p)
+        else: raise Exception("%s et %s are not mutually prime" % (x, p))
+    l1=range(0,p)
+    a='{0:0'+str(alpha)+'b}'
+    l2=[int(list(a.format(x))[i]) for x in l1]
+    print("l2 : ",l2)
+    #find the coeffs ri (in Zp) that help construct the polynomial
+    r=[]
+    print("Computing coefficients of Pbit_i") 
+    for i in range(p):
+        num=l2[i]
+        den=1
+        for j in range(p):
+            if i!=j:
+                den*=i-j
+        tmp=(num*inv_modulo(den,p))%p
+        r.append(int(tmp))
+    return r
+
+def compute_Pbit_i(x,p,coeffs_i,HE):
+    #0=< x =< p  , p prime
+    #returns [1] if the ith bit of x is 1, otherwise 0 (x coded on alpha bits)
+    res=HE.encrypt(PyPtxt([0], HE)) 
+    c_1=HE.encrypt(PyPtxt([0], HE))
+    enc_integers=[HE.encrypt(PyPtxt([i], HE)) for i in range(p)] #encrypted integers from 0 to p
+    for i in range(0,p) :
+        tmp=c_1.copy(c_1)
+        for j in range(p):
+            if i!=j:
+                tmp*=(x-enc_integers[j])
+        print type(coeffs[i])
+        res+=(tmp*coeffs[i])
     return res
 
 start = time.time()
 HE = Pyfhel()
-#Generate Key
-KEYGEN_PARAMS={ "p":2,        "r":32,
-                "d":0,        "c":3,
+#Generate key
+KEYGEN_PARAMS={ "p":113,      "r":1,
+                "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
                 "R":3,        "s":0,
