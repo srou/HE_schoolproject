@@ -39,7 +39,6 @@ def compute_Psqrt(x,p,coeffs,HE):
     #x encrypted as a single Ctxt
     #0=< x =< p  , p prime
     res=HE.encrypt(PyPtxt([0], HE))  #encrypted integers from 0 to p
-    c_1=HE.encrypt(PyPtxt([1], HE))
     enc_integers=[HE.encrypt(PyPtxt([i], HE)) for i in range(p)]
     for i in range(0,p) :
         if coeffs[i]!=0:
@@ -58,7 +57,7 @@ HE = Pyfhel()
 KEYGEN_PARAMS={ "p":7,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
-                "L":40,       "m":-1,
+                "L":100,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}
 
