@@ -47,7 +47,7 @@ def compute_Psqrt(x,p,coeffs,HE):
             if i!=j:
                 tmp*=(x-enc_integers[j]) # tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
         print type(coeffs[i])
-        print type(tmp)
+        print type(tmp),HE.decrypt(tmp)
         tmp1=tmp*coeffs[i]
         res+=tmp1
     return res
