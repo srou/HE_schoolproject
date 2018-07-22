@@ -110,24 +110,11 @@ def phi(t,mean,std,data_enc,n,HE,alpha):
         res+=is_smaller(cste_bits_enc,data_enc[k],HE,alpha=alpha)
     res=res*(1/n)
     return res
+    
 def P_bits(x,i,p,alpha):
-    #x encrypted bit by bit (coded on alpha bits)
-    #0=< x =< p
-    #0=< i <alpha
-    #returns [1] if the ith bit of x is 1, otherwise 0
     return 0
 def P_sqrt(x,p):
-    #returns sqrt(x) for an int x in [0,p]
-    l1=range(0,p)
-    l2=[math.sqrt(i) for i in l1]
-    coeffs=np.polyfit(l1,l2,p)
-
-    p_1=PyPtxt([1], HE)
-    c_1=HE.encrypt(p_1)
-    res=c_1*coeffs[0]
-    for k in range(1,len(coeffs)):
-        res+=coeffs[k]*(x**k)
-    return res
+    return 0
 
 def k_smallest_values(list_d_bits,p,HE,alpha=5):
     #Takes in input a list of data (each encrypted as a list of bits)
