@@ -46,6 +46,7 @@ def compute_Psqrt(x,p,coeffs,HE):
         for j in range(p):
             if i!=j:
                 tmp*=(x-enc_integers[j])
+        print type(coeffs[i])
         res+=(tmp*coeffs[i])
     return res
 
