@@ -75,8 +75,10 @@ a=HE.encrypt(PyPtxt([240], HE))
 print(HE.decrypt(a))
 b=HE.encrypt(PyPtxt([5*4*3*2], HE))
 print(HE.decrypt(b))
-c=(-1)*b
-print(HE.decrypt(c))
+c=HE.encrypt(PyPtxt([1], HE))-HE.encrypt(PyPtxt([2], HE))
+print("1-2 : ",HE.decrypt(c))
+d=c*b
+print(HE.decrypt(d))
 p=KEYGEN_PARAMS["p"]
 n=4
 x=HE.encrypt(PyPtxt([n], HE))
