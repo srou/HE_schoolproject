@@ -55,7 +55,7 @@ def compute_Psqrt(x,p,coeffs,HE):
 start = time.time()
 HE = Pyfhel()
 #Generate key
-KEYGEN_PARAMS={ "p":11,      "r":1,
+KEYGEN_PARAMS={ "p":17,      "r":1,
                 "d":0,        "c":3,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
