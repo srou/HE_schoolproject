@@ -46,9 +46,11 @@ def compute_Psqrt(x,p,coeffs,HE):
             tmp=enc_integers[coeffs[i]]
             for j in range(p):
                 if i!=j:
+                    print(HE.decrypt(x-enc_integers[j]))
                     tmp*=(x-enc_integers[j]) # tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
             print 'coeffs[i]',type(coeffs[i]),coeffs[i]
             print "tmp",type(tmp),HE.decrypt(tmp)
+            print("")
             res+=tmp
     return res
 
@@ -58,7 +60,7 @@ HE = Pyfhel()
 KEYGEN_PARAMS={ "p":7,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
-                "L":70,       "m":-1,
+                "L":40,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}
 
@@ -68,6 +70,13 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
+#test
+a=HE.encrypt(PyPtxt([240], HE))
+print(HE.decrypt(a))
+b=HE.encrypt(PyPtxt([5*4*3*2], HE))
+print(HE.decrypt(b))
+c=(-1)*b
+print(HE.decrypt(c))
 p=KEYGEN_PARAMS["p"]
 n=4
 x=HE.encrypt(PyPtxt([n], HE))
