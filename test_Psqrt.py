@@ -42,7 +42,7 @@ def compute_Psqrt(x,p,coeffs,HE):
     c_1=HE.encrypt(PyPtxt([1], HE))
     enc_integers=[HE.encrypt(PyPtxt([i], HE)) for i in range(p)]
     for i in range(0,p) :
-        tmp=coeffs[i]*c_1.copy(c_1)
+        tmp=enc_integers[coeffs[i]]
         for j in range(p):
             if i!=j:
                 tmp*=(x-enc_integers[j]) # tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
