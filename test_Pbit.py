@@ -4,53 +4,52 @@ import time
 import math
 import numpy as np
 
-def coeffs_Pbit_i(i,p,alpha):
-    #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
-    #alpha : nb of bits
-    #0=< 2^alpha-1 < p, p prime
-    #0=< i =< alpha
-    print("Computing coefficients of Psqrt")
-    def bezout(a, b):
-        #computes (u,v,p) st a*u + b*v = gdc(a,b)
-        if a == 0 and b == 0: return (0, 0, 0)
-        if b == 0: return (a/abs(a), 0, abs(a))
-        (u, v, gdc) = bezout(b, a%b)
-        return (v, (u - v*(a/b)), gdc)
-    def inv_modulo(x, p):
-        #Computes y in [p] st x*y=1 mod p
-        (u, _, gdc) = bezout(x, p)
-        if gdc == 1: return u%abs(p)
-        else: raise Exception("%s et %s are not mutually prime" % (x, p))
-    l1=range(0,p)
-    a='{0:0'+str(alpha)+'b}'
-    l2=[int(list(a.format(x))[i]) for x in l1]
-    print("l2 : ",l2)
-    #find the coeffs ri (in Zp) that help construct the polynomial
-    r=[]
-    print("Computing coefficients of Pbit_i") 
-    for i in range(p):
-        num=l2[i]
-        den=1
-        for j in range(p):
-            if i!=j:
-                den*=i-j
-        tmp=(num*inv_modulo(den,p))%p
-        r.append(int(tmp))
-    return r
-
-def compute_Pbit_i(x,p,coeffs_i,HE):
-    #0=< x =< 2^alpha-1 < p  , p prime
-    #returns [1] if the ith bit of x is 1, otherwise 0 (x coded on alpha bits)
-    res=HE.encrypt(PyPtxt([0], HE)) 
-    for i in range(0,p) :
-        tmp=HE.encrypt(PyPtxt([coeffs_i[i]], HE))
-        for j in range(p):
-            if i!=j:
-                tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
-        res+=tmp
-    return res
 
 def convert_to_bits(x,p,alpha,HE):
+    def coeffs_Pbit_i(i,p,alpha):
+        #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
+        #alpha : nb of bits
+        #0=< 2^alpha-1 < p, p prime
+        #0=< i =< alpha
+        print("Computing coefficients of Psqrt")
+        def bezout(a, b):
+            #computes (u,v,p) st a*u + b*v = gdc(a,b)
+            if a == 0 and b == 0: return (0, 0, 0)
+            if b == 0: return (a/abs(a), 0, abs(a))
+            (u, v, gdc) = bezout(b, a%b)
+            return (v, (u - v*(a/b)), gdc)
+        def inv_modulo(x, p):
+            #Computes y in [p] st x*y=1 mod p
+            (u, _, gdc) = bezout(x, p)
+            if gdc == 1: return u%abs(p)
+            else: raise Exception("%s et %s are not mutually prime" % (x, p))
+        l1=range(0,p)
+        a='{0:0'+str(alpha)+'b}'
+        l2=[int(list(a.format(x))[i]) for x in l1]
+        print("l2 : ",l2)
+        #find the coeffs ri (in Zp) that help construct the polynomial
+        r=[]
+        print("Computing coefficients of Pbit_i") 
+        for i in range(p):
+            num=l2[i]
+            den=1
+            for j in range(p):
+                if i!=j:
+                    den*=i-j
+            tmp=(num*inv_modulo(den,p))%p
+            r.append(int(tmp))
+        return r
+    def compute_Pbit_i(x,p,coeffs_i,HE):
+        #0=< x =< 2^alpha-1 < p  , p prime
+        #returns [1] if the ith bit of x is 1, otherwise 0 (x coded on alpha bits)
+        res=HE.encrypt(PyPtxt([0], HE)) 
+        for i in range(0,p) :
+            tmp=HE.encrypt(PyPtxt([coeffs_i[i]], HE))
+            for j in range(p):
+                if i!=j:
+                    tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
+            res+=tmp
+        return res
     #takes in input an encrypted number x and returns its representation as a list of alpha encrypted bits
     #0=< x =< 2^alpha-1 < p  , p prime
     bits_x=[]  #encrypted bit representation of x
@@ -85,6 +84,7 @@ x=HE.encrypt(PyPtxt([n], HE))
 bits_x=convert_to_bits(x,p,alpha,HE)
 end=time.time()
 print ("Result : ",[HE.decrypt(res) for res in bits_x])
+print(str(end-start)+" sec." )
 
 #i=1
 #x=HE.encrypt(PyPtxt([n], HE))

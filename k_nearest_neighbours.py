@@ -54,7 +54,7 @@ def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
         res+=tmp
     return res
 
-def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
+def dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha=4):
     #q_enc =(enc(q1), ,enc(qd)) : list of the encrypted components of q
     #q_bits=([[q1_bits]], ,[[qd_bits]]) : list of lists, where [[q1_bits]] is the list of each encrypted bit of q1
     #X_train : training set (list of rows, each row being a list itself)
@@ -90,6 +90,94 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
         dist=l1_norm(q_enc,q_bits_enc,b_enc,b_bits_enc,HE=HE_scheme,alpha=alpha)
         distances.append(dist)
     return distances
+
+def convert_to_bits(x,p,alpha,HE):
+    def coeffs_Pbit_i(i,p,alpha):
+        #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
+        #alpha : nb of bits
+        #0=< 2^alpha-1 < p, p prime
+        #0=< i =< alpha
+        print("Computing coefficients of Psqrt")
+        def bezout(a, b):
+            #computes (u,v,p) st a*u + b*v = gdc(a,b)
+            if a == 0 and b == 0: return (0, 0, 0)
+            if b == 0: return (a/abs(a), 0, abs(a))
+            (u, v, gdc) = bezout(b, a%b)
+            return (v, (u - v*(a/b)), gdc)
+        def inv_modulo(x, p):
+            #Computes y in [p] st x*y=1 mod p
+            (u, _, gdc) = bezout(x, p)
+            if gdc == 1: return u%abs(p)
+            else: raise Exception("%s et %s are not mutually prime" % (x, p))
+        l1=range(0,p)
+        a='{0:0'+str(alpha)+'b}'
+        l2=[int(list(a.format(x))[i]) for x in l1]
+        print("l2 : ",l2)
+        #find the coeffs ri (in Zp) that help construct the polynomial
+        r=[]
+        print("Computing coefficients of Pbit_i") 
+        for i in range(p):
+            num=l2[i]
+            den=1
+            for j in range(p):
+                if i!=j:
+                    den*=i-j
+            tmp=(num*inv_modulo(den,p))%p
+            r.append(int(tmp))
+        return r
+    def compute_Pbit_i(x,p,coeffs_i,HE):
+        #0=< x =< 2^alpha-1 < p  , p prime
+        #returns [1] if the ith bit of x is 1, otherwise 0 (x coded on alpha bits)
+        res=HE.encrypt(PyPtxt([0], HE)) 
+        for i in range(0,p) :
+            tmp=HE.encrypt(PyPtxt([coeffs_i[i]], HE))
+            for j in range(p):
+                if i!=j:
+                    tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
+            res+=tmp
+        return res
+    #takes in input an encrypted number x and returns its representation as a list of alpha encrypted bits
+    #0=< x =< 2^alpha-1 < p  , p prime
+    bits_x=[]  #encrypted bit representation of x
+    for i in range(alpha):
+        print("Computing bit "+str(i))
+        coeffs_i=coeffs_Pbit_i(i=i,p=p,alpha=alpha)
+        bits_x.append(compute_Pbit_i(x=x,p=p,coeffs_i=coeffs_i,HE=HE))
+    return bits_x
+
+def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
+    #q_enc =(enc(q1), ,enc(qd)) : list of the encrypted components of q
+    #q_bits=([[q1_bits]], ,[[qd_bits]]) : list of lists, where [[q1_bits]] is the list of each encrypted bit of q1
+    #X_train : training set (list of rows, each row being a list itself)
+    #Y_train : labels associated with X_train
+    #n,d : dimensions of X_train (n : nb of rows, d : nb of columns)
+    #k : nb of nearest neighbors to output
+    #alpha : nb of bits recquired to encode the input data
+    #a_class : nb of bits recquired to encode the number of classes (??) (ex : if 2 classes, a_class=1)
+    #p : prime number such that each value in X_train and q are between 0 and sqrt(p)/d
+    #HE_scheme : scheme used for encryption (Pyfhel object)
+    distances=dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha)
+    distances_bit=[convert_to_bits(x,p,alpha,HE) for x in distances]
+    XI=k_smallest_values(distances_bit,p,HE,alpha)
+    knn_bits=[]
+    Y_train_bits_enc=[]
+    a='{0:0'+str(alpha)+'b}'
+    for aux in Y_train :
+        Y_train_bits_enc.append([int(elt) for elt in list(a.format(aux))])
+    for i in range(n):
+        tmp=[]
+        for j in range(alpha):
+            tmp.append(XI[i]*(Y_train_bits_enc[i])[j])
+        knn_bits.append(tmp)
+    knn=   #convertir les bits en nbr
+    result_bits=[]
+    for j in range(alpha):
+    
+    result=    #convertir bits en nbr
+    return result
+
+    
+
 
 start = time.time()
 HE = Pyfhel()

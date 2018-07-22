@@ -90,42 +90,136 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=5):
         print("result of the coin toss : ",decrypted_res)
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
-def phi(t,mean,std,data_enc,n,HE,alpha):
-    #Cumulative distribution function
-    
-    #Takes in input a float t between 0 and 1, a list of encrypted data, and the mean and std of this distribution
-    p_0=PyPtxt([0], HE)
-    res=HE.encrypt(p_0)
-    cste=int((t*std) + mean) 
-    print("Encrypt "+str(cste)+" as a list of bits.")
-    a='{0:0'+str(alpha)+'b}'
-    cste_bits=[int(i) for i in list(a.format(r))] 
-    print(cste_bits)
-    cste_bits_enc=[]
-    for i in cste_bits:
-        p=PyPtxt([i], HE)
-        cste_bits_enc.append(HE.encrypt(p))
 
-    for k in range(n):
-        res+=is_smaller(cste_bits_enc,data_enc[k],HE,alpha=alpha)
-    res=res*(1/n)
+def convert_to_bits(x,p,alpha,HE):
+    def coeffs_Pbit_i(i,p,alpha):
+        #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
+        #alpha : nb of bits
+        #0=< 2^alpha-1 < p, p prime
+        #0=< i =< alpha
+        print("Computing coefficients of Psqrt")
+        def bezout(a, b):
+            #computes (u,v,p) st a*u + b*v = gdc(a,b)
+            if a == 0 and b == 0: return (0, 0, 0)
+            if b == 0: return (a/abs(a), 0, abs(a))
+            (u, v, gdc) = bezout(b, a%b)
+            return (v, (u - v*(a/b)), gdc)
+        def inv_modulo(x, p):
+            #Computes y in [p] st x*y=1 mod p
+            (u, _, gdc) = bezout(x, p)
+            if gdc == 1: return u%abs(p)
+            else: raise Exception("%s et %s are not mutually prime" % (x, p))
+        l1=range(0,p)
+        a='{0:0'+str(alpha)+'b}'
+        l2=[int(list(a.format(x))[i]) for x in l1]
+        print("l2 : ",l2)
+        #find the coeffs ri (in Zp) that help construct the polynomial
+        r=[]
+        print("Computing coefficients of Pbit_i") 
+        for i in range(p):
+            num=l2[i]
+            den=1
+            for j in range(p):
+                if i!=j:
+                    den*=i-j
+            tmp=(num*inv_modulo(den,p))%p
+            r.append(int(tmp))
+        return r
+    def compute_Pbit_i(x,p,coeffs_i,HE):
+        #0=< x =< 2^alpha-1 < p  , p prime
+        #returns [1] if the ith bit of x is 1, otherwise 0 (x coded on alpha bits)
+        res=HE.encrypt(PyPtxt([0], HE)) 
+        for i in range(0,p) :
+            tmp=HE.encrypt(PyPtxt([coeffs_i[i]], HE))
+            for j in range(p):
+                if i!=j:
+                    tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
+            res+=tmp
+        return res
+    #takes in input an encrypted number x and returns its representation as a list of alpha encrypted bits
+    #0=< x =< 2^alpha-1 < p  , p prime
+    bits_x=[]  #encrypted bit representation of x
+    for i in range(alpha):
+        print("Computing bit "+str(i))
+        coeffs_i=coeffs_Pbit_i(i=i,p=p,alpha=alpha)
+        bits_x.append(compute_Pbit_i(x=x,p=p,coeffs_i=coeffs_i,HE=HE))
+    return bits_x
+
+
+
+def Psqrt(x,p,HE):
+    def coeffs_Psqrt(p):
+        #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
+        def bezout(a, b):
+            #computes (u,v,p) st a*u + b*v = gdc(a,b)
+            if a == 0 and b == 0: return (0, 0, 0)
+            if b == 0: return (a/abs(a), 0, abs(a))
+            (u, v, gdc) = bezout(b, a%b)
+            return (v, (u - v*(a/b)), gdc)
+        def inv_modulo(x, p):
+            #Computes y in [p] st x*y=1 mod p
+            (u, _, gdc) = bezout(x, p)
+            if gdc == 1: return u%abs(p)
+            else: raise Exception("%s et %s are not mutually prime" % (x, p))
+        l1=range(0,p)
+        l2=[int(math.floor(math.sqrt(i))) for i in l1]
+        print("l2 : ",l2)
+        #find the coeffs ri (in Zp) that help construct the polynomial
+        r=[]
+        print("Computing coefficients of Psqrt") 
+        for i in range(p):
+            num=l2[i]
+            den=1
+            for j in range(p):
+                if i!=j:
+                    den*=i-j
+            tmp=(num*inv_modulo(den,p))%p
+            r.append(int(tmp))
+        return r
+    coeffs=coeffs_Psqrt(p)
+    #x encrypted as a single Ctxt
+    #0=< x =< p  , p prime
+    res=HE.encrypt(PyPtxt([0], HE))  #encrypted integers from 0 to p
+    for i in range(0,p) :
+        if coeffs[i]!=0:
+            tmp=HE.encrypt(PyPtxt([coeffs[i]], HE))     
+            for j in range(p):
+                if i!=j:
+                    #print("j ",j) 
+                    #print("x-"+str(j)+" : ",HE.decrypt(x-HE.encrypt(PyPtxt([j], HE))))
+                    tmp*=(x-HE.encrypt(PyPtxt([j], HE))) # tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
+            #print 'coeffs[i]',type(coeffs[i]),coeffs[i]
+            #print "tmp",type(tmp),HE.decrypt(tmp)
+            #print("")
+            res+=tmp
     return res
-    
-def P_bits(x,i,p,alpha):
-    return 0
-def P_sqrt(x,p):
-    return 0
+
+def phi(t,mean,std,data_enc,n,p,HE,alpha):
+    #Cumulative distribution function
+    #Takes in input a float t between 0 and 1, a list of encrypted data, and the (encrypted) mean 
+    # and std of this distribution
+    res=HE.encrypt(PyPtxt([0], HE))
+    cste=(PyPtxt([t], HE)*std) + mean
+    print("cste_bits",HE.decrypt(cste))
+    cste_bits=convert_to_bits(cste,p,alpha,HE)
+    for k in range(n):
+        res+=is_smaller(cste_bits,data_enc[k],HE,alpha=alpha)
+    res=res*(1/n)  ##pb : peut pas diviser par un float ???
+    return res
 
 def k_smallest_values(list_d_bits,p,HE,alpha=5):
     #Takes in input a list of data (each encrypted as a list of bits)
     #a prime p such that each datapoint 0=< d =< sqrt(p)
     n=len(list_d_bits)
+    #Compute average, 2nd order moment and std
     avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
     second_moment=avg=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
     A=avg**2+second_moment
-    std=P_sqrt(A)     ## attention au bruit pour les polynomes de degré elevé
-    T=avg+phi(k/n,avg,std,list_d_bits,n,HE,alpha)*std   # comment faire phi ???
-    T_bits=             #comment trouver Pbits_i ???
+    std=Psqrt(A,p,HE)
+    #Compute threshold
+    ## attention au bruit pour les polynomes de degré elevé
+    T=avg+(phi(k/n,avg,std,list_d_bits,n,p,HE,alpha)*std)
+    T_bits=convert_to_bits(T,p,alpha,HE)
     res=[]
     for i in range(n):
         res.append(is_smaller(T_bits,list_d_bits[i],HE,alpha=alpha))
@@ -136,7 +230,7 @@ def k_smallest_values(list_d_bits,p,HE,alpha=5):
 start = time.time()
 HE = Pyfhel()
 #Generate Key
-KEYGEN_PARAMS={ "p":2,        "r":32,
+KEYGEN_PARAMS={ "p":11,        "r":32,
                 "d":0,        "c":3,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
