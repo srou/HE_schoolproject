@@ -76,7 +76,7 @@ print("4-6",HE.decrypt(a-b))
 
 p=KEYGEN_PARAMS["p"]
 print("p=",p)
-n=9
+n=8
 x=HE.encrypt(PyPtxt([n], HE))
 print("x=",HE.decrypt(x))
 
