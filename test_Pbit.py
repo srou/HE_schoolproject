@@ -79,15 +79,15 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 n=7
 alpha=3
 p=KEYGEN_PARAMS["p"]
-print("Converting"+str(n)+" to bits (alpha ="+str(alpha))
+print("Converting "+str(n)+" to bits (alpha = "+str(alpha)+")")
 start = time.time()
-bits_x=convert_to_bits(n,p,alpha,HE)
+x=HE.encrypt(PyPtxt([n], HE))
+bits_x=convert_to_bits(x,p,alpha,HE)
 end=time.time()
 print ("Result : ",[HE.decrypt(res) for res in bits_x])
 
 #i=1
-#ptxt=PyPtxt([n], HE)
-#x=HE.encrypt(ptxt)
+#x=HE.encrypt(PyPtxt([n], HE))
 #print("Compute the "+str(i)+"th bit of "+str(n)+" (written on "+str(alpha)+" bits)")
 
 #start = time.time()
