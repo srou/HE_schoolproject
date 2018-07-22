@@ -39,13 +39,13 @@ def compute_Psqrt(x,p,coeffs,HE):
     #x encrypted as a single Ctxt
     #0=< x =< p  , p prime
     res=HE.encrypt(PyPtxt([0], HE))  #encrypted integers from 0 to p
-    c_1=HE.encrypt(PyPtxt([0], HE))
+    c_1=HE.encrypt(PyPtxt([1], HE))
     enc_integers=[HE.encrypt(PyPtxt([i], HE)) for i in range(p)]
     for i in range(0,p) :
         tmp=c_1.copy(c_1)
         for j in range(p):
             if i!=j:
-                tmp*=(x-enc_integers[j])
+                tmp*=(x-enc_integers[j]) # tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
         print type(coeffs[i])
         print type(tmp)
         res+=(tmp*coeffs[i])
