@@ -7,7 +7,6 @@ import numpy as np
 
 def coeffs_Psqrt(p):
     #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
-    print("Computing coefficients of Psqrt")
     def bezout(a, b):
         #computes (u,v,p) st a*u + b*v = gdc(a,b)
         if a == 0 and b == 0: return (0, 0, 0)
@@ -71,18 +70,16 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #test
-#a=HE.encrypt(PyPtxt([240], HE))
-#print(HE.decrypt(a))
-#b=HE.encrypt(PyPtxt([5*4*3*2], HE))
-#print(HE.decrypt(b))
-#c=HE.encrypt(PyPtxt([1], HE))-HE.encrypt(PyPtxt([2], HE))
-#print("1-2 : ",HE.decrypt(c))
-#d=c*b
-#print(HE.decrypt(d))
+a=HE.encrypt(PyPtxt([4], HE))
+b=HE.encrypt(PyPtxt([6], HE))
+print(HE.decrypt(a-b))
+
+
 p=KEYGEN_PARAMS["p"]
 print("p=",p)
 n=4
 x=HE.encrypt(PyPtxt([n], HE))
+print("x=",HE.decrypt(x))
 
 start = time.time()
 coeffs=coeffs_Psqrt(p)
