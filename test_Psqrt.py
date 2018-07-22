@@ -49,7 +49,7 @@ def compute_Psqrt(x,p,coeffs,HE):
         print type(coeffs[i])
         print type(tmp),HE.decrypt(tmp)
         #tmp1=tmp*coeffs[i]
-        res+=tmp1
+        res+=tmp
     return res
 
 start = time.time()
