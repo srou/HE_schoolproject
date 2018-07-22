@@ -39,7 +39,7 @@ def coeffs_Pbit_i(i,p,alpha):
     return r
 
 def compute_Pbit_i(x,p,coeffs_i,HE):
-    #0=< x =< p  , p prime
+    #0=< x =< 2^alpha-1 < p  , p prime
     #returns [1] if the ith bit of x is 1, otherwise 0 (x coded on alpha bits)
     res=HE.encrypt(PyPtxt([0], HE)) 
     for i in range(0,p) :
@@ -49,6 +49,16 @@ def compute_Pbit_i(x,p,coeffs_i,HE):
                 tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
         res+=tmp
     return res
+
+def convert_to_bits(x,p,alpha,HE):
+    #takes in input an encrypted number x and returns its representation as a list of alpha encrypted bits
+    #0=< x =< 2^alpha-1 < p  , p prime
+    bits_x=[]  #encrypted bit representation of x
+    for i in range(alpha):
+        print("Computing bit "+str(i))
+        coeffs_i=coeffs_Pbit_i(i=i,p=p,alpha=alpha)
+        bits_x.append(compute_Pbit_i(x=x,p=p,coeffs_i=coeffs_i,HE=HE))
+    return bits_x
 
 start = time.time()
 HE = Pyfhel()
@@ -67,16 +77,23 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
 n=10
-i=1
 alpha=4
-ptxt=PyPtxt([n], HE)
-x=HE.encrypt(ptxt)
-print("Compute the "+str(i)+"th bit of "+str(n)+" (written on "+str(alpha)+" bits)")
-
+p=KEYGEN_PARAMS["p"]
+print("Converting"+str(n)+" to bits (alpha ="+str(alpha))
 start = time.time()
-coeffs_i=coeffs_Pbit_i(i=i,p=17,alpha=alpha)
-result=compute_Pbit_i(x,p=17,coeffs_i=coeffs_i,HE=HE)
-decrypted_res=HE.decrypt(result)
-print("Result : ",decrypted_res)
+bits_x=convert_to_bits(n,p,alpha,HE)
 end=time.time()
-print(str(end-start)+" sec." )
+print ("Result : ",[HE.decrypt(res) for res in bits_x])
+
+#i=1
+#ptxt=PyPtxt([n], HE)
+#x=HE.encrypt(ptxt)
+#print("Compute the "+str(i)+"th bit of "+str(n)+" (written on "+str(alpha)+" bits)")
+
+#start = time.time()
+#coeffs_i=coeffs_Pbit_i(i=i,p=17,alpha=alpha)
+#result=compute_Pbit_i(x,p=17,coeffs_i=coeffs_i,HE=HE)
+#decrypted_res=HE.decrypt(result)
+#print("Result : ",decrypted_res)
+#end=time.time()
+#print(str(end-start)+" sec." )
