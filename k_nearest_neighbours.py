@@ -14,8 +14,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
 
     #Initialisation of same_prefix and same_bit
     #print("Initisalisation of is_smaller")
-    p_1=PyPtxt([1], HE)
-    c_1=HE.encrypt(p_1)
+    c_1=HE.encrypt(PyPtxt([1], HE))
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]
