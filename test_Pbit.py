@@ -49,8 +49,8 @@ def compute_Pbit_i(x,p,coeffs_i,HE):
         for j in range(p):
             if i!=j:
                 tmp*=(x-enc_integers[j])
-        print type(coeffs[i])
-        res+=(tmp*coeffs[i])
+        print type(coeffs_i[i])
+        res+=(tmp*coeffs_i[i])
     return res
 
 start = time.time()
@@ -74,7 +74,8 @@ ptxt=PyPtxt([20], HE)
 x=HE.encrypt(ptxt)
 
 start = time.time()
-result=P_bits(x,i=1,p=32,alpha=5)
+coeffs_i=coeffs_Pbit_i(i=1,p=17,alpha=4)
+result=compute_Pbit_i(x=2,p=17,coeffs_i=coeffs_i,HE=HE)
 decrypted_res=HE.decrypt(result)
 print("1st bit of 20 written in 5 bits : ",decrypted_res)
 end=time.time()
