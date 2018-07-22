@@ -20,7 +20,7 @@ def coeffs_Psqrt(p):
         if gdc == 1: return u%abs(p)
         else: raise Exception("%s et %s are not mutually prime" % (x, p))
     l1=range(0,p)
-    l2=[math.floor(math.sqrt(i)) for i in l1]
+    l2=[int(math.floor(math.sqrt(i))) for i in l1]
     print("l2 : ",l2)
     #find the coeffs ri (in Zp) that help construct the polynomial
     r=[]
@@ -48,7 +48,8 @@ def compute_Psqrt(x,p,coeffs,HE):
                 tmp*=(x-enc_integers[j]) # tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
         print type(coeffs[i])
         print type(tmp)
-        res+=(tmp*coeffs[i])
+        tmp1=tmp*coeffs[i]
+        res+=tmp1
     return res
 
 start = time.time()
@@ -72,6 +73,7 @@ x=HE.encrypt(PyPtxt([4], HE))
 
 start = time.time()
 coeffs=coeffs_Psqrt(p)
+print(coeffs)
 result=compute_Psqrt(x,p,coeffs,HE)
 
 decrypted_res=HE.decrypt(result)
