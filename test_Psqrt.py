@@ -37,23 +37,23 @@ def coeffs_Psqrt(p):
 def compute_Psqrt(x,p,coeffs,HE):
     #x encrypted as a single Ctxt
     #0=< x =< p  , p prime
-    res=HE.encrypt(PyPtxt([0], HE))  #encrypted integers from 0 to p
-    enc_integers=[HE.encrypt(PyPtxt([i], HE)) for i in range(p)]
-    print('integers list : ',[HE.decrypt(i) for i in enc_integers])
-    for i in range(0,p) :
-        if coeffs[i]!=0:
-            tmp=enc_integers[coeffs[i]]
-            for j in range(p):
-                if i!=j:
-                    print("j ",j,HE.decrypt(enc_integers[j]))
-                    print("x-"+str(j)+" : ",HE.decrypt(x-enc_integers[j]))
-                    tmp*=(x-enc_integers[j])
-            print 'coeffs[i]',type(coeffs[i]),coeffs[i]
-            print "tmp",type(tmp),HE.decrypt(tmp)
-            print("")
-            res+=tmp
-    return res
-
+    if coeffs[x]!=0:
+        res=HE.encrypt(PyPtxt([0], HE))  #encrypted integers from 0 to p
+        enc_integers=[HE.encrypt(PyPtxt([i], HE)) for i in range(p)]
+        print('integers list : ',[HE.decrypt(i) for i in enc_integers])
+        tmp=enc_integers[coeffs[i]]
+        for j in range(p):
+            if x!=j:
+                print("j ",j,HE.decrypt(enc_integers[j]))
+                print("x-"+str(j)+" : ",HE.decrypt(x-enc_integers[j]))
+                tmp*=(x-enc_integers[j])
+        print 'coeffs[x]',type(coeffs[x]),coeffs[x]
+        print "tmp",type(tmp),HE.decrypt(tmp)
+        print("")
+        res+=tmp
+        return res
+    else :
+        return HE.encrypt(PyPtxt([0], HE))
 start = time.time()
 HE = Pyfhel()
 #Generate key
