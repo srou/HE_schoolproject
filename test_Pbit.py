@@ -63,7 +63,7 @@ def convert_to_bits(x,p,alpha,HE):
 start = time.time()
 HE = Pyfhel()
 #Generate key
-KEYGEN_PARAMS={ "p":17,      "r":1,
+KEYGEN_PARAMS={ "p":11,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
@@ -76,8 +76,8 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-n=10
-alpha=4
+n=7
+alpha=3
 p=KEYGEN_PARAMS["p"]
 print("Converting"+str(n)+" to bits (alpha ="+str(alpha))
 start = time.time()
