@@ -69,7 +69,8 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
 p=KEYGEN_PARAMS["p"]
-x=HE.encrypt(PyPtxt([4], HE))
+n=4
+x=HE.encrypt(PyPtxt([n], HE))
 
 start = time.time()
 coeffs=coeffs_Psqrt(p)
@@ -77,6 +78,6 @@ print(coeffs)
 result=compute_Psqrt(x,p,coeffs,HE)
 
 decrypted_res=HE.decrypt(result)
-print("floor(sqrt("+str(x)+")) : ",decrypted_res)
+print("floor(sqrt("+str(n)+")) : ",decrypted_res)
 end=time.time()
 print(str(end-start)+" sec." )
