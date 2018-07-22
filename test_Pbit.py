@@ -42,21 +42,18 @@ def compute_Pbit_i(x,p,coeffs_i,HE):
     #0=< x =< p  , p prime
     #returns [1] if the ith bit of x is 1, otherwise 0 (x coded on alpha bits)
     res=HE.encrypt(PyPtxt([0], HE)) 
-    c_1=HE.encrypt(PyPtxt([0], HE))
-    enc_integers=[HE.encrypt(PyPtxt([i], HE)) for i in range(p)] #encrypted integers from 0 to p
     for i in range(0,p) :
-        tmp=c_1.copy(c_1)
+        tmp=HE.encrypt(PyPtxt([coeffs_i[i]], HE))
         for j in range(p):
             if i!=j:
-                tmp*=(x-enc_integers[j])
-        print type(coeffs_i[i])
-        res+=(tmp*coeffs_i[i])
+                tmp*=(x-HE.encrypt(PyPtxt([j], HE)))
+        res+=tmp
     return res
 
 start = time.time()
 HE = Pyfhel()
 #Generate key
-KEYGEN_PARAMS={ "p":113,      "r":1,
+KEYGEN_PARAMS={ "p":17,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
@@ -69,13 +66,16 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#compute the 1st bit of 20 (written on 5 bits)
-ptxt=PyPtxt([20], HE)
+n=10
+i=1
+alpha=4
+ptxt=PyPtxt([n], HE)
 x=HE.encrypt(ptxt)
+print("Compute the "+str(i)+"th bit of "+str(n)+" (written on "+str(alpha)+" bits)")
 
 start = time.time()
-coeffs_i=coeffs_Pbit_i(i=1,p=17,alpha=4)
-result=compute_Pbit_i(x=2,p=17,coeffs_i=coeffs_i,HE=HE)
+coeffs_i=coeffs_Pbit_i(i=i,p=17,alpha=alpha)
+result=compute_Pbit_i(x,p=17,coeffs_i=coeffs_i,HE=HE)
 decrypted_res=HE.decrypt(result)
 print("1st bit of 20 written in 5 bits : ",decrypted_res)
 end=time.time()
