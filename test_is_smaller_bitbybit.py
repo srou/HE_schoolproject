@@ -48,8 +48,8 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #test is_smaller with 2 integers
-x=12
-y=5
+x=7
+y=7
 alpha=4
 print("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
 
@@ -73,6 +73,9 @@ for i in y_bits:
 end=time.time()
 print(str(end-start)+" sec." )
 
+start = time.time()
 result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
+end=time.time()
+print(str(end-start)+" sec." )
