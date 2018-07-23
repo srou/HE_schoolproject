@@ -4,6 +4,17 @@ import time
 import math
 import numpy as np
 
+def encrypt_as_bits(x,alpha,HE):
+    #takes in input a plaintext integer x =< 2^alpha -1
+    #returns a list of the encrypted bits of x
+    a='{0:0'+str(alpha)+'b}'
+    x_bits=[int(i) for i in list(a.format(x))]
+    x_bits_enc=[]
+    print("Encrypting "+str(x)+" in bits ",x_bits)
+    for i in x_bits:
+        x_bits_enc.append(HE.encrypt(PyPtxt([i], HE)))
+    return x_bits_enc
+
 def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
@@ -19,7 +30,6 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
         same_bit.append(HE.encrypt(PyPtxt([1], HE))-((x_bits[i]-y_bits[i])**2))
         tmp=HE.encrypt(PyPtxt([1], HE))
-        #print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
             print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp*=same_bit[j]
@@ -47,32 +57,26 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#test is_smaller with 2 integers
+
+#Test is_smaller with 2 integers x and y
 x=7
 y=7
 alpha=4
 print("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
 
-x_bits=[int(i) for i in list('{0:04b}'.format(x))] #int 6 as a list of 8 bits
-x_bits_enc=[]
-print("Encrypting "+str(x)+" in bits ",x_bits)
+#Encrypt x bit by bit
 start = time.time()
-for i in x_bits:
-    p=PyPtxt([i], HE)
-    x_bits_enc.append(HE.encrypt(p))
+x_bits_enc=encrypt_as_bits(x,alpha,HE)
 end=time.time()
 print(str(end-start)+" sec." )
 
-y_bits=[int(i) for i in list('{0:04b}'.format(y))] #int 5 as a list of 8 bits
-y_bits_enc=[]
-print("Encrypting "+str(y)+" in bits.",y_bits)
+#Encrypt y bit by bit
 start = time.time()
-for i in y_bits:
-    p=PyPtxt([i], HE)
-    y_bits_enc.append(HE.encrypt(p))
+y_bits_enc=encrypt_as_bits(y,alpha,HE)
 end=time.time()
 print(str(end-start)+" sec." )
 
+#Compare x and y
 start = time.time()
 result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
 decrypted_res=HE.decrypt(result)
