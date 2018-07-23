@@ -47,7 +47,9 @@ def coinToss(x_bits,n,HE,deg,alpha):
 #Returns an encrypted bit b=[1] if r^(1/deg)<x (ie : with probability x/n) otherwise [0]
     #print("Random number between 0 and "+str(n))
     r=randint(0, n)
+    print("r : ",r)
     r=int(math.floor((r**(1/deg))))
+    print(r)
     if r>((2**alpha) -1) : #rq : x=< 2**alpha -1 so if r>2**alpha-1, then r>x
         c_0=HE.encrypt(PyPtxt([0], HE))
         return c_0
@@ -105,6 +107,9 @@ list_nb=[4,8,12]  #we want to compute the average of these numbers
 list_x_bits=[encrypt_as_bits(x,alpha,HE) for x in list_nb]
 
 #Compute the probabilistic average of the list of int
+print("")
+print("Compute Average of ",list_nb)
+print("")
 start = time.time()
 result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha)
 decrypted_res=HE.decrypt(result)
@@ -113,6 +118,9 @@ end=time.time()
 print(str(end-start)+" sec." )
 
 #Compute the 2nd order moment of the list of int
+print("")
+print("Compute 2nd moment order of ",list_nb)
+print("")
 start = time.time()
 result=probabilisticAverage(list_x_bits,len(list_nb),HE,2,alpha)
 decrypted_res=HE.decrypt(result)
