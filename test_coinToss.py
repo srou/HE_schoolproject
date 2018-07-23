@@ -5,6 +5,17 @@ import math
 import numpy as np
 from random import randint
 
+def encrypt_as_bits(x,alpha,HE):
+    #takes in input a plaintext integer x =< 2^alpha -1
+    #returns a list of the encrypted bits of x
+    a='{0:0'+str(alpha)+'b}'
+    x_bits=[int(i) for i in list(a.format(x))]
+    x_bits_enc=[]
+    print("Encrypting "+str(x)+" in bits ",x_bits)
+    for i in x_bits:
+        x_bits_enc.append(HE.encrypt(PyPtxt([i], HE)))
+    return x_bits_enc
+
 def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
@@ -66,17 +77,13 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 x=5
 alpha=4
 n=(2^alpha)-1
-print("Test coin_toss with integer "+str(x))
-#encrypt 4 as a list of bits
-x_bits=[int(i) for i in list('{0:04b}'.format(4))]
-x_bits_enc=[]
-for i in x_bits:
-    p=PyPtxt([i], HE)
-    x_bits_enc.append(HE.encrypt(p))
+#encrypt x as a list of bits
+x_bits_enc=encrypt_as_bits(x,alpha,HE)
 
 #Coin toss with equal proba (random number r between 0 and 9 either > 4 or =<4)
-start = time.time()
-result=coinToss(x_bits_enc,9,HE)
+print("Test coin_toss with integer "+str(x))
+tart = time.time()
+result=coinToss(x_bits_enc,n,HE)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
