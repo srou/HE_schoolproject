@@ -37,7 +37,7 @@ def Psqrt(x,p,HE):
     coeffs=coeffs_Psqrt(p)
     #x encrypted as a single Ctxt
     #0=< x =< p  , p prime
-    res=HE.encrypt(PyPtxt([0], HE))  #encrypted integers from 0 to p
+    res=HE.encrypt(PyPtxt([0], HE))
     for i in range(0,p) :
         if coeffs[i]!=0:
             tmp=HE.encrypt(PyPtxt([coeffs[i]], HE))     
