@@ -41,20 +41,14 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
             #print("res : ",HE.decrypt(res))
     return res
 
-def coinToss(x_bits,n,HE,alpha=4):
+def coinToss(x_bits,n,HE,alpha):
 #Takes in input an integer n, and an encrypted number x_bits as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r<x (ie : with probability x/n) otherwise [0]
     print("Random number between 0 and "+str(n))
     r=randint(0, n)
     #encrypt r as a list of bits
-    print("Encrypt "+str(r)+" as a list of "+str(alpha)+" bits.")
-    a='{0:0'+str(alpha)+'b}'
-    r_bits=[int(i) for i in list(a.format(r))] 
-    r_bits_enc=[]
-    for i in r_bits:
-        p=PyPtxt([i], HE)
-        r_bits_enc.append(HE.encrypt(p))
+    r_bits_enc=encrypt_as_bits(r,alpha,HE)
     #compare r_bits and x_bits
     return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
 
@@ -83,7 +77,7 @@ x_bits_enc=encrypt_as_bits(x,alpha,HE)
 #Coin toss with equal proba (random number r between 0 and 9 either > 4 or =<4)
 print("Test coin_toss with integer "+str(x))
 tart = time.time()
-result=coinToss(x_bits_enc,n,HE)
+result=coinToss(x_bits_enc,n,HE,alpha)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
