@@ -76,7 +76,7 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 
 x=5
 alpha=4
-n=(2^alpha)-1
+n=(2**alpha)-1
 #encrypt x as a list of bits
 x_bits_enc=encrypt_as_bits(x,alpha,HE)
 
