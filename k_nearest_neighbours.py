@@ -22,9 +22,9 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
     #print("y_bits[0] : ",HE.decrypt(y_bits[0]))
     #print("res : ",HE.decrypt(res))
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
-        tmp1=c_1.copy(c_1)
+        tmp1=HE.encrypt(PyPtxt([1], HE))
         same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
-        tmp=c_1.copy(c_1)
+        tmp=HE.encrypt(PyPtxt([1], HE))
         #print("c_1 : ",HE.decrypt(c_1))
         #print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
@@ -33,7 +33,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
         #print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         if i>0:  #since the 1st term of the sum is already computed before the loop
-            res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]
+            res+=(HE.encrypt(PyPtxt([1], HE))-y_bits[i])*x_bits[i]*same_prefix[i]
             #print("res : ",HE.decrypt(res))
     return res
 
@@ -169,7 +169,9 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
         for j in range(alpha):
             tmp.append(XI[i]*(Y_train_bits_enc[i])[j])
         knn_bits.append(tmp)
-    knn=   #convertir les bits en nbr
+    knn=knn_bits[-1]    #convert knn_bits into an encrypted number
+    for i in range(1,alpha):
+        knn=knn_bits[-1-i]*(2**i)  #ou *HE.encrypt(PyPtxt([2**i], HE)) 
     result_bits=[]
     for j in range(alpha):
     

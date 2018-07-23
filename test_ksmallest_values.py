@@ -18,8 +18,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
 
     #Initialisation of same_prefix and same_bit
     #print("Initisalisation of is_smaller")
-    p_1=PyPtxt([1], HE)
-    c_1=HE.encrypt(p_1)
+    c_1=HE.encrypt(PyPtxt([1], HE))
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]
@@ -27,9 +26,9 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
     #print("y_bits[0] : ",HE.decrypt(y_bits[0]))
     #print("res : ",HE.decrypt(res))
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
-        tmp1=c_1.copy(c_1)
+        tmp1=HE.encrypt(PyPtxt([1], HE))
         same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
-        tmp=c_1.copy(c_1)
+        tmp=HE.encrypt(PyPtxt([1], HE))
         #print("c_1 : ",HE.decrypt(c_1))
         #print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
@@ -38,7 +37,7 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
         #print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         if i>0:  #since the 1st term of the sum is already computed before the loop
-            res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]
+            res+=(HE.encrypt(PyPtxt([1], HE))-y_bits[i])*x_bits[i]*same_prefix[i]
             #print("res : ",HE.decrypt(res))
     return res
 
@@ -194,48 +193,41 @@ def Psqrt(x,p,HE):
             res+=tmp
     return res
 
-def phi(t,mean,std,data_enc,n,p,HE,alpha):
-    #Cumulative distribution function
-    #Takes in input a float t between 0 and 1, a list of encrypted data, and the (encrypted) mean 
-    # and std of this distribution
-    res=HE.encrypt(PyPtxt([0], HE))
-    cste=(PyPtxt([t], HE)*std) + mean
-    print("cste_bits",HE.decrypt(cste))
-    cste_bits=convert_to_bits(cste,p,alpha,HE)
-    for k in range(n):
-        res+=is_smaller(cste_bits,data_enc[k],HE,alpha=alpha)
-    res=res*(1/n)  ##pb : peut pas diviser par un float ???
-    return res
+def phi(x):
+    return (1.0 + math.erf(x / math.sqrt(2.0))) / 2.0
 
-def k_smallest_values(list_d_bits,p,HE,alpha=5):
+def k_smallest_values(list_d_bits,p,k,HE,alpha):
     #Takes in input a list of data (each encrypted as a list of bits)
     #a prime p such that each datapoint 0=< d =< sqrt(p)
     n=len(list_d_bits)
     #Compute average, 2nd order moment and std
+    print("Compute average")
     avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
+    print("Compute second_moment")
     second_moment=avg=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
     A=avg**2+second_moment
+    print("Compute std")
     std=Psqrt(A,p,HE)
     #Compute threshold
     ## attention au bruit pour les polynomes de degré elevé
-    T=avg+(phi(k/n,avg,std,list_d_bits,n,p,HE,alpha)*std)
+    print("Compute threshold and convert to bits")
+    T=avg+int(round(1/phi(float(k/n)/100),0))*std
     T_bits=convert_to_bits(T,p,alpha,HE)
     res=[]
     for i in range(n):
         res.append(is_smaller(T_bits,list_d_bits[i],HE,alpha=alpha))
+        print("dist("+str(i)+") : ",HE.decrypt(res[i]))
     return res
-    
-
 
 start = time.time()
 HE = Pyfhel()
 #Generate Key
-KEYGEN_PARAMS={ "p":11,        "r":32,
-                "d":0,        "c":3,
+KEYGEN_PARAMS={ "p":17,      "r":1,
+                "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
                 "R":3,        "s":0,
-                "gens":[],    "ords":[]}
+                "gens":[],    "ords":[]}                
 
 print("  Running KeyGen with params:")
 print(KEYGEN_PARAMS)
@@ -243,22 +235,32 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#Create a list of int, each one encrypted bit by bit
-list_x_bits=[]
-list_nb=[4,8,12]  #we want to compute the average of these numbers
-for k in list_nb:
-    print ("Encrypting "+str(k)+" as a list of bits.")
-    x_bits=[int(i) for i in list('{0:04b}'.format(k))]
-    x_bits_enc=[]
-    for i in x_bits:
-        p=PyPtxt([i], HE)
-        x_bits_enc.append(HE.encrypt(p))
-    list_x_bits.append(x_bits_enc)
+#params
+p=KEYGEN_PARAMS["p"]
+alpha=4
+k=2
+a='{0:0'+str(alpha)+'b}'
 
-#Compute the probabilistic average of the list of int
+#Create a list of distances and encrypt them bit by bit
+dist=[]
+for i in range(10):
+    dist.append(randint(0,100))
+print ("distances : ",dist)
+
+dist_bits=[]
+for k in dist:
+    print ("Encrypting "+str(k)+" as a list of bits.")
+    d_bits=[int(i) for i in list(a.format(k))]
+    d_bits_enc=[]
+    for i in d_bits:
+        p=PyPtxt([i], HE)
+        d_bits_enc.append(HE.encrypt(p))
+    dist_bits.append(d_bits_enc)
+
+#Return the position of the k smallest values of the list
 start = time.time()
-result=probabilisticAverage(list_x_bits,3,HE,1,L=8)
-decrypted_res=HE.decrypt(result)
+result=k_smallest_values(dist_bits,p,k,HE,alpha)
+decrypted_res=[HE.decrypt(res) for res in result]
 print("decrypted result : ",decrypted_res)
 end=time.time()
 print(str(end-start)+" sec." )

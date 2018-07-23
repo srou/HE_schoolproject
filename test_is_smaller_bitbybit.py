@@ -4,7 +4,7 @@ import time
 import math
 import numpy as np
 
-def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
+def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
@@ -12,24 +12,21 @@ def is_smaller(x_bits,y_bits,HE,alpha=4,n=1000):
 
     #Initialisation of same_prefix and same_bit
     print("Initisalisation")
-    p_1=PyPtxt([1], HE)
-    c_1=HE.encrypt(p_1)
+    c_1=HE.encrypt(PyPtxt([1], HE))
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
-        tmp1=c_1.copy(c_1)
-        same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
-        tmp=c_1.copy(c_1)
-        #print("c_1 : ",HE.decrypt(c_1))
-        print("tmp : ",HE.decrypt(tmp))
+        same_bit.append(HE.encrypt(PyPtxt([1], HE))-((x_bits[i]-y_bits[i])**2))
+        tmp=HE.encrypt(PyPtxt([1], HE))
+        #print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
             print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp*=same_bit[j]
         print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         if i>0:  #since the 1st term of the sum is already computed before the loop
-            res+=(c_1-y_bits[i])*x_bits[i]*same_prefix[i]
+            res+=(HE.encrypt(PyPtxt([1], HE))-y_bits[i])*x_bits[i]*same_prefix[i]
             print("res : ",HE.decrypt(res))
     return res
 
@@ -50,8 +47,12 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#test is_smaller with integers 8 and 0
+#test is_smaller with 2 integers
 x=12
+y=5
+alpha=4
+print("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
+
 x_bits=[int(i) for i in list('{0:04b}'.format(x))] #int 6 as a list of 8 bits
 x_bits_enc=[]
 print("Encrypting "+str(x)+" in bits ",x_bits)
@@ -62,7 +63,6 @@ for i in x_bits:
 end=time.time()
 print(str(end-start)+" sec." )
 
-y=5
 y_bits=[int(i) for i in list('{0:04b}'.format(y))] #int 5 as a list of 8 bits
 y_bits_enc=[]
 print("Encrypting "+str(y)+" in bits.",y_bits)
@@ -73,6 +73,6 @@ for i in y_bits:
 end=time.time()
 print(str(end-start)+" sec." )
 
-result=is_smaller(x_bits_enc,y_bits_enc,HE)
+result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
