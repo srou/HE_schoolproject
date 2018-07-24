@@ -71,7 +71,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
     #Initialize
     L=2**alpha
     print("L=",L)
-    c=int(math.ceil((L**deg)/n))
+    c=int(math.ceil((L**deg)/float(n)))
     print("c=",c)
     a=[]
     res=HE.encrypt(PyPtxt([0], HE))
