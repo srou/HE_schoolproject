@@ -2,7 +2,11 @@ import Pyfhel
 from Pyfhel import PyCtxt,PyPtxt,Pyfhel
 import pickle
 import time
+from joblib import Parallel, delayed
+import multiprocessing
 
+num_cores = multiprocessing.cpu_count()
+print num_cores
 
 HE = Pyfhel()
 KEYGEN_PARAMS={ "p":113,      "r":1,
@@ -18,6 +22,7 @@ KEYGEN_PARAMS={ "p":113,      "r":1,
 #                "L":40,       "m":-1,
 #                "R":3,        "s":0,
 #                "gens":[],    "ords":[]}
+
 
 print("Pyfhel DEMO")
 print("  Running KeyGen with params:")

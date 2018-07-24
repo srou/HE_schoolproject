@@ -73,18 +73,16 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
     print("L=",L)
     c=int(math.ceil((L**deg)/float(n)))
     print("c=",c)
-    a=[]
     res=HE.encrypt(PyPtxt([0], HE))
     print("c*n="+str(c*n))
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
-        tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
+        tmp=int(math.floor(i/float(c)))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
         print("")
         print("tmp="+str(tmp))
         print("")
-        a.append(coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha))
-        decrypted_res=HE.decrypt(a[i])
-        print("result of the coin toss : ",decrypted_res)
-        res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
+        tmp=coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha)
+        print("result of the coin toss : ",HE.decrypt(tmp))
+        res+=tmp  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
 
 def bezout(a, b):

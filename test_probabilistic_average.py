@@ -70,19 +70,19 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
     
     #Initialize
     L=2**alpha
-    c=int(math.ceil((L**deg)/n))
-    a=[]
+    print("L=",L)
+    c=int(math.ceil((L**deg)/float(n)))
+    print("c=",c)
     res=HE.encrypt(PyPtxt([0], HE))
     print("c*n="+str(c*n))
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
-        tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
+        tmp=int(math.floor(i/float(c)))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
         print("")
         print("tmp="+str(tmp))
         print("")
-        a.append(coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha))
-        decrypted_res=HE.decrypt(a[i])
-        print("result of the coin toss : ",decrypted_res)
-        res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
+        tmp=coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha)
+        print("result of the coin toss : ",HE.decrypt(tmp))
+        res+=tmp  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
 
 start = time.time()
@@ -107,7 +107,15 @@ list_nb=[4,8,12]  #we want to compute the average of these numbers
 list_x_bits=[encrypt_as_bits(x,alpha,HE) for x in list_nb]
 
 #Compute the probabilistic average of the list of int
-
+print("")
+print("Compute Average of ",list_nb)
+print("")
+start = time.time()
+result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha)
+decrypted_res=HE.decrypt(result)
+print("decrypted result : ",decrypted_res)
+end=time.time()
+print(str(end-start)+" sec." )
 
 #Compute the 2nd order moment of the list of int
 print("")
