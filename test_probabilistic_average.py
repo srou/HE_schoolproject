@@ -48,7 +48,7 @@ def coinToss(x_bits,n,HE,deg,alpha):
     #print("Random number between 0 and "+str(n))
     r=randint(0, n)
     print("r : ",r)
-    r=int(math.floor((r**(1/deg))))
+    r=int(math.floor((r**(1/float(deg)))))
     print(r)
     if r>((2**alpha) -1) : #rq : x=< 2**alpha -1 so if r>2**alpha-1, then r>x
         c_0=HE.encrypt(PyPtxt([0], HE))

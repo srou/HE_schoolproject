@@ -4,21 +4,20 @@ import time
 import math
 import numpy as np
 
-
+def bezout(a, b):
+    #computes (u,v,p) st a*u + b*v = gdc(a,b)
+    if a == 0 and b == 0: return (0, 0, 0)
+    if b == 0: return (a/abs(a), 0, abs(a))
+    (u, v, gdc) = bezout(b, a%b)
+    return (v, (u - v*(a/b)), gdc)
+def inv_modulo(x, p):
+    #Computes y in [p] st x*y=1 mod p
+    (u, _, gdc) = bezout(x, p)
+    if gdc == 1: return u%abs(p)
+    else: raise Exception("%s et %s are not mutually prime" % (x, p))
 def Psqrt(x,p,HE):
     def coeffs_Psqrt(p):
         #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
-        def bezout(a, b):
-            #computes (u,v,p) st a*u + b*v = gdc(a,b)
-            if a == 0 and b == 0: return (0, 0, 0)
-            if b == 0: return (a/abs(a), 0, abs(a))
-            (u, v, gdc) = bezout(b, a%b)
-            return (v, (u - v*(a/b)), gdc)
-        def inv_modulo(x, p):
-            #Computes y in [p] st x*y=1 mod p
-            (u, _, gdc) = bezout(x, p)
-            if gdc == 1: return u%abs(p)
-            else: raise Exception("%s et %s are not mutually prime" % (x, p))
         l1=range(0,p)
         l2=[int(math.floor(math.sqrt(i))) for i in l1]
         print("l2 : ",l2)
