@@ -107,15 +107,7 @@ list_nb=[4,8,12]  #we want to compute the average of these numbers
 list_x_bits=[encrypt_as_bits(x,alpha,HE) for x in list_nb]
 
 #Compute the probabilistic average of the list of int
-print("")
-print("Compute Average of ",list_nb)
-print("")
-start = time.time()
-result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha)
-decrypted_res=HE.decrypt(result)
-print("decrypted result : ",decrypted_res)
-end=time.time()
-print(str(end-start)+" sec." )
+
 
 #Compute the 2nd order moment of the list of int
 print("")
