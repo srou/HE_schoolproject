@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 import multiprocessing
 
 num_cores = multiprocessing.cpu_count()
-print num_cores
+print ("num of cores : ",num_cores)
 
 HE = Pyfhel()
 KEYGEN_PARAMS={ "p":113,      "r":1,
