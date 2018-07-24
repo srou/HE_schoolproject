@@ -4,10 +4,6 @@ import time
 import math
 import numpy as np
 from random import randint
-
-## peut etre détailler ici abréviations pour simplifier les commentaires
-#l_bits= integer(??) encrypted as a list of encrypted bits. Ex : 5 on 4 bits -> ([0],[1],[0],[1])
-#input data are a list of l_bits (pas exactement car pas forcement integer)
      
 def encrypt_as_bits(x,alpha,HE):
     #takes in input a plaintext integer x =< 2^alpha -1
