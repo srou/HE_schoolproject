@@ -9,28 +9,32 @@ from random import randint
 #l_bits= integer(??) encrypted as a list of encrypted bits. Ex : 5 on 4 bits -> ([0],[1],[0],[1])
 #input data are a list of l_bits (pas exactement car pas forcement integer)
      
-
-def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
+def encrypt_as_bits(x,alpha,HE):
+    #takes in input a plaintext integer x =< 2^alpha -1
+    #returns a list of the encrypted bits of x
+    a='{0:0'+str(alpha)+'b}'
+    x_bits=[int(i) for i in list(a.format(x))]
+    x_bits_enc=[]
+    print("Encrypting "+str(x)+" in bits ",x_bits)
+    for i in x_bits:
+        x_bits_enc.append(HE.encrypt(PyPtxt([i], HE)))
+    return x_bits_enc
+    
+def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
     #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
     #coded on alpha bits
     #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Initialisation of same_prefix and same_bit
-    #print("Initisalisation of is_smaller")
+    #print("Initisalisation")
     c_1=HE.encrypt(PyPtxt([1], HE))
     same_prefix=[c_1]
     same_bit=[]
     res=(c_1-y_bits[0])*x_bits[0]
-    #print("x_bits[0] : ",HE.decrypt(x_bits[0]))
-    #print("y_bits[0] : ",HE.decrypt(y_bits[0]))
-    #print("res : ",HE.decrypt(res))
     for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
-        tmp1=HE.encrypt(PyPtxt([1], HE))
-        same_bit.append(tmp1-((x_bits[i]-y_bits[i])**2))
+        same_bit.append(HE.encrypt(PyPtxt([1], HE))-((x_bits[i]-y_bits[i])**2))
         tmp=HE.encrypt(PyPtxt([1], HE))
-        #print("c_1 : ",HE.decrypt(c_1))
-        #print("tmp : ",HE.decrypt(tmp))
         for j in range(i+1):
             #print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp*=same_bit[j]
@@ -41,43 +45,38 @@ def is_smaller(x_bits,y_bits,HE,alpha=5,n=1000):
             #print("res : ",HE.decrypt(res))
     return res
 
-def coinToss(x_bits,n,HE,deg=1,alpha=5):
+def coinToss(x_bits,n,HE,deg,alpha):
 #Takes in input an integer n, and an encrypted number 0=< x_bits <n as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r^(1/deg)<x (ie : with probability x/n) otherwise [0]
-    print("Random number between 0 and "+str(n))
+    #print("Random number between 0 and "+str(n))
     r=randint(0, n)
-    r=int(math.floor((r**(1/deg))))
-    #exception : r cannot be larger than (2^alpha)-1, otherwise it cannot be encoded on the same number of bits as x_bits
-    if r>(2**alpha)-1:
-        r=(2**alpha)-1
-    #encrypt r as a list of bits
-    print("Encrypt "+str(r)+" as a list of bits.")
-    a='{0:0'+str(alpha)+'b}'
-    r_bits=[int(i) for i in list(a.format(r))] 
-    print(r_bits)
-    r_bits_enc=[]
-    for i in r_bits:
-        p=PyPtxt([i], HE)
-        r_bits_enc.append(HE.encrypt(p))
-    #compare r_bits and x_bits
-    return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
+    print("r : ",r)
+    r=int(math.floor((r**(1/float(deg)))))
+    print(r)
+    if r>((2**alpha) -1) : #rq : x=< 2**alpha -1 so if r>2**alpha-1, then r>x
+        c_0=HE.encrypt(PyPtxt([0], HE))
+        return c_0
+    else :
+        #encrypt r as a list of bits
+        r_bits_enc=encrypt_as_bits(r,alpha,HE)
+        #compare r_bits and x_bits
+        return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
 
-def probabilisticAverage(list_x_bits,n,HE,deg,alpha=5):
+def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
     #n=size of the vector input
-    #L=number of bits on which each elt of the vector is encoded
-    #deg is the degree of the moment to compute
+    #alpha=number of bits on which each elt of the vector is encoded
+    #deg is the degree of the moment to compute (deg=1 : average, deg=2 : second order moment)
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Returns an approximation of the statistical function (ie : average, 2nd order moment..) computed on the integer list
     
     #Initialize
     L=2**alpha
-    c=int(math.floor((L**deg)/n))  #peut etre pas +1
-    a=[]  
-    p_0=PyPtxt([0], HE)
-    res=HE.encrypt(p_0)
+    c=int(math.ceil((L**deg)/n))
+    a=[]
+    res=HE.encrypt(PyPtxt([0], HE))
     print("c*n="+str(c*n))
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
@@ -90,6 +89,18 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha=5):
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
 
+def bezout(a, b):
+    #computes (u,v,p) st a*u + b*v = gdc(a,b)
+    if a == 0 and b == 0: return (0, 0, 0)
+    if b == 0: return (a/abs(a), 0, abs(a))
+    (u, v, gdc) = bezout(b, a%b)
+    return (v, (u - v*(a/b)), gdc)
+def inv_modulo(x, p):
+    #Computes y in [p] st x*y=1 mod p
+    (u, _, gdc) = bezout(x, p)
+    if gdc == 1: return u%abs(p)
+    else: raise Exception("%s et %s are not mutually prime" % (x, p))
+        
 def convert_to_bits(x,p,alpha,HE):
     def coeffs_Pbit_i(i,p,alpha):
         #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
@@ -97,17 +108,6 @@ def convert_to_bits(x,p,alpha,HE):
         #0=< 2^alpha-1 < p, p prime
         #0=< i =< alpha
         print("Computing coefficients of Psqrt")
-        def bezout(a, b):
-            #computes (u,v,p) st a*u + b*v = gdc(a,b)
-            if a == 0 and b == 0: return (0, 0, 0)
-            if b == 0: return (a/abs(a), 0, abs(a))
-            (u, v, gdc) = bezout(b, a%b)
-            return (v, (u - v*(a/b)), gdc)
-        def inv_modulo(x, p):
-            #Computes y in [p] st x*y=1 mod p
-            (u, _, gdc) = bezout(x, p)
-            if gdc == 1: return u%abs(p)
-            else: raise Exception("%s et %s are not mutually prime" % (x, p))
         l1=range(0,p)
         a='{0:0'+str(alpha)+'b}'
         l2=[int(list(a.format(x))[i]) for x in l1]
@@ -144,22 +144,9 @@ def convert_to_bits(x,p,alpha,HE):
         bits_x.append(compute_Pbit_i(x=x,p=p,coeffs_i=coeffs_i,HE=HE))
     return bits_x
 
-
-
 def Psqrt(x,p,HE):
     def coeffs_Psqrt(p):
         #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
-        def bezout(a, b):
-            #computes (u,v,p) st a*u + b*v = gdc(a,b)
-            if a == 0 and b == 0: return (0, 0, 0)
-            if b == 0: return (a/abs(a), 0, abs(a))
-            (u, v, gdc) = bezout(b, a%b)
-            return (v, (u - v*(a/b)), gdc)
-        def inv_modulo(x, p):
-            #Computes y in [p] st x*y=1 mod p
-            (u, _, gdc) = bezout(x, p)
-            if gdc == 1: return u%abs(p)
-            else: raise Exception("%s et %s are not mutually prime" % (x, p))
         l1=range(0,p)
         l2=[int(math.floor(math.sqrt(i))) for i in l1]
         print("l2 : ",l2)
@@ -203,16 +190,24 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha):
     #Compute average, 2nd order moment and std
     print("Compute average")
     avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
+    print("average : ",HE.decrypt(avg))
     print("Compute second_moment")
     second_moment=avg=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
-    A=avg**2+second_moment
+    print("second_moment : ",HE.decrypt(second_moment))
+    A=(avg**2)+second_moment
+    print("A : ",HE.decrypt(A))
     print("Compute std")
     std=Psqrt(A,p,HE)
+    print("std : ",HE.decrypt(std))
     #Compute threshold
     ## attention au bruit pour les polynomes de degré elevé
     print("Compute threshold and convert to bits")
     T=avg+int(round(1/phi(float(k/n)/100),0))*std
+    print("threshold : ",HE.decrypt(T))
     T_bits=convert_to_bits(T,p,alpha,HE)
+    print("threshold bit by bit : ")
+    for bit in T_bits :
+        print(HE.decrypt(bit))
     res=[]
     for i in range(n):
         res.append(is_smaller(T_bits,list_d_bits[i],HE,alpha=alpha))
@@ -225,7 +220,7 @@ HE = Pyfhel()
 KEYGEN_PARAMS={ "p":17,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
-                "L":40,       "m":-1,
+                "L":50,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}                
 
@@ -239,7 +234,6 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 p=KEYGEN_PARAMS["p"]
 alpha=4
 k=2
-a='{0:0'+str(alpha)+'b}'
 
 #Create a list of distances and encrypt them bit by bit
 dist=[]
@@ -247,15 +241,7 @@ for i in range(10):
     dist.append(randint(0,100))
 print ("distances : ",dist)
 
-dist_bits=[]
-for k in dist:
-    print ("Encrypting "+str(k)+" as a list of bits.")
-    d_bits=[int(i) for i in list(a.format(k))]
-    d_bits_enc=[]
-    for i in d_bits:
-        p=PyPtxt([i], HE)
-        d_bits_enc.append(HE.encrypt(p))
-    dist_bits.append(d_bits_enc)
+dist_bits=[encrypt_as_bits(d,alpha,HE) for d in dist]
 
 #Return the position of the k smallest values of the list
 start = time.time()
