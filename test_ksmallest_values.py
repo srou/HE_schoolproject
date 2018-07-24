@@ -196,7 +196,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha):
     std=Psqrt(A,p,HE)
     print("std : ",HE.decrypt(std))
     #Compute threshold
-    #print("Compute threshold and convert to bits")
+    print("Compute threshold and convert to bits")
     T=avg+int(round(1/phi(float(k/n)/100),0))*std
     print("threshold : ",HE.decrypt(T))
     T_bits=convert_to_bits(T,p,alpha,HE)
@@ -233,7 +233,7 @@ k=2
 #Create a list of distances and encrypt them bit by bit
 dist=[]
 for i in range(10):
-    dist.append(randint(0,100))
+    dist.append(randint(0,(2**alpha)-1))
 print ("distances : ",dist)
 
 dist_bits=[encrypt_as_bits(d,alpha,HE) for d in dist]
