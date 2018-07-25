@@ -33,13 +33,13 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
         same_bit.append(HE.encrypt(PyPtxt([1], HE))-((x_bits[i]-y_bits[i])**2))
         tmp=HE.encrypt(PyPtxt([1], HE))
         for j in range(i+1):
-            print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
+            #print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
             tmp*=same_bit[j]
-        print("tmp : ",HE.decrypt(tmp))
+        #print("tmp : ",HE.decrypt(tmp))
         same_prefix.append(tmp)
         if i>0:  #since the 1st term of the sum is already computed before the loop
             res+=(HE.encrypt(PyPtxt([1], HE))-y_bits[i])*x_bits[i]*same_prefix[i]
-            print("res : ",HE.decrypt(res))
+            #print("res : ",HE.decrypt(res))
     return res
 class Computable:
     def __init__(self,HE_scheme):
