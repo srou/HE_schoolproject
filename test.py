@@ -4,6 +4,7 @@ import pickle
 import time
 from joblib import Parallel, delayed
 import multiprocessing
+import np
 
 num_cores = multiprocessing.cpu_count()
 print ("num of cores : ",num_cores)
@@ -31,6 +32,13 @@ start = time.time()
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
+
+l1=[]
+l2=[]
+for i in range(10):
+    l1.append(HE.encrypt(PyPtxt([i], HE)))
+for j in range(10,20):
+    l2.append(HE.encrypt(PyPtxt([i], HE)))
 
 #print("  Saving key")
 #f = open('key.pckl', 'wb')

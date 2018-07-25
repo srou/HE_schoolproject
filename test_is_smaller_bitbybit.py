@@ -3,6 +3,8 @@ from Pyfhel import PyCtxt,PyPtxt,Pyfhel
 import time
 import math
 import numpy as np
+from joblib import Parallel, delayed
+import multiprocessing
 
 def encrypt_as_bits(x,alpha,HE):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -40,7 +42,24 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
             print("res : ",HE.decrypt(res))
     return res
 
-
+def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
+    def product(l, i):
+        res = 1
+        for j in range(i+1):
+            res *= l[j]
+        return res
+    def somme(l, i):
+        res = 0
+        for j in range(i):
+            res += l[j]
+        return res
+    num_cores = multiprocessing.cpu_count() #number of cores
+    same_prefix=[HE.encrypt(PyPtxt([1], HE))]
+    same_bit = Parallel(n_jobs=num_cores-1)(delayed(lambda j: HE.encrypt(PyPtxt([1], HE)) -((x_bits[j]-y_bits[j])**2))(i) for i in range(alpha))
+    same_prefix += Parallel(n_jobs=num_cores-1)(delayed(product)(same_bit, i) for i in range(alpha))
+    to_sum=Parallel(n_jobs=num_cores-1)(delayed(lambda j: (HE.encrypt(PyPtxt([1], HE)) - y_bits[j]) * x_bits[j] * same_prefix[j])(i) for i in range(alpha))
+    res = somme(to_sum, len(to_sum))
+    return res
 start = time.time()
 HE = Pyfhel()
 #Generate Key
@@ -76,9 +95,17 @@ y_bits_enc=encrypt_as_bits(y,alpha,HE)
 end=time.time()
 print(str(end-start)+" sec." )
 
-#Compare x and y
+#Compare x and y without parallelization
 start = time.time()
 result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
+decrypted_res=HE.decrypt(result)
+print("decrypted result : ",decrypted_res)
+end=time.time()
+print(str(end-start)+" sec." )
+
+#Compare x and y with parallelization
+start = time.time()
+result=is_smaller_fast(x_bits_enc,y_bits_enc,HE,alpha)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
