@@ -111,7 +111,10 @@ def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha):
     res=HE.encrypt(PyPtxt([0], HE))
     print("c*n="+str(c*n))
     list_elts=np.asarray([list_x_bits[int(math.floor(i/float(c)))] for i in range(c*n)])
-    to_sum=list_elts.apply(lambda x : coinToss(x,c*n,HE,deg=deg,alpha=alpha))
+    def f(x):
+        return coinToss(x,c*n,HE,deg=deg,alpha=alpha)
+    vf=np.vectorize(f)
+    to_sum=vf(list_elts)
     res = np.sum(to_sum)
     return res
 
