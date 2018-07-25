@@ -56,9 +56,8 @@ def coinToss(x_bits,n,HE,deg,alpha):
 #Returns an encrypted bit b=[1] if r^(1/deg)<x (ie : with probability x/n) otherwise [0]
     #print("Random number between 0 and "+str(n))
     r=randint(0, n)
-    print("r : ",r)
+    #print("r : ",r)
     r=int(math.floor((r**(1/float(deg)))))
-    print(r)
     if r>((2**alpha) -1) : #rq : x=< 2**alpha -1 so if r>2**alpha-1, then r>x
         c_0=HE.encrypt(PyPtxt([0], HE))
         return c_0
@@ -111,10 +110,13 @@ def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha):
     res=HE.encrypt(PyPtxt([0], HE))
     print("c*n="+str(c*n))
     list_elts=np.asarray([list_x_bits[int(math.floor(i/float(c)))] for i in range(c*n)])
+    print("len(list_elts)",len(list_elts))
     def f(x):
         return coinToss(x,c*n,HE,deg=deg,alpha=alpha)
     vf=np.vectorize(f)
+    print("to_sum")
     to_sum=vf(list_elts)
+    print ("res")
     res = np.sum(to_sum)
     return res
 
