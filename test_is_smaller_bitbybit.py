@@ -117,15 +117,15 @@ print(str(end-start)+" sec." )
 #Compare x and y with parallelization
 start = time.time()
 result=is_smaller_fast2(x_bits_enc,y_bits_enc,HE,alpha)
+end=time.time()
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
-end=time.time()
 print(str(end-start)+" sec." )
 
 #Compare x and y without parallelization
 start = time.time()
 result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
+end=time.time()
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
-end=time.time()
 print(str(end-start)+" sec." )

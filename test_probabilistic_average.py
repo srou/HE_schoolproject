@@ -41,6 +41,15 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
             #print("res : ",HE.decrypt(res))
     return res
 
+def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
+    c_1=HE.encrypt(PyPtxt([1], HE))
+    same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))**2
+    same_bit=np.subtract(np.asarray([c_1.copy(c_1) for i in range(alpha)]),same_bit)
+    same_prefix=np.asarray([c_1.copy(c_1)]+[np.prod(same_bit[0:i+1]) for i in range(alpha-1)])
+    to_sum=np.multiply(same_prefix,np.multiply(np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),np.asarray(y_bits)),np.asarray(x_bits)))
+    res = np.sum(to_sum)
+    return res
+
 def coinToss(x_bits,n,HE,deg,alpha):
 #Takes in input an integer n, and an encrypted number 0=< x_bits <n as a list of alpha bits
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
@@ -57,7 +66,7 @@ def coinToss(x_bits,n,HE,deg,alpha):
         #encrypt r as a list of bits
         r_bits_enc=encrypt_as_bits(r,alpha,HE)
         #compare r_bits and x_bits
-        return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
+        return is_smaller_fast2(x_bits,r_bits_enc,HE,alpha=alpha)
 
 def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
