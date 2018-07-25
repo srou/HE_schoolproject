@@ -100,7 +100,7 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 
 
 #Test is_smaller with 2 integers x and y
-x=8
+x=7
 y=7
 alpha=4
 print("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
