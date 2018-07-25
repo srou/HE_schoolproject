@@ -53,13 +53,17 @@ def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
         for j in range(i):
             res += l[j]
         return res
+    def f1(x,y,j,HE):
+        return HE.encrypt(PyPtxt([1], HE)) -((x[j]-y[j])**2)
     num_cores = multiprocessing.cpu_count() #number of cores
+    print("number of cores : ",num_cores)
     same_prefix=[HE.encrypt(PyPtxt([1], HE))]
-    same_bit = Parallel(n_jobs=num_cores-1)(delayed(lambda j: HE.encrypt(PyPtxt([1], HE)) -((x_bits[j]-y_bits[j])**2))(i) for i in range(alpha))
+    same_bit = Parallel(n_jobs=num_cores-1)(delayed(f1)(x_bits,y_bits,i,HE) for i in range(alpha))
     same_prefix += Parallel(n_jobs=num_cores-1)(delayed(product)(same_bit, i) for i in range(alpha))
     to_sum=Parallel(n_jobs=num_cores-1)(delayed(lambda j: (HE.encrypt(PyPtxt([1], HE)) - y_bits[j]) * x_bits[j] * same_prefix[j])(i) for i in range(alpha))
     res = somme(to_sum, len(to_sum))
     return res
+
 start = time.time()
 HE = Pyfhel()
 #Generate Key
