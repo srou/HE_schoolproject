@@ -33,36 +33,23 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-l1=[]
-l2=[]
-for i in range(10):
-    l1.append(HE.encrypt(PyPtxt([i], HE)))
-for j in range(10,20):
-    l2.append(HE.encrypt(PyPtxt([i], HE)))
+alpha=8
+print("Encrypt a list of "+str(alpha)+" ones")
+start = time.time()
+a=[HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]
+end=time.time()
+print("  1st method : "+str(end-start)+" sec." )
+
+start = time.time()
+c_1=HE.encrypt(PyPtxt([1], HE))
+a=[c_1.copy(c_1) for i in range(alpha)]
+end=time.time()
+print("  1st method : "+str(end-start)+" sec." )
 
 #print("  Saving key")
 #f = open('key.pckl', 'wb')
 #pickle.dump(HE, f)
 #f.close()
-
-v=[127]
-print("Encrypting v: ", v)
-p = PyPtxt(v, HE)
-c = HE.encrypt(p)
-print(HE.decrypt(c))
-v=[128]
-print("Encrypting v: ", v)
-p = PyPtxt(v, HE)
-c = HE.encrypt(p)
-print(HE.decrypt(c))
-for i in range(1000):
-    v=[200+20*i]
-    print("Encrypting v: ", v)
-    p = PyPtxt(v, HE)
-    c = HE.encrypt(p)
-    print(HE.decrypt(c))
-    res=c**2
-    print("v**2=",HE.decrypt(res))
 
 
 
