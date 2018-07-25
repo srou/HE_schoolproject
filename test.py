@@ -4,7 +4,7 @@ import pickle
 import time
 from joblib import Parallel, delayed
 import multiprocessing
-import np
+import numpy as np
 
 num_cores = multiprocessing.cpu_count()
 print ("num of cores : ",num_cores)
