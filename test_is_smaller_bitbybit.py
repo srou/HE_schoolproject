@@ -42,11 +42,9 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
             print("res : ",HE.decrypt(res))
     return res
 class Computable:
-    def __init__(self,x_bit,y_bit,HE_scheme):
-        self.x = x_bit
-        self.y = y_bit
+    def __init__(self,HE_scheme):
         self.HE = HE_scheme
-    def f1(self):
+    def f1(self, x, y):
         return self.HE.encrypt(PyPtxt([1], self.HE)) -((self.x-self.y)**2)
 
 def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
@@ -64,9 +62,7 @@ def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
     print("number of cores : ",num_cores)
     same_prefix=[HE.encrypt(PyPtxt([1], HE))]
 
-    c=[Computable(x_bits[i],y_bits[i],HE) for i in range(alpha)]
-
-    same_bit = Parallel(n_jobs=num_cores-1)(delayed(c[i].f1) for i in range(alpha))
+    same_bit = Parallel(n_jobs=num_cores-1)(delayed(Computable.f1)(x_bits[i], y_bits[i]) for i in range(alpha))
     same_prefix += Parallel(n_jobs=num_cores-1)(delayed(product)(same_bit, i) for i in range(alpha))
     to_sum=Parallel(n_jobs=num_cores-1)(delayed(lambda j: (HE.encrypt(PyPtxt([1], HE)) - y_bits[j]) * x_bits[j] * same_prefix[j])(i) for i in range(alpha))
     res = somme(to_sum, len(to_sum))
