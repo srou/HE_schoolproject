@@ -94,6 +94,27 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
         res+=tmp  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
 
+def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha):
+    #Takes in input a list of integers (each integer is a list of encrypted bits)
+    #n=size of the vector input
+    #alpha=number of bits on which each elt of the vector is encoded
+    #deg is the degree of the moment to compute (deg=1 : average, deg=2 : second order moment)
+    #HE is the Homomorphic Encryption scheme (Pyfhel object)
+
+    #Returns an approximation of the statistical function (ie : average, 2nd order moment..) computed on the integer list
+    
+    #Initialize
+    L=2**alpha
+    print("L=",L)
+    c=int(math.ceil((L**deg)/float(n)))
+    print("c=",c)
+    res=HE.encrypt(PyPtxt([0], HE))
+    print("c*n="+str(c*n))
+    list_elts=np.asarray([list_x_bits[int(math.floor(i/float(c)))] for i in range(c*n)])
+    to_sum=list_elts.apply(lambda x : coinToss(x,c*n,HE,deg=deg,alpha=alpha))
+    res = np.sum(to_sum)
+    return res
+
 start = time.time()
 HE = Pyfhel()
 #Generate Key
@@ -120,10 +141,10 @@ print("")
 print("Compute Average of ",list_nb)
 print("")
 start = time.time()
-result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha)
+result=probabilisticAverage_fast(list_x_bits,len(list_nb),HE,1,alpha)
+end=time.time()
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
-end=time.time()
 print(str(end-start)+" sec." )
 
 #Compute the 2nd order moment of the list of int
@@ -132,7 +153,7 @@ print("Compute 2nd moment order of ",list_nb)
 print("")
 start = time.time()
 result=probabilisticAverage(list_x_bits,len(list_nb),HE,2,alpha)
+end=time.time()
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
-end=time.time()
 print(str(end-start)+" sec." )
