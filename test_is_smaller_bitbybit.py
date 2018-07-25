@@ -41,6 +41,15 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
             res+=(HE.encrypt(PyPtxt([1], HE))-y_bits[i])*x_bits[i]*same_prefix[i]
             #print("res : ",HE.decrypt(res))
     return res
+
+def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
+    same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))**2
+    same_bit=np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),same_bit)
+    same_prefix=np.asarray([HE.encrypt(PyPtxt([1], HE))]+[np.prod(same_bit[0:i+1]) for i in range(alpha-1)])
+    to_sum=np.multiply(same_prefix,np.multiply(np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),np.asarray(y_bits)),np.asarray(x_bits)))
+    res = np.sum(to_sum)
+    return res
+
 class Computable:
     def __init__(self,HE_scheme):
         self.HE = HE_scheme
@@ -68,20 +77,6 @@ def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
     res = somme(to_sum, len(to_sum))
     return res
 
-def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
-    same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))**2
-    same_bit=np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),same_bit)
-    for i in range(alpha):
-        print("samebit("+str(i)+") : ",HE.decrypt(same_bit[i]))
-    same_prefix=np.asarray([HE.encrypt(PyPtxt([1], HE))]+[np.prod(same_bit[0:i+1]) for i in range(alpha-1)])
-    for i in range(alpha):
-        print("sameprefix("+str(i)+") : ",HE.decrypt(same_prefix[i]))
-    to_sum=np.multiply(same_prefix,np.multiply(np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),np.asarray(y_bits)),np.asarray(x_bits)))
-    for i in range(alpha):
-        print("tosum("+str(i)+") : ",HE.decrypt(to_sum[i]))
-    res = np.sum(to_sum)
-    return res
-
 start = time.time()
 HE = Pyfhel()
 #Generate Key
@@ -100,7 +95,7 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 
 
 #Test is_smaller with 2 integers x and y
-x=4
+x=7
 y=6
 alpha=4
 print("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
