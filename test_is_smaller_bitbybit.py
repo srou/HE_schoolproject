@@ -69,19 +69,16 @@ def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
     return res
 
 def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
-    same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))
-    same_bit=same_bit**2
+    same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))**2
     same_bit=np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),same_bit)
     for i in range(alpha):
         print("samebit("+str(i)+") : ",HE.decrypt(same_bit[i]))
-    same_prefix=[HE.encrypt(PyPtxt([1], HE))]
-    same_prefix=same_prefix+[np.prod(same_bit[0:i+1]) for i in range(alpha-1)]
-    same_prefix=np.asarray(same_prefix)
+    same_prefix=np.asarray([HE.encrypt(PyPtxt([1], HE))]+[np.prod(same_bit[0:i+1]) for i in range(alpha-1)])
     for i in range(alpha):
         print("sameprefix("+str(i)+") : ",HE.decrypt(same_prefix[i]))
-    to_sum=np.multiply(same_prefix,np.multiply(np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),np.asarray(x_bits)),np.asarray(x_bits)))
+    to_sum=np.multiply(same_prefix,np.multiply(np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),np.asarray(y_bits)),np.asarray(x_bits)))
     for i in range(alpha):
-        print("sameprefix("+str(i)+") : ",HE.decrypt(to_sum[i]))
+        print("tosum("+str(i)+") : ",HE.decrypt(to_sum[i]))
     res = np.sum(to_sum)
     return res
 
