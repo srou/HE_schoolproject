@@ -39,12 +39,15 @@ start = time.time()
 a=[HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]
 end=time.time()
 print("  1st method : "+str(end-start)+" sec." )
+for elt in a : print(HE.decrypt(elt))
+
 
 start = time.time()
 c_1=HE.encrypt(PyPtxt([1], HE))
 a=[c_1.copy(c_1) for i in range(alpha)]
 end=time.time()
 print("  1st method : "+str(end-start)+" sec." )
+for elt in a : print(HE.decrypt(elt))
 
 #print("  Saving key")
 #f = open('key.pckl', 'wb')
