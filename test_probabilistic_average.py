@@ -55,7 +55,6 @@ def coinToss(x_bits,n,HE,deg,alpha):
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r^(1/deg)<x (ie : with probability x/n) otherwise [0]
     #print("Random number between 0 and "+str(n))
-    print("Coin Toss")
     r=randint(0, n)
     #print("r : ",r)
     r=int(math.floor((r**(1/float(deg)))))
@@ -86,11 +85,11 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
     print("c*n="+str(c*n))
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/float(c)))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
-        print("")
-        print("tmp="+str(tmp))
-        print("")
+        #print("")
+        #print("tmp="+str(tmp))
+        #print("")
         tmp=coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha)
-        print("result of the coin toss : ",HE.decrypt(tmp))
+        #print("result of the coin toss : ",HE.decrypt(tmp))
         res+=tmp  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
 
@@ -147,10 +146,21 @@ list_x_bits=[encrypt_as_bits(x,alpha,HE) for x in list_nb]
 
 #Compute the probabilistic average of the list of int
 print("")
-print("Compute Average of ",list_nb)
+print("Compute fast Average of ",list_nb)
 print("")
 start = time.time()
 result=probabilisticAverage_fast(list_x_bits,len(list_nb),HE,1,alpha)
+end=time.time()
+decrypted_res=HE.decrypt(result)
+print("decrypted result : ",decrypted_res)
+print(str(end-start)+" sec." )
+
+#Compute the probabilistic average of the list of int
+print("")
+print("Compute Average of ",list_nb)
+print("")
+start = time.time()
+result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
