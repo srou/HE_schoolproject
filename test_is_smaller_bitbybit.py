@@ -95,17 +95,18 @@ y_bits_enc=encrypt_as_bits(y,alpha,HE)
 end=time.time()
 print(str(end-start)+" sec." )
 
-#Compare x and y without parallelization
+
+#Compare x and y with parallelization
 start = time.time()
-result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
+result=is_smaller_fast(x_bits_enc,y_bits_enc,HE,alpha)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
 print(str(end-start)+" sec." )
 
-#Compare x and y with parallelization
+#Compare x and y without parallelization
 start = time.time()
-result=is_smaller_fast(x_bits_enc,y_bits_enc,HE,alpha)
+result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
