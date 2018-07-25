@@ -55,6 +55,7 @@ def coinToss(x_bits,n,HE,deg,alpha):
 #generates a random number r between 0 and n  (potentially drawn from a distribution D)
 #Returns an encrypted bit b=[1] if r^(1/deg)<x (ie : with probability x/n) otherwise [0]
     #print("Random number between 0 and "+str(n))
+    print("Coin Toss")
     r=randint(0, n)
     #print("r : ",r)
     r=int(math.floor((r**(1/float(deg)))))
@@ -113,9 +114,12 @@ def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha):
     print("len(list_elts)",len(list_elts))
     def f(x):
         return coinToss(x,c*n,HE,deg=deg,alpha=alpha)
-    vf=np.vectorize(f)
+    def array_map(x):
+        return np.array(list(map(f, x)))
+    #vf=np.vectorize(f)
     print("to_sum")
-    to_sum=vf(list_elts)
+    #to_sum=vf(list_elts)
+    to_sum=array_map(list_elts)
     print ("res")
     res = np.sum(to_sum)
     return res
