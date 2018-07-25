@@ -45,7 +45,7 @@ class Computable:
     def __init__(self,HE_scheme):
         self.HE = HE_scheme
     def f1(self, x, y):
-        return self.HE.encrypt(PyPtxt([1], self.HE)) -((self.x-self.y)**2)
+        return self.HE.encrypt(PyPtxt([1], self.HE)) -((x-y)**2)
 
 def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
     def product(l, i):
