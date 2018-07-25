@@ -68,6 +68,17 @@ def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
     res = somme(to_sum, len(to_sum))
     return res
 
+def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
+    same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))
+    same_bit=same_bit**2
+    same_bit=np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),same_bit)
+    same_prefix=[HE.encrypt(PyPtxt([1], HE))]
+    same_prefix=same_prefix+[np.prod(same_bit[0:i+1]) for i in range(alpha)]
+    same_prefix=np.as_array(same_prefix)
+    to_sum=np.multiply(same_prefix,np.multiply(np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),np.asarray(x_bits)),np.asarray(x_bits)))
+    res = np.sum(to_sum)
+    return res
+
 start = time.time()
 HE = Pyfhel()
 #Generate Key
@@ -106,7 +117,7 @@ print(str(end-start)+" sec." )
 
 #Compare x and y with parallelization
 start = time.time()
-result=is_smaller_fast(x_bits_enc,y_bits_enc,HE,alpha)
+result=is_smaller_fast2(x_bits_enc,y_bits_enc,HE,alpha)
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 end=time.time()
