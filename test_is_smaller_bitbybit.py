@@ -6,6 +6,9 @@ import numpy as np
 from joblib import Parallel, delayed
 import multiprocessing
 
+from pathos.multiprocessing import ProcessingPool as Pool
+
+
 def encrypt_as_bits(x,alpha,HE):
     #takes in input a plaintext integer x =< 2^alpha -1
     #returns a list of the encrypted bits of x
@@ -42,7 +45,8 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
             #print("res : ",HE.decrypt(res))
     return res
 
-def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
+##1st attempt to optimize computation (using numpy arrays)
+def is_smaller_fast1(x_bits,y_bits,HE,alpha,n=1000):
     c_1=HE.encrypt(PyPtxt([1], HE))
     same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))**2
     same_bit=np.subtract(np.asarray([c_1.copy(c_1) for i in range(alpha)]),same_bit)
@@ -51,13 +55,15 @@ def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
     res = np.sum(to_sum)
     return res
 
-class Computable:
+
+##2nd attempt (using joblib : doesn't work because the objects are not serializable)
+class Computable1:
     def __init__(self,HE_scheme):
         self.HE = HE_scheme
     def f1(self, x, y):
         return self.HE.encrypt(PyPtxt([1], self.HE)) -((x-y)**2)
 
-def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
+def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
     def product(l, i):
         res = 1
         for j in range(i+1):
@@ -71,12 +77,42 @@ def is_smaller_fast(x_bits,y_bits,HE,alpha,n=1000):
     num_cores = multiprocessing.cpu_count() #number of cores
     print("number of cores : ",num_cores)
     same_prefix=[HE.encrypt(PyPtxt([1], HE))]
-
-    same_bit = Parallel(n_jobs=num_cores-1)(delayed(Computable.f1)(x_bits[i], y_bits[i]) for i in range(alpha))
+    same_bit = Parallel(n_jobs=num_cores-1)(delayed(Computable1.f1)(x_bits[i], y_bits[i]) for i in range(alpha))
     same_prefix += Parallel(n_jobs=num_cores-1)(delayed(product)(same_bit, i) for i in range(alpha))
     to_sum=Parallel(n_jobs=num_cores-1)(delayed(lambda j: (HE.encrypt(PyPtxt([1], HE)) - y_bits[j]) * x_bits[j] * same_prefix[j])(i) for i in range(alpha))
     res = somme(to_sum, len(to_sum))
     return res
+
+##3rd attempt (using pathos)
+def product(l, i):
+    res = 1
+    for j in range(i+1):
+        res *= l[j]
+    return res
+def somme(l, i):
+    res = 0
+    for j in range(i):
+        res += l[j]
+    return res
+class Computable2:
+    def __init__(self,HE_scheme):
+        self.HE = HE_scheme
+    def f1(self,x,y):
+        return HE.encrypt(PyPtxt([1], HE))-((x-y)**2) 
+    def f2(self,x,y,same_pref):
+        return (HE.encrypt(PyPtxt([1], HE)) - y) * x * same_pref
+    def run(self,x,y,alpha):
+        pool = Pool().map
+        same_prefix=[HE.encrypt(PyPtxt([1], HE))]
+        same_bit = pool(self.f1, x,y)
+        for i in range(alpha):
+            same_prefix.append(product(same_bit,i))
+        to_sum=pool(self.f2,x,y,same_prefix)
+        result=somme(to_sum,len(to_sum))
+        return result
+def is_smaller_fast3(x_bits,y_bits,HE,alpha,n=1000):
+    m=Computable2(HE)
+    return m.run(y,x,alpha)
 
 start = time.time()
 HE = Pyfhel()
@@ -116,7 +152,7 @@ print(str(end-start)+" sec." )
 
 #Compare x and y with parallelization
 start = time.time()
-result=is_smaller_fast(x_bits_enc,y_bits_enc,HE,alpha)
+result=is_smaller_fast3(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
