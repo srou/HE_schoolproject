@@ -189,6 +189,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha):
     print("average : ",HE.decrypt(avg))
     print("Compute second_moment")
     second_moment=avg=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
+    print("")
     print("second_moment : ",HE.decrypt(second_moment))
     A=(avg**2)+second_moment
     print("A : ",HE.decrypt(A))
@@ -232,7 +233,7 @@ k=2
 
 #Create a list of distances and encrypt them bit by bit
 dist=[]
-for i in range(10):
+for i in range(20):
     dist.append(randint(0,(2**alpha)-1))
 print ("distances : ",dist)
 
