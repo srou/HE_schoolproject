@@ -112,7 +112,7 @@ class Computable2:
         return result
 def is_smaller_fast3(x_bits,y_bits,HE,alpha,n=1000):
     m=Computable2(HE)
-    return m.run(y,x,alpha)
+    return m.f1(y,x,alpha)
 
 start = time.time()
 HE = Pyfhel()
