@@ -198,7 +198,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha):
     print("std : ",HE.decrypt(std))
     #Compute threshold
     print("Compute threshold and convert to bits")
-    T=avg+int(round(1/phi(float(k/n)/100),0))*std
+    T=avg+HE.encrypt(PyPtxt([int(round(1/phi(float(k/n)/100),0))], HE))*std
     print("threshold : ",HE.decrypt(T))
     T_bits=convert_to_bits(T,p,alpha,HE)
     print("threshold bit by bit : ")
