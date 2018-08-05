@@ -237,7 +237,7 @@ k=2
 
 #Create a list of distances and encrypt them bit by bit
 dist=[]
-for i in range(20):
+for i in range(100):
     dist.append(randint(0,(2**alpha)-1))
 print ("distances : ",dist)
 
