@@ -187,8 +187,9 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha):
     print("Compute average")
     avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
     print("average : ",HE.decrypt(avg))
+    print("")
     print("Compute second_moment")
-    second_moment=avg=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
+    second_moment=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
     print("")
     print("second_moment : ",HE.decrypt(second_moment))
     A=(avg**2)+second_moment
@@ -198,7 +199,10 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha):
     print("std : ",HE.decrypt(std))
     #Compute threshold
     print("Compute threshold and convert to bits")
-    T=avg+HE.encrypt(PyPtxt([int(round(1/phi(float(k/n)/100),0))], HE))*std
+    phi_=HE.encrypt(PyPtxt([int(round(1/phi(float(k/n)/100),0))], HE))
+    print int(round(1/phi(float(k/n)/100),0))
+    print ("phi : ",HE.decrypt(phi_))
+    T=avg+phi_*std
     print("threshold : ",HE.decrypt(T))
     T_bits=convert_to_bits(T,p,alpha,HE)
     print("threshold bit by bit : ")
