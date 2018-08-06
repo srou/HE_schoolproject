@@ -314,12 +314,12 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
 start = time.time()
 HE = Pyfhel()
 #Generate Key
-KEYGEN_PARAMS={ "p":17,        "r":32,
-                "d":0,        "c":3,
+KEYGEN_PARAMS={ "p":17,      "r":1,
+                "d":0,        "c":2,
                 "sec":128,    "w":64,
-                "L":40,       "m":-1,
+                "L":50,       "m":-1,
                 "R":3,        "s":0,
-                "gens":[],    "ords":[]}
+                "gens":[],    "ords":[]}  
 
 print("  Running KeyGen with params:")
 print(KEYGEN_PARAMS)
