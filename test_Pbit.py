@@ -21,7 +21,6 @@ def convert_to_bits(x,p,alpha,HE):
         #alpha : nb of bits
         #0=< 2^alpha-1 < p, p prime
         #0=< i =< alpha
-        print("Computing coefficients of Psqrt")
         l1=range(0,p)
         a='{0:0'+str(alpha)+'b}'
         l2=[int(list(a.format(x))[i]) for x in l1]

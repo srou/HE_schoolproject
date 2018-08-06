@@ -83,8 +83,8 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
         print("tmp="+str(tmp))
         print("")
         a.append(coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha))
-        decrypted_res=HE.decrypt(a[i])
-        print("result of the coin toss : ",decrypted_res)
+        #decrypted_res=HE.decrypt(a[i])
+        #print("result of the coin toss : ",decrypted_res)
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
 
@@ -106,7 +106,6 @@ def convert_to_bits(x,p,alpha,HE):
         #alpha : nb of bits
         #0=< 2^alpha-1 < p, p prime
         #0=< i =< alpha
-        print("Computing coefficients of Psqrt")
         l1=range(0,p)
         a='{0:0'+str(alpha)+'b}'
         l2=[int(list(a.format(x))[i]) for x in l1]
@@ -148,7 +147,7 @@ def Psqrt(x,p,HE):
         #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
         l1=range(0,p)
         l2=[int(math.floor(math.sqrt(i))) for i in l1]
-        print("l2 : ",l2)
+        #print("l2 : ",l2)
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
         print("Computing coefficients of Psqrt") 
@@ -190,8 +189,10 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha):
     print("Compute average")
     avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
     print("average : ",HE.decrypt(avg))
+    print("")
     print("Compute second_moment")
-    second_moment=avg=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
+    second_moment=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
+    print("")
     print("second_moment : ",HE.decrypt(second_moment))
     A=(avg**2)+second_moment
     print("A : ",HE.decrypt(A))
@@ -200,7 +201,10 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha):
     print("std : ",HE.decrypt(std))
     #Compute threshold
     print("Compute threshold and convert to bits")
-    T=avg+int(round(1/phi(float(k/n)/100),0))*std
+    phi_=HE.encrypt(PyPtxt([int(round(1/phi(float(k/n)/100),0))], HE))
+    print int(round(1/phi(float(k/n)/100),0))
+    print ("phi : ",HE.decrypt(phi_))
+    T=avg+phi_*std
     print("threshold : ",HE.decrypt(T))
     T_bits=convert_to_bits(T,p,alpha,HE)
     print("threshold bit by bit : ")
@@ -246,22 +250,10 @@ def dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha):
     distances=[]
     n=np.size(X_train)[0]
     for i in range(n):
-        #encrypt X_train[i] 
-        b_enc=[]
-        b_bits_enc=[]
-        for elt in X_train[i]:
-            #encrypt each elt of X_train[i] as a single cyphertext
-            ptxt=PyPtxt([elt], HE) 
-            b_enc.append(HE.encrypt(ptxt))
-            #also encrypt each elt of X_train[i] as a list of encrypted bits
-            a='{0:0'+str(alpha)+'b}'
-            elt_bits=[int(i) for i in list(a.format(elt))] 
-            print(elt,elt_bits)
-            elt_bits_enc=[]
-            for k in elt_bits:
-                p=PyPtxt([k], HE)
-                elt_bits_enc.append(HE.encrypt(p))
-            b_bits_enc.append(elt_bits_enc)
+        #encrypt each elt of X_train[i] 
+        b_enc=[HE.encrypt(PyPtxt([elt], HE)) for elt in X_train[i]]
+        #also encrypt each elt of X_train[i] as a list of encrypted bits
+        b_bits_enc=[encrypt_as_bits(elt,alpha,HE) for elt in X_train[i]]
         #compute dist(q,X_train[i])
         dist=l1_norm(q_enc,q_bits_enc,b_enc,b_bits_enc,HE=HE_scheme,alpha=alpha)
         distances.append(dist)
@@ -275,12 +267,31 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
     #n,d : dimensions of X_train (n : nb of rows, d : nb of columns)
     #k : nb of nearest neighbors to output
     #alpha : nb of bits recquired to encode the input data
-    #a_class : nb of bits recquired to encode the number of classes (??) (ex : if 2 classes, a_class=1)
+    #a_class : nb of bits recquired to encode the number of classes (ex : if 2 classes, a_class=1)
     #p : prime number such that each value in X_train and q are between 0 and sqrt(p)/d
     #HE_scheme : scheme used for encryption (Pyfhel object)
+
+    print("Distances between q and elements of X_train : ")
+    start1 = time.time()
     distances=dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha)
+    for res in distances :
+        print(HE.decrypt(res))
+    end1=time.time()
+    print(str(end1-start1)+" sec to compute distances." )
+    print("")
+    print("")
+    print("Distances convert distances to bits ")
+    start2 = time.time()
     distances_bit=[convert_to_bits(x,p,alpha,HE) for x in distances]
+    end2=time.time()
+    print(str(end2-start2)+" sec to convert distances to bits." )
+    print("")
+    print("")
+    print("Compute Xi (position of the k-nearest neighbours) :")
+    start3 = time.time()
     XI=k_smallest_values(distances_bit,k,p,HE,alpha)
+    end3=time.time()
+    print(str(end3-start3)+" sec to compute the position of the k nearest neighbours." )
     #knn_bits=[]
     #Y_train_bits_enc=[]
     #a='{0:0'+str(alpha)+'b}'
@@ -303,7 +314,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
 start = time.time()
 HE = Pyfhel()
 #Generate Key
-KEYGEN_PARAMS={ "p":2,        "r":32,
+KEYGEN_PARAMS={ "p":17,        "r":32,
                 "d":0,        "c":3,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
@@ -317,62 +328,39 @@ end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 print("")
 
-alpha=4
+#Parameters
+p=KEYGEN_PARAMS["p"]
+alpha=4 # nb of bits
+k=2     # k nearest neighbours
+d=3     # d-dimensional vectors
+n=100   # n data points
+a_class=1 #binary classification (2 classes : 0 and 1)
 
 q=[3,6,2]
-X_train=[[3,6,2],[7,0,1],[5,12,3]]
-Y_train=[1,0,0]
+print("q : ",q)
+#Generate random dataset
+print("Genrate random X_train and Y_train")
+X_train=[]
+Y_train=[]
+for i in range(n):
+    tmp=[]
+    for j in range(d):
+        tmp.append(randint(0,(2**alpha)-1))
+    X_train.append(tmp)
+    Y_train.append(randint(0,a_class))
+print("X_train : ",X_train)
+print("Y_train : ",Y_train)
+
 print("Encrypting q")
-q_enc=[]
-q_bits_enc=[]
-for elt in q:
-    #encrypt each elt of q as a single cyphertext
-    ptxt=PyPtxt([elt], HE) 
-    q_enc.append(HE.encrypt(ptxt))
-    #also encrypt each elt of q as a list of encrypted bits
-    a='{0:0'+str(alpha)+'b}'
-    elt_bits=[int(i) for i in list(a.format(elt))] 
-    print(elt,elt_bits)
-    elt_bits_enc=[]
-    for k in elt_bits:
-        p=PyPtxt([k], HE)
-        elt_bits_enc.append(HE.encrypt(p))
-    q_bits_enc.append(elt_bits_enc)
+q_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in q]
+q_bits_enc=[encrypt_as_bits(elt,alpha,HE) for elt in q]
 
 print("Encrypting X1")
-x1_enc=[]
-x1_bits_enc=[]
-for elt in X_train[0]:
-    #encrypt each elt of q as a single cyphertext
-    ptxt=PyPtxt([elt], HE) 
-    x1_enc.append(HE.encrypt(ptxt))
-    #also encrypt each elt of q as a list of encrypted bits
-    a='{0:0'+str(alpha)+'b}'
-    elt_bits=[int(i) for i in list(a.format(elt))] 
-    print(elt,elt_bits)
-    elt_bits_enc=[]
-    for k in elt_bits:
-        p=PyPtxt([k], HE)
-        elt_bits_enc.append(HE.encrypt(p))
-    x1_bits_enc.append(elt_bits_enc)
+x1_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in X_train[0]]
+x1_bits_enc=[encrypt_as_bits(elt,alpha,HE) for elt in X_train[0]]
 
-print("Encrypting X2")
-x2_enc=[]
-x2_bits_enc=[]
-for elt in X_train[1]:
-    #encrypt each elt of q as a single cyphertext
-    ptxt=PyPtxt([elt], HE) 
-    x2_enc.append(HE.encrypt(ptxt))
-    #also encrypt each elt of q as a list of encrypted bits
-    a='{0:0'+str(alpha)+'b}'
-    elt_bits=[int(i) for i in list(a.format(elt))] 
-    print(elt,elt_bits)
-    elt_bits_enc=[]
-    for k in elt_bits:
-        p=PyPtxt([k], HE)
-        elt_bits_enc.append(HE.encrypt(p))
-    x2_bits_enc.append(elt_bits_enc)
-
+print("")
+print("")
 print("Test l1-norm")
 start = time.time()
 result=l1_norm(q_enc,q_bits_enc,x1_enc,x1_bits_enc,HE=HE,alpha=4)
@@ -381,20 +369,11 @@ print("Distance (q,x1) : ",decrypted_res)
 end=time.time()
 print(str(end-start)+" sec." )
 
-start = time.time()
-result=l1_norm(q_enc,q_bits_enc,x2_enc,x2_bits_enc,HE=HE,alpha=4)
-decrypted_res=HE.decrypt(result)
-print("Distance (q,x2) : ",decrypted_res)
-end=time.time()
-print(str(end-start)+" sec." )
-
-
+print("")
+print("")
 print("Test knn")
 start = time.time()
-result=knn(q_enc,q_bits_enc,X_train,Y_train,HE,1023,3,3,k=3,alpha=4,a_class=1)
-print("Distances between q and elements of X_train : ")
-for res in result :
-    print(HE.decrypt(res))
+result=knn(q_enc,q_bits_enc,X_train,Y_train,HE,p,n,d,k,alpha,a_class)
 end=time.time()
 print(str(end-start)+" sec." )
 
