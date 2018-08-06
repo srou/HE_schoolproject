@@ -248,7 +248,7 @@ def dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha):
     #Step 1 : calculate distances between q and the rows of X_train
     #initialize distances 
     distances=[]
-    n=np.size(X_train)[0]
+    n=len(X_train)
     for i in range(n):
         #encrypt each elt of X_train[i] 
         b_enc=[HE.encrypt(PyPtxt([elt], HE)) for elt in X_train[i]]
