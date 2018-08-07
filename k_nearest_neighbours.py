@@ -112,7 +112,7 @@ def convert_to_bits(x,p,alpha,HE):
         print("l2 : ",l2)
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
-        print("Computing coefficients of Pbit_i") 
+        #print("Computing coefficients of Pbit_i") 
         for i in range(p):
             num=l2[i]
             den=1
@@ -137,7 +137,7 @@ def convert_to_bits(x,p,alpha,HE):
     #0=< x =< 2^alpha-1 < p  , p prime
     bits_x=[]  #encrypted bit representation of x
     for i in range(alpha):
-        print("Computing bit "+str(i))
+        #print("Computing bit "+str(i))
         coeffs_i=coeffs_Pbit_i(i=i,p=p,alpha=alpha)
         bits_x.append(compute_Pbit_i(x=x,p=p,coeffs_i=coeffs_i,HE=HE))
     return bits_x
@@ -150,7 +150,7 @@ def Psqrt(x,p,HE):
         #print("l2 : ",l2)
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
-        print("Computing coefficients of Psqrt") 
+        #print("Computing coefficients of Psqrt") 
         for i in range(p):
             num=l2[i]
             den=1
