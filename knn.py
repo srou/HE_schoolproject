@@ -8,7 +8,7 @@ from random import randint
 
 #test knn writing file
 
-f = open("results.txt", "a")
+f = open("results_knn2.txt", "a")
 
 def encrypt_as_bits(x,alpha,HE,f=f):
     #takes in input a plaintext integer x =< 2^alpha -1
