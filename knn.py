@@ -351,7 +351,7 @@ KEYGEN_PARAMS={ "p":17,      "r":1,
 
 f.write("  Running KeyGen with params:")
 f.write("\n")
-f.write(KEYGEN_PARAMS)
+f.write(str(KEYGEN_PARAMS))
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 f.write("  KeyGen completed in "+str(end-start)+" sec." )
