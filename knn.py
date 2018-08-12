@@ -16,7 +16,8 @@ def encrypt_as_bits(x,alpha,HE,f=f):
     a='{0:0'+str(alpha)+'b}'
     x_bits=[int(i) for i in list(a.format(x))]
     x_bits_enc=[]
-    f.write("Encrypting "+str(x)+" in bits ",x_bits)
+    f.write("Encrypting "+str(x)+" in bits "+str(x_bits))
+    f.write("\n")
     for i in x_bits:
         x_bits_enc.append(HE.encrypt(PyPtxt([i], HE)))
     return x_bits_enc
@@ -52,7 +53,8 @@ def coinToss(x_bits,n,HE,deg,alpha,f=f):
 #Returns an encrypted bit b=[1] if r^(1/deg)<x (ie : with probability x/n) otherwise [0]
     #f.write("Random number between 0 and "+str(n))
     r=randint(0, n)
-    f.write("r : ",r)
+    f.write("r : "+str(r))
+    f.write("\n")
     r=int(math.floor((r**(1/float(deg)))))
     f.write(r)
     if r>((2**alpha) -1) : #rq : x=< 2**alpha -1 so if r>2**alpha-1, then r>x
@@ -75,17 +77,22 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha,f=f):
     
     #Initialize
     L=2**alpha
-    f.write("L=",L)
+    f.write("L="+str(L))
+    f.write("\n")
     c=int(math.ceil((L**deg)/float(n)))
-    f.write("c=",c)
+    f.write("c="+str(c))
+    f.write("\n")
     a=[]
     res=HE.encrypt(PyPtxt([0], HE))
     f.write("c*n="+str(c*n))
+    f.write("\n")
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
-        f.write("")
+        f.write("\n")
+        f.write("\n")
         f.write("tmp="+str(tmp))
-        f.write("")
+        f.write("\n")
+        f.write("\n")
         a.append(coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha,f))
         #decrypted_res=HE.decrypt(a[i])
         #f.write("result of the coin toss : ",decrypted_res)
@@ -113,7 +120,8 @@ def convert_to_bits(x,p,alpha,HE,f=f):
         l1=range(0,p)
         a='{0:0'+str(alpha)+'b}'
         l2=[int(list(a.format(x))[i]) for x in l1]
-        f.write("l2 : ",l2)
+        f.write("l2 : "+str(l2))
+        f.write("\n")
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
         #f.write("Computing coefficients of Pbit_i") 
@@ -191,33 +199,46 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f=f):
     n=len(list_d_bits)
     #Compute average, 2nd order moment and std
     f.write("Compute average")
+    f.write("\n")
     avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
-    f.write("average : ",HE.decrypt(avg))
-    f.write("")
+    f.write("average : "+str(HE.decrypt(avg)))
+    f.write("\n")
+    f.write("\n")
     f.write("Compute second_moment")
     second_moment=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
-    f.write("")
-    f.write("second_moment : ",HE.decrypt(second_moment))
+    f.write("\n")
+    f.write("\n")
+    f.write("second_moment : "+str(HE.decrypt(second_moment)))
+    f.write("\n")
     A=(avg**2)+second_moment
-    f.write("A : ",HE.decrypt(A))
+    f.write("A : "+str(HE.decrypt(A)))
+    f.write("\n")
     f.write("Compute std")
+    f.write("\n")
     std=Psqrt(A,p,HE)
-    f.write("std : ",HE.decrypt(std))
+    f.write("std : "+str(HE.decrypt(std)))
+    f.write("\n")
     #Compute threshold
     f.write("Compute threshold and convert to bits")
+    f.write("\n")
     phi_=HE.encrypt(PyPtxt([int(round(1/phi(float(k/n)/100),0))], HE))
-    f.write int(round(1/phi(float(k/n)/100),0))
-    f.write ("phi : ",HE.decrypt(phi_))
+    f.write(int(round(1/phi(float(k/n)/100),0)))
+    f.write ("phi : "+str(HE.decrypt(phi_)))
+    f.write("\n")
     T=avg+phi_*std
-    f.write("threshold : ",HE.decrypt(T))
+    f.write("threshold : "+str(HE.decrypt(T)))
+    f.write("\n")
     T_bits=convert_to_bits(T,p,alpha,HE)
     f.write("threshold bit by bit : ")
+    f.write("\n")
     for bit in T_bits :
         f.write(HE.decrypt(bit))
+        f.write("\n")
     res=[]
     for i in range(n):
         res.append(is_smaller(T_bits,list_d_bits[i],HE,alpha=alpha))
-        f.write("dist("+str(i)+") : ",HE.decrypt(res[i]))
+        f.write("dist("+str(i)+") : "+str(HE.decrypt(res[i])))
+        f.write("\n")
     return res
 
 def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
@@ -276,26 +297,31 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     #HE_scheme : scheme used for encryption (Pyfhel object)
 
     f.write("Distances between q and elements of X_train : ")
+    f.write("\n")
     start1 = time.time()
     distances=dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,f)
     for res in distances :
         f.write(HE.decrypt(res))
     end1=time.time()
     f.write(str(end1-start1)+" sec to compute distances." )
-    f.write("")
-    f.write("")
+    f.write("\n")
+    f.write("\n")
     f.write("Distances convert distances to bits ")
+    f.write("\n")
     start2 = time.time()
     distances_bit=[convert_to_bits(x,p,alpha,HE,f) for x in distances]
     end2=time.time()
     f.write(str(end2-start2)+" sec to convert distances to bits." )
-    f.write("")
-    f.write("")
+    f.write("\n")
+    f.write("\n")
+    f.write("\n")
     f.write("Compute Xi (position of the k-nearest neighbours) :")
+    f.write("\n")
     start3 = time.time()
     XI=k_smallest_values(distances_bit,k,p,HE,alpha,f)
     end3=time.time()
     f.write(str(end3-start3)+" sec to compute the position of the k nearest neighbours." )
+    f.write("\n")
     #knn_bits=[]
     #Y_train_bits_enc=[]
     #a='{0:0'+str(alpha)+'b}'
@@ -324,11 +350,13 @@ KEYGEN_PARAMS={ "p":17,      "r":1,
                 "gens":[],    "ords":[]}  
 
 f.write("  Running KeyGen with params:")
+f.write("\n")
 f.write(KEYGEN_PARAMS)
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 f.write("  KeyGen completed in "+str(end-start)+" sec." )
-f.write("")
+f.write("\n")
+f.write("\n")
 
 #Parameters
 p=KEYGEN_PARAMS["p"]
@@ -339,9 +367,11 @@ n=100   # n data points
 a_class=1 #binary classification (2 classes : 0 and 1)
 
 q=[3,6,2]
-f.write("q : ",q)
+f.write("q : "+str(q))
+f.write("\n")
 #Generate random dataset
 f.write("Genrate random X_train and Y_train")
+f.write("\n")
 X_train=[]
 Y_train=[]
 for i in range(n):
@@ -350,30 +380,38 @@ for i in range(n):
         tmp.append(randint(0,(2**alpha)-1))
     X_train.append(tmp)
     Y_train.append(randint(0,a_class))
-f.write("X_train : ",X_train)
-f.write("Y_train : ",Y_train)
+f.write("X_train : "+str(X_train))
+f.write("\n")
+f.write("Y_train : "+str(Y_train))
+f.write("\n")
 
 f.write("Encrypting q")
+f.write("\n")
 q_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in q]
 q_bits_enc=[encrypt_as_bits(elt,alpha,HE,f) for elt in q]
 
 f.write("Encrypting X1")
+f.write("\n")
 x1_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in X_train[0]]
 x1_bits_enc=[encrypt_as_bits(elt,alpha,HE,f) for elt in X_train[0]]
 
-f.write("")
-f.write("")
+f.write("\n")
+f.write("\n")
 f.write("Test l1-norm")
+f.write("\n")
 start = time.time()
 result=l1_norm(q_enc,q_bits_enc,x1_enc,x1_bits_enc,HE=HE,alpha=4)
 decrypted_res=HE.decrypt(result)
-f.write("Distance (q,x1) : ",decrypted_res)
+f.write("Distance (q,x1) : "+str(decrypted_res))
+f.write("\n")
 end=time.time()
 f.write(str(end-start)+" sec." )
+f.write("\n")
 
-f.write("")
-f.write("")
+f.write("\n")
+f.write("\n")
 f.write("Test knn")
+f.write("\n")
 start = time.time()
 result=knn(q_enc,q_bits_enc,X_train,Y_train,HE,p,n,d,k,alpha,a_class,file=f)
 end=time.time()
