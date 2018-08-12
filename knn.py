@@ -112,7 +112,7 @@ def inv_modulo(x, p):
     else: raise Exception("%s et %s are not mutually prime" % (x, p))
         
 def convert_to_bits(x,p,alpha,HE,f=f):
-    def coeffs_Pbit_i(i,p,alpha,f):
+    def coeffs_Pbit_i(i,p,alpha,f=f):
         #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
         #alpha : nb of bits
         #0=< 2^alpha-1 < p, p prime
