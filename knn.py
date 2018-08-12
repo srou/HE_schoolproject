@@ -93,7 +93,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha,f=f):
         f.write("tmp="+str(tmp))
         f.write("\n")
         f.write("\n")
-        a.append(coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha,f))
+        a.append(coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha,f=f))
         #decrypted_res=HE.decrypt(a[i])
         #f.write("result of the coin toss : ",decrypted_res)
         res+=a[i]  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
