@@ -64,7 +64,7 @@ def coinToss(x_bits,n,HE,deg,alpha,f=f):
         #encrypt r as a list of bits
         r_bits_enc=encrypt_as_bits(r,alpha,HE,f)
         #compare r_bits and x_bits
-        return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha,f)
+        return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha,f=f)
 
 def probabilisticAverage(list_x_bits,n,HE,deg,alpha,f=f):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
