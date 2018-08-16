@@ -10,7 +10,8 @@ from random import randint
 
 #with open("results_knn2.txt", "w") as f:
 #    f.write("knn_results")
-f = open("results_knn3.txt", "a")
+filename="results_knn4.txt"
+f = open(filename, "a")
 
 def encrypt_as_bits(x,alpha,HE,f=f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -388,7 +389,7 @@ f.write("Y_train : "+str(Y_train))
 f.write("\n")
 
 f.close()
-f = open("results_knn2.txt", "a")
+f = open(filename, "a")
 
 f.write("Encrypting q")
 f.write("\n")
@@ -401,7 +402,7 @@ x1_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in X_train[0]]
 x1_bits_enc=[encrypt_as_bits(elt,alpha,HE,f) for elt in X_train[0]]
 
 f.close()
-f = open("results_knn2.txt", "a")
+f = open(filename, "a")
 
 f.write("\n")
 f.write("\n")
@@ -417,7 +418,7 @@ f.write(str(end-start)+" sec." )
 f.write("\n")
 
 f.close()
-f = open("results_knn2.txt", "a")
+f = open(filename, "a")
 
 f.write("\n")
 f.write("\n")
