@@ -418,4 +418,4 @@ start = time.time()
 result=knn(q_enc,q_bits_enc,X_train,Y_train,HE,p,n,d,k,alpha,a_class,file=f)
 end=time.time()
 f.write(str(end-start)+" sec." )
-
+f.close()
