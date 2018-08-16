@@ -233,7 +233,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f=f):
     f.write("threshold bit by bit : ")
     f.write("\n")
     for bit in T_bits :
-        f.write(HE.decrypt(bit))
+        f.write(str(HE.decrypt(bit)))
         f.write("\n")
     res=[]
     for i in range(n):
@@ -302,7 +302,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     start1 = time.time()
     distances=dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,f)
     for res in distances :
-        f.write(HE.decrypt(res))
+        f.write(str(HE.decrypt(res)))
     end1=time.time()
     f.write(str(end1-start1)+" sec to compute distances." )
     f.write("\n")
