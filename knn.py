@@ -8,7 +8,9 @@ from random import randint
 
 #test knn writing file
 
-f = open("results_knn2.txt", "a")
+#with open("results_knn2.txt", "w") as f:
+#    f.write("knn_results")
+f = open("results_knn3.txt", "a")
 
 def encrypt_as_bits(x,alpha,HE,f=f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -385,6 +387,9 @@ f.write("\n")
 f.write("Y_train : "+str(Y_train))
 f.write("\n")
 
+f.close()
+f = open("results_knn2.txt", "a")
+
 f.write("Encrypting q")
 f.write("\n")
 q_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in q]
@@ -394,6 +399,9 @@ f.write("Encrypting X1")
 f.write("\n")
 x1_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in X_train[0]]
 x1_bits_enc=[encrypt_as_bits(elt,alpha,HE,f) for elt in X_train[0]]
+
+f.close()
+f = open("results_knn2.txt", "a")
 
 f.write("\n")
 f.write("\n")
@@ -407,6 +415,9 @@ f.write("\n")
 end=time.time()
 f.write(str(end-start)+" sec." )
 f.write("\n")
+
+f.close()
+f = open("results_knn2.txt", "a")
 
 f.write("\n")
 f.write("\n")
