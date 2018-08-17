@@ -10,7 +10,7 @@ num_cores = multiprocessing.cpu_count()
 print ("num of cores : ",num_cores)
 
 HE = Pyfhel()
-KEYGEN_PARAMS={ "p":113,      "r":1,
+KEYGEN_PARAMS={ "p":13,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
@@ -32,6 +32,16 @@ start = time.time()
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
+
+#store the Key
+filename='filename_pi.obj'
+file_ = open(filename, 'w')
+pickle.dump(HE, file_)
+file_.close()
+
+file_pi2 = open(filename, 'r')
+key = pickle.load(file_pi2)
+print object_pi2
 
 alpha=8
 print("Encrypt a list of "+str(alpha)+" ones")
