@@ -41,7 +41,7 @@ file_.close()
 
 file_pi2 = open(filename, 'r')
 key = pickle.load(file_pi2)
-print object_pi2
+print key
 
 alpha=8
 print("Encrypt a list of "+str(alpha)+" ones")
