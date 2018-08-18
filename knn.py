@@ -10,7 +10,7 @@ from random import randint
 
 #with open("results_knn2.txt", "w") as f:
 #    f.write("knn_results")
-filename="results_knn4.txt"
+filename="results_knn10.txt"
 f = open(filename, "a")
 
 def encrypt_as_bits(x,alpha,HE,f=f):
@@ -89,6 +89,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha,f=f):
     res=HE.encrypt(PyPtxt([0], HE))
     f.write("c*n="+str(c*n))
     f.write("\n")
+    f.flush()
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/c))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
         f.write("\n")
@@ -96,6 +97,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha,f=f):
         f.write("tmp="+str(tmp))
         f.write("\n")
         f.write("\n")
+        f.flush()
         a.append(coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha,f=f))
         #decrypted_res=HE.decrypt(a[i])
         #f.write("result of the coin toss : ",decrypted_res)
@@ -125,6 +127,7 @@ def convert_to_bits(x,p,alpha,HE,f=f):
         l2=[int(list(a.format(x))[i]) for x in l1]
         f.write("l2 : "+str(l2))
         f.write("\n")
+        f.flush()
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
         #f.write("Computing coefficients of Pbit_i") 
