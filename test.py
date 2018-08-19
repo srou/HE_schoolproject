@@ -35,10 +35,15 @@ print("  KeyGen completed in "+str(end-start)+" sec." )
 
 #save and restore the key with saveEnv method
 filename='filename.aenv'
+start = time.time()
 HE.saveEnv(filename)
+end=time.time()
 c1=HE.encrypt(PyPtxt([1], HE))
 HE2=Pyfhel()
+start2 = time.time()
 HE2.restoreEnv(filename)
+end2=time.time()
+print "key saved in "+str(end-start)+" sec, and restored in "+str(end2-start2)+" sec."
 print HE2.decrypt(c1)
 
 #store the Key as a pickle object
