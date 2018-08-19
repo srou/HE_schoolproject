@@ -125,8 +125,8 @@ def convert_to_bits(x,p,alpha,HE,f=f):
         l1=range(0,p)
         a='{0:0'+str(alpha)+'b}'
         l2=[int(list(a.format(x))[i]) for x in l1]
-        f.write("l2 : "+str(l2))
-        f.write("\n")
+        #f.write("l2 : "+str(l2))
+        #f.write("\n")
         f.flush()
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
@@ -316,6 +316,8 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     f.write("\n")
     start1 = time.time()
     distances=dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,f)
+    f.write("len(distances"+str(len(distances)))
+    f.write("\n")
     for res in distances :
         f.write(str(HE.decrypt(res)))
         f.flush()
@@ -323,10 +325,14 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     f.write(str(end1-start1)+" sec to compute distances." )
     f.write("\n")
     f.write("\n")
-    f.write("Distances convert distances to bits ")
+    f.write("Convert distances to bits ")
     f.write("\n")
     start2 = time.time()
-    distances_bit=[convert_to_bits(x,p,alpha,HE,f) for x in distances]
+    distances_bit=[]
+    for i in range(len(distances)):
+        distances_bit.append(convert_to_bits(distances[i],p,alpha,HE,f))
+        f.write("convert distance "+str(i))
+        f.write("\n")
     end2=time.time()
     f.write(str(end2-start2)+" sec to convert distances to bits." )
     f.flush()
@@ -401,12 +407,14 @@ for i in range(n):
     Y_train.append(randint(0,a_class))
 f.write("X_train : "+str(X_train))
 f.write("\n")
+f.write("\n")
 f.write("Y_train : "+str(Y_train))
 f.write("\n")
 
 f.flush()
 
 f.write("Encrypting q")
+f.write("\n")
 f.write("\n")
 q_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in q]
 q_bits_enc=[encrypt_as_bits(elt,alpha,HE,f) for elt in q]
@@ -421,6 +429,7 @@ f.flush()
 f.write("\n")
 f.write("\n")
 f.write("Test l1-norm")
+f.write("\n")
 f.write("\n")
 start = time.time()
 result=l1_norm(q_enc,q_bits_enc,x1_enc,x1_bits_enc,HE=HE,alpha=4)
@@ -437,6 +446,7 @@ f.flush()
 f.write("\n")
 f.write("\n")
 f.write("Test knn")
+f.write("\n")
 f.write("\n")
 start = time.time()
 result=knn(q_enc,q_bits_enc,X_train,Y_train,HE,p,n,d,k,alpha,a_class,file=f)
