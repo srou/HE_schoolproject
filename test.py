@@ -33,7 +33,15 @@ HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
 
-#store the Key
+#save and restore the key with saveEnv method
+filename='filename.aenv'
+HE.saveEnv(filename)
+c1=HE.encrypt(PyPtxt([1], HE))
+HE2=Pyfhel()
+HE2.restoreEnv(filename)
+print HE2.decrypt(c1)
+
+#store the Key as a pickle object
 filename='filename_pi.obj'
 file_ = open(filename, 'w')
 pickle.dump(HE, file_)
