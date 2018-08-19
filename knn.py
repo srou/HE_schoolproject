@@ -10,7 +10,7 @@ from random import randint
 
 #with open("results_knn2.txt", "w") as f:
 #    f.write("knn_results")
-filename="results_knn10.txt"
+filename="results_knn11.txt"
 f = open(filename, "a")
 
 def encrypt_as_bits(x,alpha,HE,f=f):
