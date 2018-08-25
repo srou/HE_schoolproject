@@ -120,7 +120,7 @@ HE = Pyfhel()
 KEYGEN_PARAMS={ "p":17,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
-                "L":40,       "m":-1,
+                "L":30,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}  
 
@@ -151,16 +151,24 @@ print(str(end-start)+" sec." )
 
 
 #Compare x and y with parallelization
+#start = time.time()
+#result=is_smaller_fast3(x_bits_enc,y_bits_enc,HE,alpha)
+#end=time.time()
+#decrypted_res=HE.decrypt(result)
+#print("decrypted result : ",decrypted_res)
+#print(str(end-start)+" sec." )
+
+#Compare x and y without parallelization
 start = time.time()
-result=is_smaller_fast3(x_bits_enc,y_bits_enc,HE,alpha)
+result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
 print(str(end-start)+" sec." )
 
-#Compare x and y without parallelization
+#Compare x and y with np.arrays
 start = time.time()
-result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
+result=is_smaller_fast1(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
 print("decrypted result : ",decrypted_res)
