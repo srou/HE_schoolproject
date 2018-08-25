@@ -316,7 +316,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     f.write("\n")
     start1 = time.time()
     distances=dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,f)
-    f.write("len(distances"+str(len(distances)))
+    f.write("len(distances) : "+str(len(distances)))
     f.write("\n")
     for res in distances :
         f.write(str(HE.decrypt(res)))

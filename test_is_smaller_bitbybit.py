@@ -20,10 +20,10 @@ def encrypt_as_bits(x,alpha,HE):
         x_bits_enc.append(HE.encrypt(PyPtxt([i], HE)))
     return x_bits_enc
 
-def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
-    #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
+def is_smaller(x_bits,y_bits,HE,alpha):
+    #takes in input 2 encrypted integers given in their binary form
     #coded on alpha bits
-    #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
+    #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1) )
     #HE is the Homomorphic Encryption scheme (Pyfhel object)
 
     #Initialisation of same_prefix and same_bit
@@ -46,7 +46,7 @@ def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
     return res
 
 ##1st attempt to optimize computation (using numpy arrays)
-def is_smaller_fast1(x_bits,y_bits,HE,alpha,n=1000):
+def is_smaller_fast1(x_bits,y_bits,HE,alpha):
     c_1=HE.encrypt(PyPtxt([1], HE))
     same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))**2
     same_bit=np.subtract(np.asarray([c_1.copy(c_1) for i in range(alpha)]),same_bit)
@@ -63,7 +63,7 @@ class Computable1:
     def f1(self, x, y):
         return self.HE.encrypt(PyPtxt([1], self.HE)) -((x-y)**2)
 
-def is_smaller_fast2(x_bits,y_bits,HE,alpha,n=1000):
+def is_smaller_fast2(x_bits,y_bits,HE,alpha):
     def product(l, i):
         res = 1
         for j in range(i+1):
@@ -110,19 +110,19 @@ class Computable2:
         to_sum=pool(self.f2,x,y,same_prefix)
         result=somme(to_sum,len(to_sum))
         return result
-def is_smaller_fast3(x_bits,y_bits,HE,alpha,n=1000):
+def is_smaller_fast3(x_bits,y_bits,HE,alpha):
     m=Computable2(HE)
     return m.f3(y,x,alpha)
 
 start = time.time()
 HE = Pyfhel()
 #Generate Key
-KEYGEN_PARAMS={ "p":2,        "r":32,
-                "d":0,        "c":3,
+KEYGEN_PARAMS={ "p":17,      "r":1,
+                "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":40,       "m":-1,
                 "R":3,        "s":0,
-                "gens":[],    "ords":[]}
+                "gens":[],    "ords":[]}  
 
 print("  Running KeyGen with params:")
 print(KEYGEN_PARAMS)

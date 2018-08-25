@@ -308,7 +308,6 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k=3,alpha=4,a_class=1):
     #result_bits=[]
     return XI
 
-    
 
 
 start = time.time()
