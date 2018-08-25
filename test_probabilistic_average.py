@@ -160,8 +160,8 @@ KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
                 "gens":[],    "ords":[]}  
 f.write("  Running KeyGen with params:")
 f.write("\n")
+f.write(str(KEYGEN_PARAMS))
 f.flush()
-print(KEYGEN_PARAMS)
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 f.write("  KeyGen completed in "+str(end-start)+" sec." )

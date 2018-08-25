@@ -15,15 +15,16 @@ def inv_modulo(x, p):
     (u, _, gdc) = bezout(x, p)
     if gdc == 1: return u%abs(p)
     else: raise Exception("%s et %s are not mutually prime" % (x, p))
-def Psqrt(x,p,HE):
+def Psqrt(x,p,HE,f):
     def coeffs_Psqrt(p):
         #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
         l1=range(0,p)
         l2=[int(math.floor(math.sqrt(i))) for i in l1]
-        print("l2 : ",l2)
+        f.write("l2 : "+str(l2))
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
-        print("Computing coefficients of Psqrt") 
+        f.write("Computing coefficients of Psqrt") 
+        f.write("\n")
         for i in range(p):
             num=l2[i]
             den=1
@@ -51,41 +52,63 @@ def Psqrt(x,p,HE):
             res+=tmp
     return res
 
-start = time.time()
-HE = Pyfhel()
-#Generate key
-KEYGEN_PARAMS={ "p":17,      "r":1,
-                "d":0,        "c":3,
-                "sec":128,    "w":64,
-                "L":40,       "m":-1,
-                "R":3,        "s":0,
-                "gens":[],    "ords":[]}
+#For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
+prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-print("  Running KeyGen with params:")
-print(KEYGEN_PARAMS)
-HE.keyGen(KEYGEN_PARAMS)
-end=time.time()
-print("  KeyGen completed in "+str(end-start)+" sec." )
+L=40
+filename="Psqrt_"+str(L)+".txt"
+f = open(filename, "a")
 
-#preliminary test
-start = time.time()
-a=HE.encrypt(PyPtxt([4], HE))
-end=time.time()
-print("encrypts an int in : "+str(end-start)+" sec." )
-b=HE.encrypt(PyPtxt([6], HE))
-print("4-6",HE.decrypt(a-b))
+for alpha in range(4,9):
+    start = time.time()
+    HE = Pyfhel()
+    #Generate key
+    KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
+                    "d":0,        "c":2,
+                    "sec":128,    "w":64,
+                    "L":L,       "m":-1,
+                    "R":3,        "s":0,
+                    "gens":[],    "ords":[]}  
+
+    f.write("  Running KeyGen with params:")
+    f.write("\n")
+    f.write(str(KEYGEN_PARAMS))
+    f.flush()
+    HE.keyGen(KEYGEN_PARAMS)
+    end=time.time()
+    f.write("  KeyGen completed in "+str(end-start)+" sec." )
+    f.write("\n")
+    f.flush()
+
+    #preliminary test
+    #start = time.time()
+    #a=HE.encrypt(PyPtxt([4], HE))
+    #end=time.time()
+    #f.write("encrypts an int in : "+str(end-start)+" sec." )
+    #f.write("\n")
+    #f.flush()
+    #b=HE.encrypt(PyPtxt([6], HE))
+    #f.write("4-6"+str(HE.decrypt(a-b)))
+    #f.write("\n")
+    #f.flush()
 
 
-#Compute floor(sqrt(x))
-p=KEYGEN_PARAMS["p"]
-print("p=",p)
-n=8
-x=HE.encrypt(PyPtxt([n], HE))
-print("x=",HE.decrypt(x))
+    #Compute floor(sqrt(x))
+    p=KEYGEN_PARAMS["p"]
+    f.write("p="+str(p))
+    f.write("\n")
+    n=8
+    x=HE.encrypt(PyPtxt([n], HE))
+    f.write("x="+str(HE.decrypt(x)))
+    f.write("\n")
+    f.flush()
 
-start = time.time()
-result=Psqrt(x,p,HE)
-decrypted_res=HE.decrypt(result)
-print("floor(sqrt("+str(n)+")) : ",decrypted_res)
-end=time.time()
-print(str(end-start)+" sec." )
+    start = time.time()
+    result=Psqrt(x,p,HE,f)
+    decrypted_res=HE.decrypt(result)
+    f.write("floor(sqrt("+str(n)+")) : "+str(decrypted_res))
+    f.write("\n")
+    end=time.time()
+    f.write(str(end-start)+" sec." )
+    f.write("\n")
+    f.flush()
