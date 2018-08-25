@@ -9,7 +9,7 @@ import multiprocessing
 from pathos.multiprocessing import ProcessingPool as Pool
 
 
-def encrypt_as_bits(x,alpha,HE,file):
+def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
     #returns a list of the encrypted bits of x
     a='{0:0'+str(alpha)+'b}'
@@ -119,7 +119,7 @@ def is_smaller_fast3(x_bits,y_bits,HE,alpha):
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-L=70
+L=40
 filename="is_smaller_"+str(L)+".txt"
 f = open(filename, "a")
 
