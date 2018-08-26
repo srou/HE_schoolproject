@@ -6,6 +6,8 @@ import numpy as np
 from random import randint
 import argparse
 
+#In this file, we are testing the function probabilisticAverage for different values of L, alpha
+# and n (length of the list which we want to compute the average of)
 parser=argparse.ArgumentParser()
 parser.add_argument("L",type=int)
 parser.add_argument("alpha",type=int)
@@ -152,13 +154,12 @@ prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13
 L=args.L
 alpha=args.alpha
 n=args.n
-filename="average_"+str(L)+".txt"
+filename="average_"+str(L)+"_"+str(n)+".txt"
 f = open(filename, "a")
 
-
+#Generate Key
 start = time.time()
 HE = Pyfhel()
-#Generate Key
 KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
@@ -182,21 +183,21 @@ for i in range(n):
 list_x_bits=[encrypt_as_bits(x,alpha,HE,filename) for x in list_nb]
 
 #Compute the probabilistic average of the list of int
-f.write("\n")
-f.write("\n")
-f.write("Compute fast Average of "+str(list_nb))
-f.write("\n")
-f.write("\n")
-f.flush()
-start = time.time()
-result=probabilisticAverage_fast(list_x_bits,len(list_nb),HE,1,alpha,filename)
-end=time.time()
-decrypted_res=HE.decrypt(result)
-print("decrypted result : "+str(decrypted_res))
-f.write("\n")
-print(str(end-start)+" sec." )
-f.write("\n")
-f.flush()
+#f.write("\n")
+#f.write("\n")
+#f.write("Compute fast Average of "+str(list_nb))
+#f.write("\n")
+#f.write("\n")
+#f.flush()
+#start = time.time()
+#result=probabilisticAverage_fast(list_x_bits,len(list_nb),HE,1,alpha,filename)
+#end=time.time()
+#decrypted_res=HE.decrypt(result)
+#print("decrypted result : "+str(decrypted_res))
+#f.write("\n")
+#print(str(end-start)+" sec." )
+#f.write("\n")
+#f.flush()
 
 #Compute the probabilistic average of the list of int
 f.write("\n")
