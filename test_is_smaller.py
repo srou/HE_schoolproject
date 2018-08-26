@@ -7,7 +7,12 @@ from joblib import Parallel, delayed
 import multiprocessing
 
 from pathos.multiprocessing import ProcessingPool as Pool
+import argparse
 
+parser=argparse.ArgumentParser()
+parser.add_argument("L",type=int)
+parser.add_argument("alpha",type=int)
+args=parser.parse_args()
 
 def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -119,86 +124,86 @@ def is_smaller_fast3(x_bits,y_bits,HE,alpha):
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-L=40
-filename="is_smaller_"+str(L)+".txt"
+L=args.L
+alpha=args.alpha
+filename="is_smaller_"+str(L)+"_"+str(alpha)+".txt"
 f = open(filename, "a")
 
-for alpha in range(4,13):
-    #Generate Key
-    start = time.time()
-    HE = Pyfhel()
-    KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
-                    "d":0,        "c":2,
-                    "sec":128,    "w":64,
-                    "L":L,       "m":-1,
-                    "R":3,        "s":0,
-                    "gens":[],    "ords":[]}  
+#Generate Key
+start = time.time()
+HE = Pyfhel()
+KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
+                "d":0,        "c":2,
+                "sec":128,    "w":64,
+                "L":L,       "m":-1,
+                "R":3,        "s":0,
+                "gens":[],    "ords":[]}  
 
-    f.write("  Running KeyGen with params:")
-    f.write("\n")
-    f.write(str(KEYGEN_PARAMS))
-    f.flush()
-    HE.keyGen(KEYGEN_PARAMS)
-    end=time.time()
-    f.write("  KeyGen completed in "+str(end-start)+" sec." )
-    f.write("\n")
-    f.flush()
-
-
-    #Test is_smaller with 2 integers x and y
-    x=7
-    y=6
-    f.write("alpha="+str(alpha))
-    f.write("\n")
-    f.write("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
-    f.write("\n")
-    f.flush()
-
-    #Encrypt x bit by bit
-    start = time.time()
-    x_bits_enc=encrypt_as_bits(x,alpha,HE,f)
-    end=time.time()
-    f.write(str(end-start)+" sec." )
-    f.write("\n")
-    f.flush()
-
-    #Encrypt y bit by bit
-    start = time.time()
-    y_bits_enc=encrypt_as_bits(y,alpha,HE,f)
-    end=time.time()
-    f.write(str(end-start)+" sec." )
-    f.write("\n")
-    f.flush()
+f.write("  Running KeyGen with params:")
+f.write("\n")
+f.write(str(KEYGEN_PARAMS))
+f.flush()
+HE.keyGen(KEYGEN_PARAMS)
+end=time.time()
+f.write("  KeyGen completed in "+str(end-start)+" sec." )
+f.write("\n")
+f.flush()
 
 
-    #Compare x and y with parallelization
-    #start = time.time()
-    #result=is_smaller_fast3(x_bits_enc,y_bits_enc,HE,alpha)
-    #end=time.time()
-    #decrypted_res=HE.decrypt(result)
-    #print("decrypted result : ",decrypted_res)
-    #print(str(end-start)+" sec." )
+#Test is_smaller with 2 integers x and y
+x=7
+y=6
+f.write("alpha="+str(alpha))
+f.write("\n")
+f.write("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
+f.write("\n")
+f.flush()
 
-    #Compare x and y without parallelization
-    start = time.time()
-    result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
-    end=time.time()
-    decrypted_res=HE.decrypt(result)
-    f.write("decrypted result : "+str(decrypted_res))
-    f.write("\n")
-    f.write(str(end-start)+" sec." )
-    f.write("\n")
-    f.flush()
+#Encrypt x bit by bit
+start = time.time()
+x_bits_enc=encrypt_as_bits(x,alpha,HE,f)
+end=time.time()
+f.write(str(end-start)+" sec." )
+f.write("\n")
+f.flush()
 
-    #Compare x and y with np.arrays
-    start = time.time()
-    result=is_smaller_fast1(x_bits_enc,y_bits_enc,HE,alpha)
-    end=time.time()
-    decrypted_res=HE.decrypt(result)
-    f.write("decrypted result : "+str(decrypted_res))
-    f.write("\n")
-    f.write(str(end-start)+" sec." )
-    f.write("\n")
-    f.write("\n")
-    f.flush()
+#Encrypt y bit by bit
+start = time.time()
+y_bits_enc=encrypt_as_bits(y,alpha,HE,f)
+end=time.time()
+f.write(str(end-start)+" sec." )
+f.write("\n")
+f.flush()
+
+
+#Compare x and y with parallelization
+#start = time.time()
+#result=is_smaller_fast3(x_bits_enc,y_bits_enc,HE,alpha)
+#end=time.time()
+#decrypted_res=HE.decrypt(result)
+#print("decrypted result : ",decrypted_res)
+#print(str(end-start)+" sec." )
+
+#Compare x and y without parallelization
+start = time.time()
+result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
+end=time.time()
+decrypted_res=HE.decrypt(result)
+f.write("decrypted result : "+str(decrypted_res))
+f.write("\n")
+f.write(str(end-start)+" sec." )
+f.write("\n")
+f.flush()
+
+#Compare x and y with np.arrays
+start = time.time()
+result=is_smaller_fast1(x_bits_enc,y_bits_enc,HE,alpha)
+end=time.time()
+decrypted_res=HE.decrypt(result)
+f.write("decrypted result : "+str(decrypted_res))
+f.write("\n")
+f.write(str(end-start)+" sec." )
+f.write("\n")
+f.write("\n")
+f.flush()
 f.close()

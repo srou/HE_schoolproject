@@ -4,6 +4,13 @@ import time
 import math
 import numpy as np
 from random import randint
+import argparse
+
+parser=argparse.ArgumentParser()
+parser.add_argument("L",type=int)
+parser.add_argument("alpha",type=int)
+parser.add_argument("n",type=int)
+args=parser.parse_args()
 
 def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -142,11 +149,11 @@ def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha,f):
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-L=40
+L=args.L
+alpha=args.alpha
+n=args.n
 filename="average_"+str(L)+".txt"
 f = open(filename, "a")
-alpha=4
-n=10
 
 
 start = time.time()
