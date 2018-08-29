@@ -179,7 +179,7 @@ f.flush()
 #list of n numbers which we want to compute the average
 list_nb=[]
 for i in range(n):
-    list_nb.append(randint(0,(2**alpha)-1))
+    list_nb.append(randint(0,2**alpha)) #list_nb.append(randint(0,(int(math.floor(math.sqrt(KEYGEN_PARAMS["p"])))+1)
 list_x_bits=[encrypt_as_bits(x,alpha,HE,f) for x in list_nb]
 
 #Compute the probabilistic average of the list of int
