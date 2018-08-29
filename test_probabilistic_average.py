@@ -180,7 +180,7 @@ f.flush()
 list_nb=[]
 for i in range(n):
     list_nb.append(randint(0,(2**alpha)-1))
-list_x_bits=[encrypt_as_bits(x,alpha,HE,filename) for x in list_nb]
+list_x_bits=[encrypt_as_bits(x,alpha,HE,f) for x in list_nb]
 
 #Compute the probabilistic average of the list of int
 #f.write("\n")
