@@ -3,6 +3,13 @@ from Pyfhel import PyCtxt,PyPtxt,Pyfhel
 import time
 import math
 import numpy as np
+import argparse
+
+#In this file, we are testing the function probabilisticAverage for different values of L and alpha
+parser=argparse.ArgumentParser()
+parser.add_argument("L",type=int)
+parser.add_argument("p",type=int)
+args=parser.parse_args()
 
 def bezout(a, b):
     #computes (u,v,p) st a*u + b*v = gdc(a,b)
@@ -55,60 +62,61 @@ def Psqrt(x,p,HE,f):
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-L=40
-filename="Psqrt_"+str(L)+".txt"
+L=args.L
+p=args.p
+filename="Psqrt_"+str(L)+"_"+str(p)+".txt"
 f = open(filename, "a")
 
-for alpha in range(4,9):
-    start = time.time()
-    HE = Pyfhel()
-    #Generate key
-    KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
-                    "d":0,        "c":2,
-                    "sec":128,    "w":64,
-                    "L":L,       "m":-1,
-                    "R":3,        "s":0,
-                    "gens":[],    "ords":[]}  
 
-    f.write("  Running KeyGen with params:")
-    f.write("\n")
-    f.write(str(KEYGEN_PARAMS))
-    f.flush()
-    HE.keyGen(KEYGEN_PARAMS)
-    end=time.time()
-    f.write("  KeyGen completed in "+str(end-start)+" sec." )
-    f.write("\n")
-    f.flush()
+start = time.time()
+HE = Pyfhel()
+#Generate key
+KEYGEN_PARAMS={ "p":p,   "r":1,
+                "d":0,        "c":2,
+                "sec":128,    "w":64,
+                "L":L,       "m":-1,
+                "R":3,        "s":0,
+                "gens":[],    "ords":[]}  
 
-    #preliminary test
-    #start = time.time()
-    #a=HE.encrypt(PyPtxt([4], HE))
-    #end=time.time()
-    #f.write("encrypts an int in : "+str(end-start)+" sec." )
-    #f.write("\n")
-    #f.flush()
-    #b=HE.encrypt(PyPtxt([6], HE))
-    #f.write("4-6"+str(HE.decrypt(a-b)))
-    #f.write("\n")
-    #f.flush()
+f.write("  Running KeyGen with params:")
+f.write("\n")
+f.write(str(KEYGEN_PARAMS))
+f.flush()
+HE.keyGen(KEYGEN_PARAMS)
+end=time.time()
+f.write("  KeyGen completed in "+str(end-start)+" sec." )
+f.write("\n")
+f.flush()
+
+#preliminary test
+#start = time.time()
+#a=HE.encrypt(PyPtxt([4], HE))
+#end=time.time()
+#f.write("encrypts an int in : "+str(end-start)+" sec." )
+#f.write("\n")
+#f.flush()
+#b=HE.encrypt(PyPtxt([6], HE))
+#f.write("4-6"+str(HE.decrypt(a-b)))
+#f.write("\n")
+#f.flush()
 
 
-    #Compute floor(sqrt(x))
-    p=KEYGEN_PARAMS["p"]
-    f.write("p="+str(p))
-    f.write("\n")
-    n=8
-    x=HE.encrypt(PyPtxt([n], HE))
-    f.write("x="+str(HE.decrypt(x)))
-    f.write("\n")
-    f.flush()
+#Compute floor(sqrt(x))
+p=KEYGEN_PARAMS["p"]
+f.write("p="+str(p))
+f.write("\n")
+n=8
+x=HE.encrypt(PyPtxt([n], HE))
+f.write("x="+str(HE.decrypt(x)))
+f.write("\n")
+f.flush()
 
-    start = time.time()
-    result=Psqrt(x,p,HE,f)
-    decrypted_res=HE.decrypt(result)
-    f.write("floor(sqrt("+str(n)+")) : "+str(decrypted_res))
-    f.write("\n")
-    end=time.time()
-    f.write(str(end-start)+" sec." )
-    f.write("\n")
-    f.flush()
+start = time.time()
+result=Psqrt(x,p,HE,f)
+decrypted_res=HE.decrypt(result)
+f.write("floor(sqrt("+str(n)+")) : "+str(decrypted_res))
+f.write("\n")
+end=time.time()
+f.write(str(end-start)+" sec." )
+f.write("\n")
+f.flush()
