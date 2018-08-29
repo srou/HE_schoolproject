@@ -179,7 +179,7 @@ f.flush()
 #list of n numbers which we want to compute the average
 list_nb=[]
 for i in range(n):
-    list_nb.append(randint(0,2**alpha)) #list_nb.append(randint(0,(int(math.floor(math.sqrt(KEYGEN_PARAMS["p"])))+1)
+    list_nb.append(randint(0,(2**alpha)-1)) #list_nb.append(randint(0,(int(math.floor(math.sqrt(KEYGEN_PARAMS["p"])))
 list_x_bits=[encrypt_as_bits(x,alpha,HE,f) for x in list_nb]
 
 #Compute the probabilistic average of the list of int
@@ -202,7 +202,7 @@ list_x_bits=[encrypt_as_bits(x,alpha,HE,f) for x in list_nb]
 #Compute the probabilistic average of the list of int
 f.write("\n")
 f.write("\n")
-print("Compute Average of "+str(list_nb))
+f.write("Compute Average of "+str(list_nb))
 f.write("\n")
 f.write("\n")
 f.flush()
@@ -210,25 +210,25 @@ start = time.time()
 result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha,f)
 end=time.time()
 decrypted_res=HE.decrypt(result)
-print("decrypted result : "+str(decrypted_res))
+f.write("decrypted result : "+str(decrypted_res))
 f.write("\n")
-print(str(end-start)+" sec." )
+f.write(str(end-start)+" sec." )
 f.write("\n")
 f.flush()
 
 #Compute the 2nd order moment of the list of int
 f.write("\n")
 f.write("\n")
-print("Compute 2nd moment order of "+str(list_nb))
+f.write("Compute 2nd moment order of "+str(list_nb))
 f.write("\n")
 f.write("\n")
-f.flush()
+f.flush() 
 start = time.time()
 result=probabilisticAverage(list_x_bits,len(list_nb),HE,2,alpha,f)
 end=time.time()
 decrypted_res=HE.decrypt(result)
 f.write("decrypted result : "+str(decrypted_res))
 f.write("\n")
-print(str(end-start)+" sec." )
+f.write(str(end-start)+" sec." )
 f.write("\n")
 f.flush()
