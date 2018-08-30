@@ -223,7 +223,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
 #params
 p=17
 L=40 #L=args.L
-t=4 #t=args.t
+t=3 #t=args.t
 alpha=4
 k=2
 
