@@ -65,6 +65,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha,f):
     c=int(math.ceil((L**deg)/float(n)))
     res=HE.encrypt(PyPtxt([0], HE))
     f.write("c*n="+str(c*n))
+    f.write("\n")
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/float(c)))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
         tmp=coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha)
@@ -173,13 +174,16 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
     #a prime p such that each datapoint 0=< d =< sqrt(p)
     n=len(list_d_bits)
     #Compute average, 2nd order moment and std
+    f.write("\n")
     f.write("Compute average")
+    f.write("\n")
     avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha,f=f) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
     f.write("average : "+str(HE.decrypt(avg)))
     f.write("\n")
     f.write("\n")
     f.flush()
     f.write("Compute second_moment")
+    f.write("\n")
     second_moment=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha,f=f)
     f.write("\n")
     f.write("second_moment : "+str(HE.decrypt(second_moment)))
@@ -188,6 +192,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
     f.flush()
     A=(avg**2)+second_moment
     f.write("A : "+str(HE.decrypt(A)))
+    f.write("\n")
     f.write("Compute std")
     f.write("\n")
     f.flush()
@@ -197,8 +202,11 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
     f.flush()
     #Compute threshold
     f.write("Compute threshold and convert to bits")
+    f.write("\n")
     phi_=HE.encrypt(PyPtxt([int(round(1/phi(float(k/n)/100),0))], HE))
+    f.write("\n")
     f.write(int(round(1/phi(float(k/n)/100),0)))
+    f.write("\n")
     f.write ("phi : "+str(HE.decrypt(phi_)))
     f.write("\n")
     f.flush()
@@ -223,7 +231,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
 #params
 p=17
 L=40 #L=args.L
-t=3 #t=args.t
+t=5 #t=args.t
 alpha=4
 k=2
 
