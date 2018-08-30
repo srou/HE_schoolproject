@@ -100,7 +100,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha,f):
     f.write("c*n="+str(c*n))
     f.write("\n")
     f.flush()
-    for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
+    for i in range(c*n):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/float(c)))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
         #print("")
         #print("tmp="+str(tmp))
@@ -148,8 +148,9 @@ def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha,f):
     res = np.sum(to_sum)
     return res
 
-#For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
+#For a given number of bits alpha, this dict gives the smallest prime number p such that sqrt(p) > 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
+#prime_dict={3:53 , 4:227, 5:967, 6:3989}
 
 L=args.L
 alpha=args.alpha
