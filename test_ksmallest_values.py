@@ -4,41 +4,34 @@ import time
 import math
 import numpy as np
 from random import randint
+
+import argparse
+
+parser=argparse.ArgumentParser()
+parser.add_argument("L",type=int)
+parser.add_argument("t",type=int)  #number of the test
+args=parser.parse_args()
      
-def encrypt_as_bits(x,alpha,HE):
+def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
     #returns a list of the encrypted bits of x
     a='{0:0'+str(alpha)+'b}'
     x_bits=[int(i) for i in list(a.format(x))]
     x_bits_enc=[]
-    print("Encrypting "+str(x)+" in bits ",x_bits)
+    f.write("Encrypting "+str(x)+" in bits "+str(x_bits))
+    f.write("\n")
+    f.flush()
     for i in x_bits:
         x_bits_enc.append(HE.encrypt(PyPtxt([i], HE)))
     return x_bits_enc
     
-def is_smaller(x_bits,y_bits,HE,alpha,n=1000):
-    #takes in input 2 encrypted number (st 0=< x,y < n) given in their binary form
-    #coded on alpha bits
-    #returns [1] iff y<x , [0] otherwise  (where [1]= encrypt(1))
-    #HE is the Homomorphic Encryption scheme (Pyfhel object)
-
-    #Initialisation of same_prefix and same_bit
-    #print("Initisalisation")
+def is_smaller(x_bits,y_bits,HE,alpha):
     c_1=HE.encrypt(PyPtxt([1], HE))
-    same_prefix=[c_1]
-    same_bit=[]
-    res=(c_1-y_bits[0])*x_bits[0]
-    for i in range(alpha):                        #min(alpha,int(math.floor(math.log(n))+1))):
-        same_bit.append(HE.encrypt(PyPtxt([1], HE))-((x_bits[i]-y_bits[i])**2))
-        tmp=HE.encrypt(PyPtxt([1], HE))
-        for j in range(i+1):
-            #print("same_bit : "+str(j),HE.decrypt(same_bit[j]))
-            tmp*=same_bit[j]
-        #print("tmp : ",HE.decrypt(tmp))
-        same_prefix.append(tmp)
-        if i>0:  #since the 1st term of the sum is already computed before the loop
-            res+=(HE.encrypt(PyPtxt([1], HE))-y_bits[i])*x_bits[i]*same_prefix[i]
-            #print("res : ",HE.decrypt(res))
+    same_bit =np.subtract(np.asarray(x_bits),np.asarray(y_bits))**2
+    same_bit=np.subtract(np.asarray([c_1.copy(c_1) for i in range(alpha)]),same_bit)
+    same_prefix=np.asarray([c_1.copy(c_1)]+[np.prod(same_bit[0:i+1]) for i in range(alpha-1)])
+    to_sum=np.multiply(same_prefix,np.multiply(np.subtract(np.asarray([HE.encrypt(PyPtxt([1], HE)) for i in range(alpha)]),np.asarray(y_bits)),np.asarray(x_bits)))
+    res = np.sum(to_sum)
     return res
 
 def coinToss(x_bits,n,HE,deg,alpha):
@@ -47,7 +40,6 @@ def coinToss(x_bits,n,HE,deg,alpha):
 #Returns an encrypted bit b=[1] if r^(1/deg)<x (ie : with probability x/n) otherwise [0]
     #print("Random number between 0 and "+str(n))
     r=randint(0, n)
-    print("r : ",r)
     r=int(math.floor((r**(1/float(deg)))))
     print(r)
     if r>((2**alpha) -1) : #rq : x=< 2**alpha -1 so if r>2**alpha-1, then r>x
@@ -59,7 +51,7 @@ def coinToss(x_bits,n,HE,deg,alpha):
         #compare r_bits and x_bits
         return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
 
-def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
+def probabilisticAverage(list_x_bits,n,HE,deg,alpha,f):
     #Takes in input a list of integers (each integer is a list of encrypted bits)
     #n=size of the vector input
     #alpha=number of bits on which each elt of the vector is encoded
@@ -70,18 +62,12 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
     
     #Initialize
     L=2**alpha
-    print("L=",L)
     c=int(math.ceil((L**deg)/float(n)))
-    print("c=",c)
     res=HE.encrypt(PyPtxt([0], HE))
-    print("c*n="+str(c*n))
+    f.write("c*n="+str(c*n))
     for i in range((c*n)):       #rq : pour L=8 et n=3, c=3 et c*n=9 (environ 440sec)
         tmp=int(math.floor(i/float(c)))    #(rq le dernier i sera c*n-1 donc le dernier tmp sera n-1)
-        print("")
-        print("tmp="+str(tmp))
-        print("")
         tmp=coinToss(list_x_bits[tmp],c*n,HE,deg=deg,alpha=alpha)
-        print("result of the coin toss : ",HE.decrypt(tmp))
         res+=tmp  #peut etre pas besoin d'une liste (sommer directement les elts dans res)
     return res
 
@@ -97,7 +83,7 @@ def inv_modulo(x, p):
     if gdc == 1: return u%abs(p)
     else: raise Exception("%s et %s are not mutually prime" % (x, p))
         
-def convert_to_bits(x,p,alpha,HE):
+def convert_to_bits(x,p,alpha,HE,f):
     def coeffs_Pbit_i(i,p,alpha):
         #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
         #alpha : nb of bits
@@ -106,10 +92,10 @@ def convert_to_bits(x,p,alpha,HE):
         l1=range(0,p)
         a='{0:0'+str(alpha)+'b}'
         l2=[int(list(a.format(x))[i]) for x in l1]
-        print("l2 : ",l2)
+        #print("l2 : ",l2)
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
-        print("Computing coefficients of Pbit_i") 
+        #f.write("Computing coefficients of Pbit_i") 
         for i in range(p):
             num=l2[i]
             den=1
@@ -134,20 +120,21 @@ def convert_to_bits(x,p,alpha,HE):
     #0=< x =< 2^alpha-1 < p  , p prime
     bits_x=[]  #encrypted bit representation of x
     for i in range(alpha):
-        print("Computing bit "+str(i))
+        f.write("Computing bit "+str(i))
+        f.write("\n")
+        f.flush()
         coeffs_i=coeffs_Pbit_i(i=i,p=p,alpha=alpha)
         bits_x.append(compute_Pbit_i(x=x,p=p,coeffs_i=coeffs_i,HE=HE))
     return bits_x
 
-def Psqrt(x,p,HE):
+def Psqrt(x,p,HE,f):
     def coeffs_Psqrt(p):
         #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
         l1=range(0,p)
         l2=[int(math.floor(math.sqrt(i))) for i in l1]
-        print("l2 : ",l2)
+        #print("l2 : ",l2)
         #find the coeffs ri (in Zp) that help construct the polynomial
-        r=[]
-        print("Computing coefficients of Psqrt") 
+        r=[] 
         for i in range(p):
             num=l2[i]
             den=1
@@ -157,6 +144,9 @@ def Psqrt(x,p,HE):
             tmp=(num*inv_modulo(den,p))%p
             r.append(int(tmp))
         return r
+    f.write("Computing coefficients of Psqrt")
+    f.write("\n")
+    f.flush()
     coeffs=coeffs_Psqrt(p)
     #x encrypted as a single Ctxt
     #0=< x =< p  , p prime
@@ -178,67 +168,96 @@ def Psqrt(x,p,HE):
 def phi(x):
     return (1.0 + math.erf(x / math.sqrt(2.0))) / 2.0
 
-def k_smallest_values(list_d_bits,p,k,HE,alpha):
+def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
     #Takes in input a list of data (each encrypted as a list of bits)
     #a prime p such that each datapoint 0=< d =< sqrt(p)
     n=len(list_d_bits)
     #Compute average, 2nd order moment and std
-    print("Compute average")
-    avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
-    print("average : ",HE.decrypt(avg))
-    print("")
-    print("Compute second_moment")
-    second_moment=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha)
-    print("")
-    print("second_moment : ",HE.decrypt(second_moment))
+    f.write("Compute average")
+    avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha,f) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
+    f.write("average : "+str(HE.decrypt(avg)))
+    f.write("\n")
+    f.write("\n")
+    f.flush()
+    f.write("Compute second_moment")
+    second_moment=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha,f)
+    f.write("\n")
+    f.write("second_moment : "+str(HE.decrypt(second_moment)))
+    f.write("\n")
+    f.write("\n")
+    f.flush()
     A=(avg**2)+second_moment
-    print("A : ",HE.decrypt(A))
-    print("Compute std")
-    std=Psqrt(A,p,HE)
-    print("std : ",HE.decrypt(std))
+    f.write("A : "+str(HE.decrypt(A)))
+    f.write("Compute std")
+    f.write("\n")
+    f.flush()
+    std=Psqrt(A,p,HE,f)
+    f.write("std : "+str(HE.decrypt(std)))
+    f.write("\n")
+    f.flush()
     #Compute threshold
-    print("Compute threshold and convert to bits")
+    f.write("Compute threshold and convert to bits")
     phi_=HE.encrypt(PyPtxt([int(round(1/phi(float(k/n)/100),0))], HE))
-    print int(round(1/phi(float(k/n)/100),0))
-    print ("phi : ",HE.decrypt(phi_))
+    f.write(int(round(1/phi(float(k/n)/100),0)))
+    f.write ("phi : "+str(HE.decrypt(phi_)))
+    f.write("\n")
+    f.flush()
     T=avg+phi_*std
-    print("threshold : ",HE.decrypt(T))
-    T_bits=convert_to_bits(T,p,alpha,HE)
-    print("threshold bit by bit : ")
+    f.write("threshold : "+str(HE.decrypt(T)))
+    f.write("\n")
+    f.flush()
+    T_bits=convert_to_bits(T,p,alpha,HE,f)
+    f.write("threshold bit by bit : ")
+    f.write("\n")
+    f.flush()
     for bit in T_bits :
         print(HE.decrypt(bit))
     res=[]
     for i in range(n):
         res.append(is_smaller(T_bits,list_d_bits[i],HE,alpha=alpha))
-        print("dist("+str(i)+") : ",HE.decrypt(res[i]))
+        f.write("dist("+str(i)+") : "+str(HE.decrypt(res[i])))
+        f.write("\n")
+        f.flush()
     return res
+
+#params
+p=17
+L=args.L
+t=args.t
+alpha=4
+k=2
+
+filename="ksv_"+str(t)+".txt"
+f = open(filename, "a")
 
 start = time.time()
 HE = Pyfhel()
 #Generate Key
-KEYGEN_PARAMS={ "p":17,      "r":1,
+KEYGEN_PARAMS={ "p":p,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
-                "L":50,       "m":-1,
+                "L":L,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}                
-
-print("  Running KeyGen with params:")
-print(KEYGEN_PARAMS)
+f.write("\n")
+f.write("  Running KeyGen with params:")
+f.write("\n")
+f.write(str(KEYGEN_PARAMS))
+f.write("\n")
+f.flush()
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
-print("  KeyGen completed in "+str(end-start)+" sec." )
-
-#params
-p=KEYGEN_PARAMS["p"]
-alpha=4
-k=2
+f.write("  KeyGen completed in "+str(end-start)+" sec." )
+f.write("\n")
+f.flush()
 
 #Create a list of distances and encrypt them bit by bit
 dist=[]
 for i in range(100):
     dist.append(randint(0,(2**alpha)-1))
-print ("distances : ",dist)
+f.write ("distances : "+str(dist))
+f.write("\n")
+f.flush()
 
 dist_bits=[encrypt_as_bits(d,alpha,HE) for d in dist]
 
@@ -246,6 +265,9 @@ dist_bits=[encrypt_as_bits(d,alpha,HE) for d in dist]
 start = time.time()
 result=k_smallest_values(dist_bits,p,k,HE,alpha)
 decrypted_res=[HE.decrypt(res) for res in result]
-print("decrypted result : ",decrypted_res)
+f.write("decrypted result : "+str(decrypted_res))
+f.write("\n")
 end=time.time()
-print(str(end-start)+" sec." )
+f.write(str(end-start)+" sec." )
+f.write("\n")
+f.flush()

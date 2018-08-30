@@ -89,7 +89,7 @@ def is_smaller_fast2(x_bits,y_bits,HE,alpha):
     res = somme(to_sum, len(to_sum))
     return res
 
-##3rd attempt (using pathos)
+##3rd attempt : using pathos (does not work either)
 def product(l, i):
     res = 1
     for j in range(i+1):
