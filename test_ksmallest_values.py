@@ -47,7 +47,7 @@ def coinToss(x_bits,n,HE,deg,alpha):
         return c_0
     else :
         #encrypt r as a list of bits
-        r_bits_enc=encrypt_as_bits(r,alpha,HE)
+        r_bits_enc=encrypt_as_bits(r,alpha,HE,f)
         #compare r_bits and x_bits
         return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
 
@@ -174,13 +174,13 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
     n=len(list_d_bits)
     #Compute average, 2nd order moment and std
     f.write("Compute average")
-    avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha,f) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
+    avg=probabilisticAverage(list_d_bits,n,HE,1,alpha=alpha,f=f) #L=sqrt(p) ?? donc alpha = log2(sqrt(p) ?????
     f.write("average : "+str(HE.decrypt(avg)))
     f.write("\n")
     f.write("\n")
     f.flush()
     f.write("Compute second_moment")
-    second_moment=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha,f)
+    second_moment=probabilisticAverage(list_d_bits,n,HE,2,alpha=alpha,f=f)
     f.write("\n")
     f.write("second_moment : "+str(HE.decrypt(second_moment)))
     f.write("\n")
@@ -259,15 +259,15 @@ f.write ("distances : "+str(dist))
 f.write("\n")
 f.flush()
 
-dist_bits=[encrypt_as_bits(d,alpha,HE) for d in dist]
+dist_bits=[encrypt_as_bits(d,alpha,HE,f) for d in dist]
 
 #Return the position of the k smallest values of the list
 start = time.time()
-result=k_smallest_values(dist_bits,p,k,HE,alpha)
+result=k_smallest_values(dist_bits,p,k,HE,alpha,f)
 decrypted_res=[HE.decrypt(res) for res in result]
 f.write("decrypted result : "+str(decrypted_res))
 f.write("\n")
 end=time.time()
 f.write(str(end-start)+" sec." )
 f.write("\n")
-f.flush()
+f.close()
