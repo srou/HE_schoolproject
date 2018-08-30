@@ -3,13 +3,6 @@ from Pyfhel import PyCtxt,PyPtxt,Pyfhel
 import time
 import math
 import numpy as np
-import argparse
-
-#In this file, we are testing the function probabilisticAverage for different values of L and alpha
-parser=argparse.ArgumentParser()
-parser.add_argument("L",type=int)
-parser.add_argument("p",type=int)
-args=parser.parse_args()
 
 def bezout(a, b):
     #computes (u,v,p) st a*u + b*v = gdc(a,b)
@@ -62,8 +55,8 @@ def Psqrt(x,p,HE,f):
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-L=args.L
-p=args.p
+L=30
+p=17
 filename="Psqrt_"+str(L)+"_"+str(p)+".txt"
 f = open(filename, "a")
 
