@@ -205,7 +205,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
     f.write("\n")
     phi_=HE.encrypt(PyPtxt([int(round(1/phi(float(k/n)/100),0))], HE))
     f.write("\n")
-    f.write(int(round(1/phi(float(k/n)/100),0)))
+    f.write(str(int(round(1/phi(float(k/n)/100),0))))
     f.write("\n")
     f.write ("phi : "+str(HE.decrypt(phi_)))
     f.write("\n")
