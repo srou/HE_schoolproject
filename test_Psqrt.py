@@ -23,6 +23,7 @@ def Psqrt(x,p,HE,f):
         f.write("l2 : "+str(l2))
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
+        f.write("\n")
         f.write("Computing coefficients of Psqrt") 
         f.write("\n")
         f.flush()
@@ -114,5 +115,6 @@ f.write("floor(sqrt("+str(n)+")) : "+str(decrypted_res))
 f.write("\n")
 end=time.time()
 f.write(str(end-start)+" sec." )
+f.write("\n")
 f.write("\n")
 f.close()
