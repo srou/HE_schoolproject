@@ -25,6 +25,7 @@ def Psqrt(x,p,HE,f):
         r=[]
         f.write("Computing coefficients of Psqrt") 
         f.write("\n")
+        f.flush()
         for i in range(p):
             num=l2[i]
             den=1
@@ -41,6 +42,7 @@ def Psqrt(x,p,HE,f):
     for i in range(0,p) :
         if coeffs[i]!=0:
             f.write(str(i))
+            f.flush()
             tmp=HE.encrypt(PyPtxt([coeffs[i]], HE))     
             for j in range(p):
                 if i!=j:
