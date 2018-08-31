@@ -5,12 +5,12 @@ import math
 import numpy as np
 from random import randint
 
-import argparse
+#import argparse
 
-parser=argparse.ArgumentParser()
-parser.add_argument("L",type=int)
-parser.add_argument("t",type=int)  #number of the test
-args=parser.parse_args()
+#parser=argparse.ArgumentParser()
+#parser.add_argument("L",type=int)
+#parser.add_argument("t",type=int)  #number of the test
+#args=parser.parse_args()
      
 def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -232,8 +232,8 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
 
 #params
 p=17
-L=args.L
-t=args.t
+L=50 #L=args.L
+t=1 #t=args.t
 alpha=4
 k=2
 
