@@ -10,12 +10,12 @@ num_cores = multiprocessing.cpu_count()
 print ("num of cores : ",num_cores)
 
 HE = Pyfhel()
-KEYGEN_PARAMS={ "p":13,      "r":1,
+KEYGEN_PARAMS={ "p":17,      "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
-                "L":40,       "m":-1,
+                "L":50,       "m":-1,
                 "R":3,        "s":0,
-                "gens":[],    "ords":[]}
+                "gens":[],    "ords":[]}  
 
 #KEYGEN_PARAMS={ "p":123,      "r":1,
 #                "d":1,        "c":2,
