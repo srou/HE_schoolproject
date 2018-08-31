@@ -233,7 +233,7 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
 #params
 p=17
 L=50 #L=args.L
-t=2 #t=args.t
+t=10 #t=args.t
 alpha=4
 k=2
 
@@ -264,7 +264,7 @@ f.flush()
 #Create a list of distances and encrypt them bit by bit
 dist=[]
 for i in range(100):
-    dist.append(randint(0,(2**alpha)-1))
+    dist.append(randint(0,(int(math.floor(math.sqrt(p)))))) #dist.append(randint(0,(2**alpha)-1))
 f.write ("distances : "+str(dist))
 f.write("\n")
 f.flush()
