@@ -219,7 +219,9 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
     f.write("\n")
     f.flush()
     for bit in T_bits :
-        print(HE.decrypt(bit))
+        f.write(str(HE.decrypt(bit)))
+        f.write("\n")
+        f.flush()
     res=[]
     for i in range(n):
         res.append(is_smaller(T_bits,list_d_bits[i],HE,alpha=alpha))
