@@ -9,10 +9,10 @@ import multiprocessing
 from pathos.multiprocessing import ProcessingPool as Pool
 import argparse
 
-parser=argparse.ArgumentParser()
-parser.add_argument("L",type=int)
-parser.add_argument("alpha",type=int)
-args=parser.parse_args()
+#parser=argparse.ArgumentParser()
+#parser.add_argument("L",type=int)
+#parser.add_argument("alpha",type=int)
+#args=parser.parse_args()
 
 def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -89,7 +89,7 @@ def is_smaller_fast2(x_bits,y_bits,HE,alpha):
     res = somme(to_sum, len(to_sum))
     return res
 
-##3rd attempt : using pathos (does not work either)
+##3rd attempt : using pathos (does not work either for the same reason as the 2nd attemp)
 def product(l, i):
     res = 1
     for j in range(i+1):
@@ -124,8 +124,10 @@ def is_smaller_fast3(x_bits,y_bits,HE,alpha):
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-L=args.L
-alpha=args.alpha
+#L=args.L
+#alpha=args.alpha
+L=30
+alpha=4
 filename="is_smaller_"+str(L)+"_"+str(alpha)+".txt"
 f = open(filename, "a")
 
@@ -198,6 +200,19 @@ f.flush()
 #Compare x and y with np.arrays
 start = time.time()
 result=is_smaller_fast1(x_bits_enc,y_bits_enc,HE,alpha)
+end=time.time()
+decrypted_res=HE.decrypt(result)
+f.write("decrypted result : "+str(decrypted_res))
+f.write("\n")
+f.write(str(end-start)+" sec." )
+f.write("\n")
+f.write("\n")
+f.flush()
+f.close()
+
+#Compare x and y with multiprocessing
+start = time.time()
+result=is_smaller_fast2(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
 f.write("decrypted result : "+str(decrypted_res))
