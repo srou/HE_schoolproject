@@ -48,7 +48,10 @@ def coinToss(x_bits,n,HE,alpha):
     print("Random number between 0 and "+str(n))
     r=randint(0, n)
     #encrypt r as a list of bits
+    start = time.time()
     r_bits_enc=encrypt_as_bits(r,alpha,HE)
+    end=time.time()
+    print(str(end-start)+" sec to encrypt "+str(r)+" as bits." )
     #compare r_bits and x_bits
     return is_smaller(x_bits,r_bits_enc,HE,alpha=alpha)
 
