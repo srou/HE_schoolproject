@@ -9,7 +9,7 @@ from random import randint
 #test knn writing file
 
 
-def encrypt_as_bits(x,alpha,HE,f=f):
+def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
     #returns a list of the encrypted bits of x
     a='{0:0'+str(alpha)+'b}'
