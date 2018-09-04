@@ -8,9 +8,9 @@ import argparse
 
 #In this file, we are testing the function probabilisticAverage for different values of L, alpha
 # and n (length of the list which we want to compute the average of)
-parser=argparse.ArgumentParser()
-parser.add_argument("alpha",type=int)
-args=parser.parse_args()
+#parser=argparse.ArgumentParser()
+#parser.add_argument("alpha",type=int)
+#args=parser.parse_args()
 
 def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
