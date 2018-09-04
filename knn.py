@@ -271,7 +271,7 @@ def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
         res+=tmp
     return res
 
-def dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,f=f):
+def dist(q_enc,q_bits_enc,X_train,HE,alpha,f=f):
     #q_enc =(enc(q1), ,enc(qd)) : list of the encrypted components of q
     #q_bits=([[q1_bits]], ,[[qd_bits]]) : list of lists, where [[q1_bits]] is the list of each encrypted bit of q1
     #X_train : training set (list of rows, each row being a list itself)
@@ -293,7 +293,7 @@ def dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,f=f):
         #also encrypt each elt of X_train[i] as a list of encrypted bits
         b_bits_enc=[encrypt_as_bits(elt,alpha,HE,f) for elt in X_train[i]]
         #compute dist(q,X_train[i])
-        dist=l1_norm(q_enc,q_bits_enc,b_enc,b_bits_enc,HE=HE_scheme,alpha=alpha)
+        dist=l1_norm(q_enc,q_bits_enc,b_enc,b_bits_enc,HE=HE,alpha=alpha)
         distances.append(dist)
     return distances
 
@@ -317,7 +317,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     f.write("len(distances) : "+str(len(distances)))
     f.write("\n")
     for res in distances :
-        f.write(str(HE.decrypt(res)))
+        f.write(str(HE_scheme.decrypt(res)))
         f.flush()
     end1=time.time()
     f.write(str(end1-start1)+" sec to compute distances." )
@@ -330,7 +330,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     start2 = time.time()
     distances_bit=[]
     for i in range(len(distances)):
-        distances_bit.append(convert_to_bits(distances[i],p,alpha,HE,f))
+        distances_bit.append(convert_to_bits(distances[i],p,alpha,HE_scheme,f))
         f.write("convert distance "+str(i))
         f.write("\n")
         f.flush()
@@ -344,7 +344,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     f.write("Compute Xi (position of the k-nearest neighbours) :")
     f.write("\n")
     start3 = time.time()
-    XI=k_smallest_values(distances_bit,k,p,HE,alpha,f)
+    XI=k_smallest_values(distances_bit,k,p,HE_scheme,alpha,f)
     end3=time.time()
     f.write(str(end3-start3)+" sec to compute the position of the k nearest neighbours." )
     f.flush()
@@ -353,9 +353,9 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     #Multiply by the auxiliary data
     f.write("Multiply by the auxiliary data")
     f.write("\n")
-    y_enc=[HE.encrypt(PyPtxt([elt], HE)) for elt in X_train[i]]
-    output=np.multiply(np.asarray(XI),np.asarray(y_enc))
-    return output
+    y_enc=[HE_scheme.encrypt(PyPtxt([elt], HE_scheme)) for elt in X_train[i]]
+    res=np.multiply(np.asarray(XI),np.asarray(y_enc))
+    return res
 
 filename="results_knn14.txt"
 f = open(filename, "a")

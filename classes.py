@@ -198,7 +198,7 @@ def l1_norm(a_enc,a_enc_bits,b,b_bits,HE,alpha):
         res+=tmp
     return res
 
-def dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,HE):
+def dist(q_enc,q_bits_enc,X_train,HE,alpha):
     #q_enc =(enc(q1), ,enc(qd)) : list of the encrypted components of q
     #q_bits=([[q1_bits]], ,[[qd_bits]]) : list of lists, where [[q1_bits]] is the list of each encrypted bit of q1
     #X_train : training set (list of rows, each row being a list itself)
@@ -220,7 +220,7 @@ def dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,HE):
         #also encrypt each elt of X_train[i] as a list of encrypted bits
         b_bits_enc=[encrypt_as_bits(elt,alpha,HE) for elt in X_train[i]]
         #compute dist(q,X_train[i])
-        dist=l1_norm(q_enc,q_bits_enc,b_enc,b_bits_enc,HE=HE_scheme,alpha=alpha)
+        dist=l1_norm(q_enc,q_bits_enc,b_enc,b_bits_enc,HE,alpha=alpha)
         distances.append(dist)
     return distances
 
@@ -237,11 +237,13 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class):
     #HE_scheme : scheme used for encryption (Pyfhel object)
 
     #Compute the distances (q to each row of X_train)
-    distances=dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha,HE_scheme)
+    distances=dist(q_enc,q_bits_enc,X_train,HE_scheme,alpha)
     distances_bit=[]
     for i in range(len(distances)):
         distances_bit.append(convert_to_bits(distances[i],p,alpha,HE_scheme))
-    #Compute Xi (position of the k-nearest neighbours
+    #Compute Xi (position of the k-nearest neighbours)
     XI=k_smallest_values(distances_bit,k,p,HE_scheme,alpha)
-    res=[XI[i]*Y_train[i] for i in range(n)]
+    #Multiply by the auxiliary data
+    y_enc=[HE_scheme.encrypt(PyPtxt([elt], HE_scheme)) for elt in X_train[i]]
+    res=np.multiply(np.asarray(XI),np.asarray(y_enc))
     return res
