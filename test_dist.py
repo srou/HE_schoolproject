@@ -43,8 +43,8 @@ def inv_modulo(x, p):
     if gdc == 1: return u%abs(p)
     else: raise Exception("%s et %s are not mutually prime" % (x, p))
         
-def convert_to_bits(x,p,alpha,HE,f=f):
-    def coeffs_Pbit_i(i,p,alpha,f=f):
+def convert_to_bits(x,p,alpha,HE,f):
+    def coeffs_Pbit_i(i,p,alpha,f):
         #Returns the coefficients ri that will help compute the polynomial P_bit that interpolates the function f:x-->bit_i(x) on [p]
         #alpha : nb of bits
         #0=< 2^alpha-1 < p, p prime
@@ -171,7 +171,7 @@ f.write("\n")
 f.flush()
 
 start2=time.time()
-distances_bit=[convert_to_bits(x,p,alpha,HE) for x in distances]
+distances_bit=[convert_to_bits(x,p,alpha,HE,f) for x in distances]
 end2=time.time()
 f.write(str(end2-start2)+" sec to convert distances to bits." )
 f.write("\n")
