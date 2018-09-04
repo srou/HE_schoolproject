@@ -8,9 +8,9 @@ import argparse
 
 #In this file, we are testing the function probabilisticAverage for different values of L, alpha
 # and n (length of the list which we want to compute the average of)
-parser=argparse.ArgumentParser()
-parser.add_argument("alpha",type=int)
-args=parser.parse_args()
+#parser=argparse.ArgumentParser()
+#parser.add_argument("alpha",type=int)
+#args=parser.parse_args()
 
 def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -125,7 +125,8 @@ def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha,f):
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
 
-alpha=args.alpha
+#alpha=args.alpha
+alpha=4
 L=40
 n=10
 filename="average_alpha"+str(alpha)+".txt"
@@ -168,22 +169,22 @@ avg=dict_average[alpha]
 list_nb=dict_list[alpha]
 list_x_bits=[encrypt_as_bits(x,alpha,HE,f) for x in list_nb]
 
-
+for count in range(10):
 #Compute the probabilistic average of the list of int
-f.write("\n")
-f.write("\n")
-f.write("Compute Average of "+str(list_nb))
-f.write("\n")
-f.write("\n")
-f.flush()
-start = time.time()
-result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha,f)
-end=time.time()
-decrypted_res=HE.decrypt(result)
-f.write("decrypted result : "+str(decrypted_res))
-f.write("\n")
-f.write("Deviation : "+str(math.fabs(int(decrypted_res[0][0])-avg)))
-f.write("\n")
-f.write(str(end-start)+" sec." )
-f.write("\n")
-f.flush()
+    f.write("\n")
+    f.write("\n")
+    f.write("Compute Average of "+str(list_nb))
+    f.write("\n")
+    f.write("\n")
+    f.flush()
+    start = time.time()
+    result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha,f)
+    end=time.time()
+    decrypted_res=HE.decrypt(result)
+    f.write("decrypted result : "+str(decrypted_res))
+    f.write("\n")
+    f.write("Deviation : "+str(math.fabs(int(decrypted_res[0][0])-avg)))
+    f.write("\n")
+    f.write(str(end-start)+" sec." )
+    f.write("\n")
+    f.flush()
