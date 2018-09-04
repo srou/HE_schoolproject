@@ -137,7 +137,7 @@ KEYGEN_PARAMS={ "p":p,   "r":1,
                 "sec":128,    "w":64,
                 "L":L,       "m":-1,
                 "R":3,        "s":0,
-                "gens":[],    "ords":[]}  
+                "gens":[],    "ords":[]} 
 f.write("  Running KeyGen with params:")
 f.write("\n")
 f.write(str(KEYGEN_PARAMS))
