@@ -5,12 +5,6 @@ import math
 import numpy as np
 from random import randint
 
-#import argparse
-
-#parser=argparse.ArgumentParser()
-#parser.add_argument("L",type=int)
-#parser.add_argument("t",type=int)  #number of the test
-#args=parser.parse_args()
      
 def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -232,8 +226,8 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
 
 #params
 p=17
-L=50 #L=args.L
-t=12 #t=args.t
+L=50
+t=1
 alpha=4
 k=2
 
@@ -261,14 +255,8 @@ f.write("  KeyGen completed in "+str(end-start)+" sec." )
 f.write("\n")
 f.flush()
 
-#Create a list of distances and encrypt them bit by bit
-dist=[]
-for i in range(100):
-    dist.append(randint(0,(int(math.floor(math.sqrt(p)))))) #dist.append(randint(0,(2**alpha)-1))
-f.write ("distances : "+str(dist))
-f.write("\n")
-f.flush()
-
+#Create a random list of distances and encrypt them bit by bit
+dist=[0, 3, 2, 2, 2, 2, 3, 4, 0, 2, 0, 0, 0, 0, 1, 4, 2, 1, 0, 0, 0, 2, 2, 2, 4, 1, 1, 2, 1, 0, 0, 1, 0, 2, 0, 0, 1, 1, 2, 0, 2, 1, 3, 4, 1, 3, 2, 0, 1, 3, 4, 3, 1, 3, 3, 2, 1, 3, 1, 4, 0, 2, 2, 0, 3, 2, 1, 0, 0, 2, 0, 0, 2, 2, 0, 2, 0, 0, 2, 2, 3, 2, 3, 2, 4, 4, 2, 4, 2, 3, 4, 3, 3, 3, 1, 2, 3, 2, 3, 2]
 dist_bits=[encrypt_as_bits(d,alpha,HE,f) for d in dist]
 
 #Return the position of the k smallest values of the list
