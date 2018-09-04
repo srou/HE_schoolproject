@@ -126,7 +126,7 @@ prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13
 
 
 #alpha=args.alpha
-alpha=6
+alpha=7
 L=40
 n=10
 filename="average_alpha"+str(alpha)+".txt"
