@@ -128,7 +128,7 @@ p=17
 alpha=4 #alpha=args.alpha
 n=20
 L=50
-filename="second_order_moment"+str(alpha)+".txt"
+filename="second_order_moment"+str(n)+".txt"
 f = open(filename, "a")
 
 #Generate Key
