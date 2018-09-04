@@ -154,12 +154,12 @@ f.flush()
 #list of n numbers which we want to compute the average, and the corresponding average of the list
 dict_list={10:[2, 14, 1, 7, 3, 5, 14, 2, 15, 0],
 20:[14, 14, 8, 0, 11, 2, 7, 0, 0, 13, 9, 8, 9, 12, 12, 7, 9, 7, 12, 14],
-50: [2, 8, 7, 9, 10, 13, 7, 7, 14, 4, 8, 0, 11, 5, 0, 7, 13, 13, 4, 4, 15, 8, 14, 1, 13, 4, 6, 10, 2, 15, 1, 1, 9, 15, 14, 1, 7, 3, 6, 1, 13, 7, 4, 6, 1, 6, 4, 6, 15, 11],
+50: [2, 8, 7, 9, 5, 13, 7, 2, 14, 4, 8, 0, 11, 5, 0, 5, 13, 13, 4, 4, 15, 8, 14, 1, 13, 4, 6, 10, 2, 15, 1, 1, 9, 15, 14, 1, 7, 3, 6, 1, 13, 7, 4, 6, 1, 6, 4, 6, 15, 11],
 100:[4, 5, 6, 0, 7, 5, 4, 9, 0, 13, 14, 13, 11, 10, 8, 9, 11, 10, 7, 0, 7, 8, 0, 11, 0, 9, 12, 11, 9, 10, 2, 13, 5, 13, 14, 15, 12, 1, 3, 8, 1, 1, 6, 1, 8, 4, 1, 8, 4, 11, 13, 12, 7, 11, 14, 6, 3, 15, 11, 8, 15, 1, 15, 15, 15, 8, 9, 0, 14, 6, 5, 13, 0, 6, 7, 9, 9, 3, 8, 6, 5, 7, 13, 7, 10, 6, 3, 15, 8, 7, 8, 9, 0, 13, 7, 2, 14, 7, 8, 12]
 }
 dict_average={10:6.3,
 20:8.4,
-50:7.3,
+50:7,
 100:7.79}
 
 avg=dict_average[n]
@@ -169,20 +169,21 @@ list_x_bits=[encrypt_as_bits(x,alpha,HE,f) for x in list_nb]
 
 
 #Compute the probabilistic average of the list of int
-f.write("\n")
-f.write("\n")
-f.write("Compute Average of "+str(list_nb))
-f.write("\n")
-f.write("\n")
-f.flush()
-start = time.time()
-result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha,f)
-end=time.time()
-decrypted_res=HE.decrypt(result)
-f.write("decrypted result : "+str(decrypted_res))
-f.write("\n")
-f.write("Deviation : "+str(math.fabs(int(decrypted_res[0][0])-avg)))
-f.write("\n")
-f.write(str(end-start)+" sec." )
-f.write("\n")
-f.flush()
+for count in range(10):
+    f.write("\n")
+    f.write("\n")
+    f.write("Compute Average of "+str(list_nb))
+    f.write("\n")
+    f.write("\n")
+    f.flush()
+    start = time.time()
+    result=probabilisticAverage(list_x_bits,len(list_nb),HE,1,alpha,f)
+    end=time.time()
+    decrypted_res=HE.decrypt(result)
+    f.write("decrypted result : "+str(decrypted_res))
+    f.write("\n")
+    f.write("Deviation : "+str(math.fabs(int(decrypted_res[0][0])-avg)))
+    f.write("\n")
+    f.write(str(end-start)+" sec." )
+    f.write("\n")
+    f.flush()

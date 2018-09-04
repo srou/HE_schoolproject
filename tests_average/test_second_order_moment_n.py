@@ -151,8 +151,8 @@ f.write("\n")
 f.flush()
 
 #list of n numbers which we want to compute the average of
-list_nb=[1, 3, 0, 1, 3, 4, 3, 0, 2, 1]
-sec_order_moment=5.0
+list_nb=[1, 3, 0, 1, 3]
+sec_order_moment=4.0
 list_x_bits=[encrypt_as_bits(x,alpha,HE,f) for x in list_nb]
 
 
