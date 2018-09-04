@@ -123,7 +123,7 @@ def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha,f):
 
 
 p=17
-L=args.L
+L=20 #L=args.L
 n=10
 alpha=4
 filename="average_L"+str(L)+".txt"

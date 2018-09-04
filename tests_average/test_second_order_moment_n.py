@@ -125,7 +125,7 @@ def probabilisticAverage_fast(list_x_bits,n,HE,deg,alpha,f):
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
 p=17
-alpha=args.alpha
+alpha=4 #alpha=args.alpha
 n=10
 L=50
 filename="second_order_moment"+str(alpha)+".txt"
