@@ -156,7 +156,7 @@ p=17
 
 #input data
 q=[3,4,2]
-X1=[0,3,1]
+X1=[[0,3,1]]
 
 #encrypt q
 q_enc=[HE.encrypt(PyPtxt([elt], HE) ) for elt in q]
