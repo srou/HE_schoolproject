@@ -83,7 +83,7 @@ def convert_to_bits(x,p,alpha,HE,f):
     bits_x=[]  #encrypted bit representation of x
     for i in range(alpha):
         #f.write("Computing bit "+str(i))
-        coeffs_i=coeffs_Pbit_i(i=i,p=p,alpha=alpha)
+        coeffs_i=coeffs_Pbit_i(i=i,p=p,alpha=alpha,f=f)
         bits_x.append(compute_Pbit_i(x=x,p=p,coeffs_i=coeffs_i,HE=HE))
     return bits_x
 
@@ -121,11 +121,14 @@ def dist(q_enc,q_bits_enc,X_train,HE,alpha):
         #encrypt each elt of X_train[i] 
         b_enc=[HE.encrypt(PyPtxt([elt], HE)) for elt in X_train[i]]
         #also encrypt each elt of X_train[i] as a list of encrypted bits
-        b_bits_enc=[encrypt_as_bits(elt,alpha,HE) for elt in X_train[i]]
+        b_bits_enc=[encrypt_as_bits(elt,alpha,HE,f) for elt in X_train[i]]
         #compute dist(q,X_train[i])
         dist=l1_norm(q_enc,q_bits_enc,b_enc,b_bits_enc,HE,alpha)
         distances.append(dist)
     return distances
+
+filename="test_distance.txt"
+f = open(filename, "a")
 
 start = time.time()
 HE = Pyfhel()
@@ -146,9 +149,6 @@ f.write("  KeyGen completed in "+str(end-start)+" sec." )
 f.write("\n")
 f.write("\n")
 f.flush()
-
-filename="test_distance.txt"
-f = open(filename, "a")
 
 #parameters
 alpha=4
