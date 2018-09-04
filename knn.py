@@ -8,10 +8,6 @@ from random import randint
 
 #test knn writing file
 
-#with open("results_knn2.txt", "w") as f:
-#    f.write("knn_results")
-filename="results_knn14.txt"
-f = open(filename, "a")
 
 def encrypt_as_bits(x,alpha,HE,f=f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -313,6 +309,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     #p : prime number such that each value in X_train and q are between 0 and sqrt(p)/d
     #HE_scheme : scheme used for encryption (Pyfhel object)
 
+    #compute the distances between q and elements of X_train
     f.write("Distances between q and elements of X_train : ")
     f.write("\n")
     start1 = time.time()
@@ -326,6 +323,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     f.write(str(end1-start1)+" sec to compute distances." )
     f.write("\n")
     f.write("\n")
+    #convert distances to bits
     f.write("Convert distances to bits ")
     f.write("\n")
     f.flush()
@@ -342,6 +340,7 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     f.write("\n")
     f.write("\n")
     f.write("\n")
+    #Find the position of the k nearest neighbours
     f.write("Compute Xi (position of the k-nearest neighbours) :")
     f.write("\n")
     start3 = time.time()
@@ -350,22 +349,16 @@ def knn(q_enc,q_bits_enc,X_train,Y_train,HE_scheme,p,n,d,k,alpha,a_class,file=f)
     f.write(str(end3-start3)+" sec to compute the position of the k nearest neighbours." )
     f.flush()
     f.write("\n")
-    #knn_bits=[]
-    #Y_train_bits_enc=[]
-    #a='{0:0'+str(alpha)+'b}'
-    #for aux in Y_train :
-    #    Y_train_bits_enc.append([int(elt) for elt in list(a.format(aux))])
-    #for i in range(n):
-    #    tmp=[]
-    #    for j in range(alpha):
-    #        tmp.append(XI[i]*(Y_train_bits_enc[i])[j])
-    #    knn_bits.append(tmp)
-    #knn=knn_bits[-1]    #convert knn_bits into an encrypted number
-    #for i in range(1,alpha):
-    #    knn=knn_bits[-1-i]*(2**i)  #ou *HE.encrypt(PyPtxt([2**i], HE)) 
-    #result_bits=[]
-    return XI
+    f.write("\n")
+    #Multiply by the auxiliary data
+    f.write("Multiply by the auxiliary data")
+    f.write("\n")
+    y_enc=[HE.encrypt(PyPtxt([elt], HE)) for elt in X_train[i]]
+    output=np.multiply(np.asarray(XI),np.asarray(y_enc))
+    return output
 
+filename="results_knn14.txt"
+f = open(filename, "a")
 
 start = time.time()
 HE = Pyfhel()
@@ -409,7 +402,7 @@ for i in range(n):
     for j in range(d):
         tmp.append(randint(0,(2**alpha)-1))
     X_train.append(tmp)
-    Y_train.append(randint(0,a_class))
+    Y_train.append(randint(0,a_class)+1)
 f.write("X_train : "+str(X_train))
 f.write("\n")
 f.write("\n")
@@ -458,5 +451,10 @@ f.flush()
 start = time.time()
 result=knn(q_enc,q_bits_enc,X_train,Y_train,HE,p,n,d,k,alpha,a_class,file=f)
 end=time.time()
+f.write("\n")
 f.write(str(end-start)+" sec." )
+f.write("\n")
+decrypted_res=[HE.decrypt(res) for res in result]
+f.write("decrypted result : "+str(decrypted_res))
+f.write("\n")
 f.close()
