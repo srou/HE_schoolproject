@@ -81,11 +81,10 @@ def Psqrt2(x,p,HE,f):
     coeffs=coeffs_Psqrt(p)
     #x encrypted as a single Ctxt
     #0=< x =< p  , p prime
-    ctxt_poly=HE.encrypt(PyPtxt([x], HE))
     coeffs_ctxt=[]
     for i in range(p):
         coeffs_ctxt.append(HE.encrypt(PyPtxt([coeffs[i]], HE)))
-    res=ctxt_poly.polynomialMult(coeffs_ctxt)
+    res=x.polynomialMult(coeffs_ctxt)
     return res
 
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
