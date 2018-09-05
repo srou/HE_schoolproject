@@ -81,19 +81,18 @@ def Psqrt2(x,p,HE,f):
     coeffs=coeffs_Psqrt(p)
     #x encrypted as a single Ctxt
     #0=< x =< p  , p prime
-    ctxt_poly=[]
+    ctxt_poly=HE.encrypt(PyPtxt([x], HE))
     coeffs_ctxt=[]
     for i in range(p):
         coeffs_ctxt.append(HE.encrypt(PyPtxt([coeffs[i]], HE)))
-        ctxt_poly.append(HE.encrypt(PyPtxt([x], HE)))
-    res=ctxt_poly.polynomialMult(coeff)
+    res=ctxt_poly.polynomialMult(coeffs_ctxt)
     return res
 
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
 L=70
-p=67
+p=17
 filename="Psqrt_"+str(L)+"_"+str(p)+".txt"
 f = open(filename, "a")
 
@@ -142,7 +141,7 @@ f.write("\n")
 f.flush()
 
 start = time.time()
-result=Psqrt(x,p,HE,f)
+result=Psqrt2(x,p,HE,f)
 decrypted_res=HE.decrypt(result)
 f.write("floor(sqrt("+str(n)+")) : "+str(decrypted_res))
 f.write("\n")
