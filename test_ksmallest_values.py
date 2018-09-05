@@ -228,10 +228,10 @@ def k_smallest_values(list_d_bits,p,k,HE,alpha,f):
 p=17
 L=50
 t=1
-alpha=4
+alpha=5
 k=2
 
-filename="ksv_"+str(t)+".txt"
+filename="ksv_alpha"+str(alpha)+".txt"
 f = open(filename, "a")
 
 start = time.time()
