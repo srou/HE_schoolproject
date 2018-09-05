@@ -140,7 +140,7 @@ f.write("\n")
 f.flush()
 
 start = time.time()
-result=Psqrt2(x,p,HE,f)
+result=Psqrt(x,p,HE,f)
 decrypted_res=HE.decrypt(result)
 f.write("floor(sqrt("+str(n)+")) : "+str(decrypted_res))
 f.write("\n")
