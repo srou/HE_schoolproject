@@ -39,7 +39,6 @@ def Psqrt(x,p,HE):
     res=HE.encrypt(PyPtxt([0], HE))
     for i in range(0,p) :
         if coeffs[i]!=0:
-            print("coeff "+str(i))
             tmp=HE.encrypt(PyPtxt([coeffs[i]], HE))     
             for j in range(p):
                 if i!=j:
