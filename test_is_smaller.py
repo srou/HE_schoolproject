@@ -10,14 +10,14 @@ from pathos.multiprocessing import ProcessingPool as Pool
 import argparse
 
 
-def encrypt_as_bits(x,alpha,HE,f):
+def encrypt_as_bits(x,alpha,HE):
     #takes in input a plaintext integer x =< 2^alpha -1
     #returns a list of the encrypted bits of x
     a='{0:0'+str(alpha)+'b}'
     x_bits=[int(i) for i in list(a.format(x))]
     x_bits_enc=[]
-    f.write("Encrypting "+str(x)+" in bits "+str(x_bits))
-    f.write("\n")
+    print("Encrypting "+str(x)+" in bits "+str(x_bits))
+    print("\n")
     for i in x_bits:
         x_bits_enc.append(HE.encrypt(PyPtxt([i], HE)))
     return x_bits_enc
@@ -123,8 +123,6 @@ prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13
 
 L=30
 alpha=4
-filename="is_smaller_"+str(L)+"_"+str(alpha)+".txt"
-f = open(filename, "a")
 
 #Generate Key
 start = time.time()
@@ -135,42 +133,35 @@ KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
                 "L":L,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}  
-
-f.write("  Running KeyGen with params:")
-f.write("\n")
-f.write(str(KEYGEN_PARAMS))
-f.flush()
+print("  Running KeyGen with params:")
+print("")
+print(str(KEYGEN_PARAMS))
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
-f.write("  KeyGen completed in "+str(end-start)+" sec." )
-f.write("\n")
-f.flush()
+print("  KeyGen completed in "+str(end-start)+" sec." )
+print("")
 
 
 #Test is_smaller with 2 integers x and y
 x=7
 y=6
-f.write("alpha="+str(alpha))
-f.write("\n")
-f.write("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
-f.write("\n")
-f.flush()
+print("alpha="+str(alpha))
+print("")
+print("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
+print("")
 
 #Encrypt x bit by bit
 start = time.time()
-x_bits_enc=encrypt_as_bits(x,alpha,HE,f)
+x_bits_enc=encrypt_as_bits(x,alpha,HE)
 end=time.time()
-f.write(str(end-start)+" sec." )
-f.write("\n")
-f.flush()
+print(str(end-start)+" sec." )
+print("")
 
 #Encrypt y bit by bit
 start = time.time()
-y_bits_enc=encrypt_as_bits(y,alpha,HE,f)
+y_bits_enc=encrypt_as_bits(y,alpha,HE)
 end=time.time()
-f.write(str(end-start)+" sec." )
-f.write("\n")
-f.flush()
+print(str(end-start)+" sec." )
 
 
 #Compare x and y with parallelization
@@ -186,45 +177,31 @@ start = time.time()
 result,same_bit,same_prefix=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
-f.write("\n")
-f.write("sameBit : "+str([HE.decrypt(i) for i in same_bit]))
-f.write("\n")
-f.flush()
-f.write("samePrefix : "+str([HE.decrypt(i) for i in same_prefix]))
-f.write("\n")
-f.flush()
-f.write("decrypted result : "+str(decrypted_res))
-f.write("\n")
-f.write(str(end-start)+" sec." )
-f.write("\n")
-f.flush()
+print("")
+print("sameBit : "+str([HE.decrypt(i) for i in same_bit]))
+print("samePrefix : "+str([HE.decrypt(i) for i in same_prefix]))
+print("decrypted result : "+str(decrypted_res))
+print(str(end-start)+" sec." )
 
 #Compare x and y with np.arrays
-f.write("Compare x and y with np.arrays")
-f.write("\n")
-f.write("\n")
-f.flush()
+print("Compare x and y with np.arrays")
+print("")
 start = time.time()
 result=is_smaller_fast1(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
-f.write("decrypted result : "+str(decrypted_res))
-f.write("\n")
-f.write(str(end-start)+" sec." )
-f.write("\n")
-f.write("\n")
-f.flush()
-f.close()
+print("decrypted result : "+str(decrypted_res))
+print(str(end-start)+" sec." )
 
 #Compare x and y with multiprocessing
-start = time.time()
-result=is_smaller_fast2(x_bits_enc,y_bits_enc,HE,alpha)
-end=time.time()
-decrypted_res=HE.decrypt(result)
-f.write("decrypted result : "+str(decrypted_res))
-f.write("\n")
-f.write(str(end-start)+" sec." )
-f.write("\n")
-f.write("\n")
-f.flush()
-f.close()
+#start = time.time()
+#result=is_smaller_fast2(x_bits_enc,y_bits_enc,HE,alpha)
+#end=time.time()
+#decrypted_res=HE.decrypt(result)
+#f.write("decrypted result : "+str(decrypted_res))
+#f.write("\n")
+#f.write(str(end-start)+" sec." )
+#f.write("\n")
+#f.write("\n")
+#f.flush()
+#f.close()

@@ -15,18 +15,15 @@ def inv_modulo(x, p):
     (u, _, gdc) = bezout(x, p)
     if gdc == 1: return u%abs(p)
     else: raise Exception("%s et %s are not mutually prime" % (x, p))
-def Psqrt(x,p,HE,f):
+def Psqrt(x,p,HE):
     def coeffs_Psqrt(p):
         #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
         l1=range(0,p)
         l2=[int(math.floor(math.sqrt(i))) for i in l1]
-        f.write("l2 : "+str(l2))
+        print("l2 : "+str(l2))
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
-        f.write("\n")
-        f.write("Computing coefficients of Psqrt") 
-        f.write("\n")
-        f.flush()
+        print("Computing coefficients of Psqrt") 
         for i in range(p):
             num=l2[i]
             den=1
@@ -92,29 +89,27 @@ prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13
 
 L=40
 p=17
+alpha=4
 filename="Psqrt_"+str(L)+"_"+str(p)+".txt"
 f = open(filename, "a")
 
 
+#Generate Key
 start = time.time()
 HE = Pyfhel()
-#Generate key
-KEYGEN_PARAMS={ "p":p,   "r":1,
+KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
                 "d":0,        "c":2,
                 "sec":128,    "w":64,
                 "L":L,       "m":-1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}  
-
-f.write("  Running KeyGen with params:")
-f.write("\n")
-f.write(str(KEYGEN_PARAMS))
-f.flush()
+print("  Running KeyGen with params:")
+print("")
+print(str(KEYGEN_PARAMS))
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
-f.write("  KeyGen completed in "+str(end-start)+" sec." )
-f.write("\n")
-f.flush()
+print("  KeyGen completed in "+str(end-start)+" sec." )
+print("")
 
 #preliminary test
 #start = time.time()
@@ -131,21 +126,15 @@ f.flush()
 
 #Compute floor(sqrt(x))
 p=KEYGEN_PARAMS["p"]
-f.write("p="+str(p))
-f.write("\n")
+print("p="+str(p))
 n=8
 x=HE.encrypt(PyPtxt([n], HE))
-f.write("x="+str(HE.decrypt(x)))
-f.write("\n")
-f.flush()
+print("x="+str(HE.decrypt(x)))
 
 start = time.time()
-result=Psqrt(x,p,HE,f)
+result=Psqrt(x,p,HE)
 decrypted_res=HE.decrypt(result)
-f.write("floor(sqrt("+str(n)+")) : "+str(decrypted_res))
-f.write("\n")
+print("floor(sqrt("+str(n)+")) : "+str(decrypted_res))
 end=time.time()
-f.write(str(end-start)+" sec." )
-f.write("\n")
-f.write("\n")
-f.close()
+print(str(end-start)+" sec." )
+print("")
