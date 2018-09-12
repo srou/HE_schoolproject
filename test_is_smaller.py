@@ -144,9 +144,7 @@ print("")
 x=7
 y=6
 print("alpha="+str(alpha))
-print("")
 print("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
-print("")
 
 #Encrypt x bit by bit
 start = time.time()
@@ -176,14 +174,15 @@ result,same_bit,same_prefix=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
 print("")
+print("Compare x and y with for-loops")
 print("sameBit : "+str([HE.decrypt(i) for i in same_bit]))
 print("samePrefix : "+str([HE.decrypt(i) for i in same_prefix]))
 print("decrypted result : "+str(decrypted_res))
 print(str(end-start)+" sec." )
 
 #Compare x and y with np.arrays
-print("Compare x and y with np.arrays")
 print("")
+print("Compare x and y with np.arrays")
 start = time.time()
 result=is_smaller_fast1(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
