@@ -20,7 +20,7 @@ def Psqrt(x,p,HE):
         #Returns the coefficients ri that will help compute the polynomial P_sqrt that interpolates the function f:x-->floor(sqrt(x)) on [p]
         l1=range(0,p)
         l2=[int(math.floor(math.sqrt(i))) for i in l1]
-        print("l2 : "+str(l2))
+        print("values : "+str(l2))
         #find the coeffs ri (in Zp) that help construct the polynomial
         r=[]
         print("Computing coefficients of Psqrt") 
@@ -103,7 +103,6 @@ KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}  
 print("  Running KeyGen with params:")
-print("")
 print(str(KEYGEN_PARAMS))
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
