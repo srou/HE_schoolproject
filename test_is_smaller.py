@@ -9,10 +9,6 @@ import multiprocessing
 from pathos.multiprocessing import ProcessingPool as Pool
 import argparse
 
-#parser=argparse.ArgumentParser()
-#parser.add_argument("L",type=int)
-#parser.add_argument("alpha",type=int)
-#args=parser.parse_args()
 
 def encrypt_as_bits(x,alpha,HE,f):
     #takes in input a plaintext integer x =< 2^alpha -1
@@ -49,7 +45,7 @@ def is_smaller(x_bits,y_bits,HE,alpha):
         if i>0:  #since the 1st term of the sum is already computed before the loop
             res+=(HE.encrypt(PyPtxt([1], HE))-y_bits[i])*x_bits[i]*same_prefix[i]
             #print("res : ",HE.decrypt(res))
-    return res
+    return res,same_bit,same_prefix
 
 ##1st attempt to optimize computation (using numpy arrays)
 def is_smaller_fast1(x_bits,y_bits,HE,alpha):
@@ -124,8 +120,7 @@ def is_smaller_fast3(x_bits,y_bits,HE,alpha):
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-#L=args.L
-#alpha=args.alpha
+
 L=30
 alpha=4
 filename="is_smaller_"+str(L)+"_"+str(alpha)+".txt"
@@ -188,9 +183,16 @@ f.flush()
 
 #Compare x and y without parallelization
 start = time.time()
-result=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
+result,same_bit,same_prefix=is_smaller(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()
 decrypted_res=HE.decrypt(result)
+f.write("\n")
+f.write("sameBit : "+str([HE.decrypt(i) for i in same_bit]))
+f.write("\n")
+f.flush()
+f.write("samePrefix : "+str([HE.decrypt(i) for i in same_prefix]))
+f.write("\n")
+f.flush()
 f.write("decrypted result : "+str(decrypted_res))
 f.write("\n")
 f.write(str(end-start)+" sec." )
@@ -198,6 +200,10 @@ f.write("\n")
 f.flush()
 
 #Compare x and y with np.arrays
+f.write("Compare x and y with np.arrays")
+f.write("\n")
+f.write("\n")
+f.flush()
 start = time.time()
 result=is_smaller_fast1(x_bits_enc,y_bits_enc,HE,alpha)
 end=time.time()

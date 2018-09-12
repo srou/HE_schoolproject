@@ -82,7 +82,7 @@ def probabilisticAverage(list_x_bits,n,HE,deg,alpha):
     return res
 
 def bezout(a, b):
-    #computes (u,v,p) st a*u + b*v = gdc(a,b)
+    #computes (u,v,gcd) st a*u + b*v = gdc(a,b)
     if a == 0 and b == 0: return (0, 0, 0)
     if b == 0: return (a/abs(a), 0, abs(a))
     (u, v, gdc) = bezout(b, a%b)

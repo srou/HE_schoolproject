@@ -165,7 +165,7 @@ q_bits_enc=[encrypt_as_bits(elt,alpha,HE,f) for elt in q]
 start1=time.time()
 distances=dist(q_enc,q_bits_enc,X1,HE,alpha)
 end1=time.time()
-f.write(str(end1-start1)+" sec to compute distances." )
+f.write(str(end1-start1)+" sec to compute one distance." )
 f.write("\n")
 f.write("\n")
 f.flush()

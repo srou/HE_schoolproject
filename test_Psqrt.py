@@ -90,7 +90,7 @@ def Psqrt2(x,p,HE,f):
 #For a given number of bits alpha, this dict gives the smallest prime number greater than 2^alpha-1
 prime_dict={4:17, 5:37, 6:67, 7:131, 8:257, 9:521, 10:1031, 11:2053, 12:4099, 13:8209}
 
-L=70
+L=40
 p=17
 filename="Psqrt_"+str(L)+"_"+str(p)+".txt"
 f = open(filename, "a")
