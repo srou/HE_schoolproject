@@ -17,7 +17,6 @@ def encrypt_as_bits(x,alpha,HE):
     x_bits=[int(i) for i in list(a.format(x))]
     x_bits_enc=[]
     print("Encrypting "+str(x)+" in bits "+str(x_bits))
-    print("\n")
     for i in x_bits:
         x_bits_enc.append(HE.encrypt(PyPtxt([i], HE)))
     return x_bits_enc
@@ -134,7 +133,6 @@ KEYGEN_PARAMS={ "p":prime_dict[alpha],   "r":1,
                 "R":3,        "s":0,
                 "gens":[],    "ords":[]}  
 print("  Running KeyGen with params:")
-print("")
 print(str(KEYGEN_PARAMS))
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
