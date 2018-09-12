@@ -137,13 +137,13 @@ print(str(KEYGEN_PARAMS))
 HE.keyGen(KEYGEN_PARAMS)
 end=time.time()
 print("  KeyGen completed in "+str(end-start)+" sec." )
-print("")
 
 
 #Test is_smaller with 2 integers x and y
 x=7
 y=6
 print("alpha="+str(alpha))
+print("")
 print("Test is_smaller with integers "+str(x)+" and "+str(y)+".")
 
 #Encrypt x bit by bit
