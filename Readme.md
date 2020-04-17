@@ -1,4 +1,4 @@
-# Summary
+## Summary
 Individual project on Privacy Preserving Machine Learning. 
 This project implements a secure KNN algorithm using the Homomorphic Encryption library Pyfhel.
 
